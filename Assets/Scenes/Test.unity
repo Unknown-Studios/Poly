@@ -115,9 +115,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Width: 100
-  Radius: 1000
+  Radius: 2500
   MaxHeight: 200
-  tmPrefab: {fileID: 163332, guid: aa8bd20434f4944489f82ac322439720, type: 2}
   Octaves: 3
   groundFrq: 1
 --- !u!4 &17005513

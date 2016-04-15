@@ -357,16 +357,8 @@ Material:
         second: {r: 1, g: 1, b: 0, a: 0}
       data:
         first:
-          name: _Emission
-        second: {r: 0, g: 0, b: 0, a: 0}
-      data:
-        first:
           name: _EmissionColorUI
         second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _BumpMap_ST
-        second: {r: 1, g: 1, b: 0, a: 0}
       data:
         first:
           name: _TintColor
@@ -375,6 +367,14 @@ Material:
         first:
           name: White
         second: {r: 0.8455882, g: 0.83937067, b: 0.83937067, a: 0}
+      data:
+        first:
+          name: _Emission
+        second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _BumpMap_ST
+        second: {r: 1, g: 1, b: 0, a: 0}
       data:
         first:
           name: _SkyColor1
