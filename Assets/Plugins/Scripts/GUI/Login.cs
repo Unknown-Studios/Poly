@@ -50,54 +50,58 @@ public class Login : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-        GUI.skin = Game.GUISKIN;
-        GUI.backgroundColor = Game.Color(39, 39, 39, 0.75f);
-        if (!LoggingIn)
+        if (!Game.ShowPopup)
         {
-            if (!PlayerPrefs.HasKey("Password") || error != "")
+            GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+            GUI.skin = Game.GUISKIN;
+            GUI.color = Color.white;
+            GUI.backgroundColor = Game.Color(39, 39, 39, 0.75f);
+            if (!LoggingIn)
             {
-                Game.SetMouse(true);
-                GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 86, 200, 25), "Login form");
-
-                Username = GUI.TextField(Game.Rect(-2), Username, 25);
-                Password = GUI.PasswordField(Game.Rect(-1), Password, "#"[0], 25);
-                Remember = Game.ToggleBox(Game.Rect(0), Remember, "Remember Password");
-
-                if (GUI.Button(Game.Rect(2), text) || Input.GetKeyDown(KeyCode.Return))
+                if (!PlayerPrefs.HasKey("Password") || error != "")
                 {
-                    if (Username.ToString().Length == 0 || Username.ToString() == "Username")
+                    Game.SetMouse(true);
+                    GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 86, 200, 25), "Login form");
+
+                    Username = GUI.TextField(Game.Rect(-2), Username, 25);
+                    Password = GUI.PasswordField(Game.Rect(-1), Password, "#"[0], 25);
+                    Remember = Game.ToggleBox(Game.Rect(0), Remember, "Remember Password");
+
+                    if (GUI.Button(Game.Rect(2), text) || Input.GetKeyDown(KeyCode.Return))
                     {
-                        error = "Username is missing!";
+                        if (Username.ToString().Length == 0 || Username.ToString() == "Username")
+                        {
+                            error = "Username is missing!";
+                        }
+                        else if (Password.ToString().Length == 0 || Password.ToString() == "Password")
+                        {
+                            error = "Password is missing!";
+                        }
+                        else {
+                            StartCoroutine(login(Username, Md5Sum(Password), false));
+                        }
                     }
-                    else if (Password.ToString().Length == 0 || Password.ToString() == "Password")
+                    if (GUI.Button(Game.Rect(3), "Quit"))
                     {
-                        error = "Password is missing!";
+                        Application.Quit();
                     }
-                    else {
-                        StartCoroutine(login(Username, Md5Sum(Password), false));
+                    //Show errors to the client.
+                    if (error != "")
+                    {
+                        Vector2 ErrorSize = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("Error: " + error));
+                        ErrorSize.x += 20;
+                        GUI.backgroundColor = Game.Color(255, 0, 0, 0.4f);
+                        GUI.Label(new Rect((Screen.width / 2) - (ErrorSize.x) / 2, 0, ErrorSize.x, 25), "Error: " + error);
                     }
                 }
-                if (GUI.Button(Game.Rect(3), "Quit"))
-                {
-                    Application.Quit();
-                }
-                //Show errors to the client.
-                if (error != "")
-                {
-                    Vector2 ErrorSize = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("Error: " + error));
-                    ErrorSize.x += 20;
-                    GUI.backgroundColor = Game.Color(255, 0, 0, 0.4f);
-                    GUI.Label(new Rect((Screen.width / 2) - (ErrorSize.x) / 2, 0, ErrorSize.x, 25), "Error: " + error);
+                else {
+                    LoggingIn = true;
+                    StartCoroutine(login(PlayerPrefs.GetString("Username"), PlayerPrefs.GetString("Password"), true));
                 }
             }
             else {
-                LoggingIn = true;
-                StartCoroutine(login(PlayerPrefs.GetString("Username"), PlayerPrefs.GetString("Password"), true));
+                GUI.Label(new Rect((Screen.width / 2) - (300 / 2), (Screen.height / 2) - (50 / 2), 300, 50), LoadText);
             }
-        }
-        else {
-            GUI.Label(new Rect((Screen.width / 2) - (300 / 2), (Screen.height / 2) - (50 / 2), 300, 50), LoadText);
         }
     }
 
@@ -136,7 +140,7 @@ public class Login : MonoBehaviour
         }
         if (N["Access"] == null)
         {
-            Game.Popup("The username wasn't found in the database, do you want to create a user?", delegate () { Application.OpenURL(Game.Website + "/Login/login.php"); });
+            Game.Popup("The username wasn't found in the database, do you want to create a user?", delegate () { Application.OpenURL(Game.Website + "/Login/#Signup"); });
             LoggingIn = false;
             error = "User not found in database, check your credentials and try again.";
             yield break;

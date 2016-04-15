@@ -773,7 +773,9 @@ public class Game : MonoBehaviour
             }
             if (ShowPopup)
             {
-                GUI.backgroundColor = Game.GUIColor;
+                Color c = Game.GUIColor;
+                c.a = 1;
+                GUI.backgroundColor = c;
                 GUI.Label(new Rect(Screen.width / 2 - 125, Screen.height / 2 - 100, 250, 98), PopupText);
                 if (GUI.Button(new Rect(Screen.width / 2 - 125, Screen.height / 2, 124, 25), "Yes"))
                 {
