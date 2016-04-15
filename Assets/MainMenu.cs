@@ -61,8 +61,6 @@ public class MainMenu : MonoBehaviour
             if (!ShowGraphicsMenu && !ShowControlsMenu && !ShowAudioMenu && !ShowGameplay && !ShowCredits)
             {
                 GUI.backgroundColor = new Color(0, 0, 0, 0);
-
-                GUI.skin.font = TitleFont;
                 GUI.color = Color.white;
 
                 GUI.skin.label.fontSize = 75;
@@ -261,7 +259,7 @@ public class MainMenu : MonoBehaviour
                 GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + ((26 * -1) - 16), 200, 25), "Audio Settings:");
                 volume = Game.DragBar(Game.Rect(0), 0f, 100f, volume, Game.Color(100, 255, 100));
                 string s1;
-				if (volume == 0)
+                if (volume == 0)
                 {
                     s1 = "Audio: off";
                 }
@@ -352,12 +350,12 @@ public class MainMenu : MonoBehaviour
             //Sub-menu for joining/hosting server
             GUI.backgroundColor = Color.clear;
             GUI.skin.button.fontSize = 40;
-            GUI.skin.button.font = FontAwesome;
-            if (GUI.Button(new Rect(Screen.width / 2 - 200, Screen.height / 2 - 62.5f, 200, 125), " \n Host"))
+            GUI.skin.button.font = MainFont;
+            if (GUI.Button(new Rect(Screen.width / 2 - 200, Screen.height / 2 - 62.5f, 200, 125), "Host"))
             {
                 ShowServer = true;
             }
-            if (GUI.Button(new Rect(Screen.width / 2, Screen.height / 2 - 62.5f, 200, 125), " \n Connect"))
+            if (GUI.Button(new Rect(Screen.width / 2, Screen.height / 2 - 62.5f, 200, 125), "Connect"))
             {
                 ShowJoin = true;
             }
