@@ -1,0 +1,111 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &102886
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 420262}
+  - 114: {fileID: 11427860}
+  - 114: {fileID: 11481290}
+  - 114: {fileID: 11428610}
+  - 114: {fileID: 11401010}
+  m_Layer: 0
+  m_Name: PlanetController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &420262
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 102886}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+--- !u!114 &11401010
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 102886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ecd4b70dc466b048b6dfcbaaab60e16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameobjects:
+  - {fileID: 113616, guid: a3239caa8ae8bdc4a8ed2b8f1c1bfa3c, type: 2}
+  - {fileID: 113616, guid: 85dd87e4e6d49094092486c4a2628040, type: 2}
+  - {fileID: 113918, guid: 833b2552490f0164ebd46bae2ba70ed3, type: 2}
+--- !u!114 &11427860
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 102886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36076c5a956b9d246848be8476557a82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RepeatRate: 300
+--- !u!114 &11428610
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 102886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81ea3d07684bd2b4880f0d8375192e96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxAIs: 100
+--- !u!114 &11481290
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 102886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11b8bde1059ff37429823f0f74c5ee0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DebugLvl: 2
+  grid:
+  - _gridType: 0
+    _NodeRadius: 2.5
+    angleLimit: 45
+    name: 'Grid #1'
+    offset: {x: 0, y: 0, z: 0}
+    Radius: 0
+    Scanning: 0
+    ScanOnLoad: 1
+    UnWalkableMask:
+      serializedVersion: 2
+      m_Bits: 0
+    WorldSize: {x: 100, y: 100}
+  ShowFlockColor: 1
+  ShowGizmos: 1
+  ShowPaths: 1
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 102886}
+  m_IsPrefabParent: 1

@@ -1,0 +1,440 @@
+fileFormatVersion: 2
+guid: 455707fb9d2561b44893544b5a3c376d
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: Person
+    100002: //RootNode
+    100004: Skeleton
+    100006: Skeleton|Chest
+    100008: Skeleton|Head
+    100010: Skeleton|Hips
+    100012: Skeleton|LFoot
+    100014: Skeleton|LHand
+    100016: Skeleton|LLArm
+    100018: Skeleton|LLLeg
+    100020: Skeleton|LRArm
+    100022: Skeleton|LRLeg
+    100024: Skeleton|LShoulder
+    100026: Skeleton|Neck
+    100028: Skeleton|RFoot
+    100030: Skeleton|RHand
+    100032: Skeleton|RShoulder
+    100034: Skeleton|Spine
+    100036: Skeleton|ULArm
+    100038: Skeleton|ULLeg
+    100040: Skeleton|URArm
+    100042: Skeleton|URLeg
+    400000: Person
+    400002: //RootNode
+    400004: Skeleton
+    400006: Skeleton|Chest
+    400008: Skeleton|Head
+    400010: Skeleton|Hips
+    400012: Skeleton|LFoot
+    400014: Skeleton|LHand
+    400016: Skeleton|LLArm
+    400018: Skeleton|LLLeg
+    400020: Skeleton|LRArm
+    400022: Skeleton|LRLeg
+    400024: Skeleton|LShoulder
+    400026: Skeleton|Neck
+    400028: Skeleton|RFoot
+    400030: Skeleton|RHand
+    400032: Skeleton|RShoulder
+    400034: Skeleton|Spine
+    400036: Skeleton|ULArm
+    400038: Skeleton|ULLeg
+    400040: Skeleton|URArm
+    400042: Skeleton|URLeg
+    4300000: Person
+    7400000: RunForward
+    9500000: //RootNode
+    13700000: Person
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 3
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: RunForward
+      takeName: Skeleton|SkeletonAction.001
+      firstFrame: 0
+      lastFrame: 31
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Person
+        weight: 1
+      - path: Skeleton
+        weight: 1
+      - path: Skeleton/Skeleton|Hips
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine/Skeleton|Chest
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine/Skeleton|Chest/Skeleton|LShoulder
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine/Skeleton|Chest/Skeleton|LShoulder/Skeleton|ULArm
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine/Skeleton|Chest/Skeleton|LShoulder/Skeleton|ULArm/Skeleton|LLArm
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine/Skeleton|Chest/Skeleton|LShoulder/Skeleton|ULArm/Skeleton|LLArm/Skeleton|LHand
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine/Skeleton|Chest/Skeleton|Neck
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine/Skeleton|Chest/Skeleton|Neck/Skeleton|Head
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine/Skeleton|Chest/Skeleton|RShoulder
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine/Skeleton|Chest/Skeleton|RShoulder/Skeleton|URArm
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine/Skeleton|Chest/Skeleton|RShoulder/Skeleton|URArm/Skeleton|LRArm
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|Spine/Skeleton|Chest/Skeleton|RShoulder/Skeleton|URArm/Skeleton|LRArm/Skeleton|RHand
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|ULLeg
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|ULLeg/Skeleton|LLLeg
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|ULLeg/Skeleton|LLLeg/Skeleton|LFoot
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|URLeg
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|URLeg/Skeleton|LRLeg
+        weight: 1
+      - path: Skeleton/Skeleton|Hips/Skeleton|URLeg/Skeleton|LRLeg/Skeleton|RFoot
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human:
+    - boneName: Skeleton|Hips
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|ULLeg
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|URLeg
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|LLLeg
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|LRLeg
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|LFoot
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|RFoot
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|Spine
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|Chest
+      humanName: Chest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|Neck
+      humanName: Neck
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|Head
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|LShoulder
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|RShoulder
+      humanName: RightShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|ULArm
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|URArm
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|LLArm
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|LRArm
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|LHand
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Skeleton|RHand
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: RunForward(Clone)
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Person
+      position: {x: .000290200318, y: .00204810523, z: -.0384727195}
+      rotation: {x: .707106888, y: 0, z: 0, w: .707106769}
+      scale: {x: 1.57252014, y: 1.57252038, z: 1.57252014}
+      transformModified: 1
+    - name: Skeleton
+      position: {x: -.00018454477, y: .024465641, z: .00130243495}
+      rotation: {x: -.707106888, y: 0, z: -0, w: .707106769}
+      scale: {x: .635921896, y: .635921896, z: .635921896}
+      transformModified: 1
+    - name: Skeleton|Hips
+      position: {x: .000283316476, y: .00445944862, z: .000483484793}
+      rotation: {x: .781438529, y: .0242199134, z: -.0243152231, w: .623037755}
+      scale: {x: .99999994, y: .999999881, z: 1.00000024}
+      transformModified: 1
+    - name: Skeleton|Spine
+      position: {x: -8.38190281e-11, y: .00204240135, z: 2.87545848e-10}
+      rotation: {x: -.0573405325, y: .352861583, z: .0138386618, w: .933814347}
+      scale: {x: 1.00000012, y: .999999821, z: .999999881}
+      transformModified: 1
+    - name: Skeleton|Chest
+      position: {x: -2.23517413e-10, y: .0122587448, z: 4.47034826e-10}
+      rotation: {x: -.108913258, y: -.360262871, z: -.0511063598, w: .925060391}
+      scale: {x: 1.00000024, y: .999999881, z: .999999642}
+      transformModified: 1
+    - name: Skeleton|LShoulder
+      position: {x: -.00519889826, y: .0147327837, z: -.0010965598}
+      rotation: {x: -.49547717, y: .439099759, z: .568583727, w: .488268673}
+      scale: {x: .99999994, y: 1.00000012, z: .999999642}
+      transformModified: 1
+    - name: Skeleton|ULArm
+      position: {x: -8.84756435e-11, y: .00566865783, z: 1.60187474e-09}
+      rotation: {x: .0531781614, y: .00463392353, z: .0323298983, w: .998050809}
+      scale: {x: 1.00000024, y: .999999821, z: 1.0000006}
+      transformModified: 1
+    - name: Skeleton|LLArm
+      position: {x: 8.19563861e-10, y: .0118670287, z: -2.98023217e-10}
+      rotation: {x: .0215053484, y: -.00550250849, z: .00132900651, w: .99975276}
+      scale: {x: 1.00000012, y: 1.00000036, z: .99999994}
+      transformModified: 1
+    - name: Skeleton|LHand
+      position: {x: 5.96046434e-10, y: .0140867382, z: -4.47034826e-10}
+      rotation: {x: -.0522923097, y: .00751149468, z: -.034617871, w: .998003364}
+      scale: {x: .999999762, y: 1.00000012, z: .99999994}
+      transformModified: 1
+    - name: Skeleton|RShoulder
+      position: {x: .00468352996, y: .0146238292, z: -.00130576862}
+      rotation: {x: -.495932668, y: -.440548986, z: -.543670058, w: .514188945}
+      scale: {x: .99999994, y: .999999881, z: .999999881}
+      transformModified: 1
+    - name: Skeleton|URArm
+      position: {x: -1.81607895e-10, y: .00572467083, z: -2.98023217e-10}
+      rotation: {x: .0186643992, y: -.00406928174, z: -.0198974553, w: .999619603}
+      scale: {x: 1, y: 1.00000024, z: 1.00000048}
+      transformModified: 1
+    - name: Skeleton|LRArm
+      position: {x: -9.31322519e-11, y: .0105084199, z: -1.02445483e-10}
+      rotation: {x: .0385467224, y: -.00276312185, z: .0608990118, w: .997395515}
+      scale: {x: 1, y: .999999583, z: 1.00000024}
+      transformModified: 1
+    - name: Skeleton|RHand
+      position: {x: -1.56462188e-09, y: .0174059309, z: -1.75088644e-09}
+      rotation: {x: .134634748, y: -.00440747337, z: -.0533152074, w: .989450097}
+      scale: {x: 1, y: .999999642, z: .999999821}
+      transformModified: 1
+    - name: Skeleton|Neck
+      position: {x: -7.21775001e-11, y: .017276803, z: -6.98491889e-11}
+      rotation: {x: -.0154036311, y: .196833566, z: .00261408999, w: .980312407}
+      scale: {x: 1, y: 1, z: 1.00000012}
+      transformModified: 1
+    - name: Skeleton|Head
+      position: {x: -0, y: .00378586072, z: -7.45058043e-11}
+      rotation: {x: .0653738901, y: .00586294942, z: .0713152885, w: .995291948}
+      scale: {x: .999999881, y: .999999881, z: .99999994}
+      transformModified: 1
+    - name: Skeleton|ULLeg
+      position: {x: -.00381436432, y: .00110400713, z: .000488160033}
+      rotation: {x: -.924433053, y: -.0725393519, z: -.36787352, w: -.0695034117}
+      scale: {x: 1.00000024, y: .999999762, z: .999997556}
+      transformModified: 1
+    - name: Skeleton|LLLeg
+      position: {x: -2.23517413e-10, y: .0185706094, z: -3.72529022e-11}
+      rotation: {x: -.0229818169, y: -.370884746, z: .049962189, w: .92704922}
+      scale: {x: .999999702, y: .999999702, z: 1}
+      transformModified: 1
+    - name: Skeleton|LFoot
+      position: {x: 9.31322554e-12, y: .0209614038, z: -2.04890965e-10}
+      rotation: {x: .00625749398, y: -.71848619, z: .693339407, w: .0549453869}
+      scale: {x: .999999583, y: 1.00000048, z: .999999642}
+      transformModified: 1
+    - name: Skeleton|URLeg
+      position: {x: .00364973443, y: .00161272928, z: .000424534752}
+      rotation: {x: -.923132956, y: -.012300862, z: .373425126, w: -.0907075033}
+      scale: {x: 1, y: .99999994, z: 1}
+      transformModified: 1
+    - name: Skeleton|LRLeg
+      position: {x: -4.47034826e-10, y: .0190595891, z: -7.45058043e-11}
+      rotation: {x: -.0318190046, y: .371397406, z: -.00970620848, w: .927877843}
+      scale: {x: 1.00000012, y: 1, z: .999999523}
+      transformModified: 1
+    - name: Skeleton|RFoot
+      position: {x: 2.98023217e-10, y: .0204346534, z: 2.53319743e-09}
+      rotation: {x: -.0173716191, y: -.726066232, z: .686052024, w: -.0431129858}
+      scale: {x: .999999762, y: .999999762, z: 1}
+      transformModified: 1
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: a0653c2372fa4b04280c93b82f5a977a,
+    type: 3}
+  animationType: 3
+  additionalBone: 0
+  userData: 

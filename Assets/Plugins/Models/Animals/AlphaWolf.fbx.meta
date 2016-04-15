@@ -1,0 +1,110 @@
+fileFormatVersion: 2
+guid: f18ece5140c332843a3a8178fe5dedd3
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Armature
+    100004: Armature|Bone
+    100006: Armature|Bone.001
+    100008: Armature|Bone.002
+    100010: Armature|Bone.003
+    100012: Armature|Bone.004
+    100014: Armature|Bone.004_L
+    100016: Armature|Bone.004_L.001
+    100018: Armature|Bone.004_L.002
+    100020: Armature|Bone.004_R
+    100022: Armature|Bone.004_R.001
+    100024: Armature|Bone.004_R.002
+    100026: Armature|Bone.007
+    100028: Armature|Bone.008
+    100030: Armature|Bone.009
+    100032: Armature|Bone.010
+    100034: Armature|Bone.011
+    100036: Armature|Bone.012
+    100038: Armature|Bone.013
+    100040: Armature|Bone.014
+    100042: Armature|Bone.015
+    100044: Armature|Bone.016
+    100046: Cube
+    400000: //RootNode
+    400002: Armature
+    400004: Armature|Bone
+    400006: Armature|Bone.001
+    400008: Armature|Bone.002
+    400010: Armature|Bone.003
+    400012: Armature|Bone.004
+    400014: Armature|Bone.004_L
+    400016: Armature|Bone.004_L.001
+    400018: Armature|Bone.004_L.002
+    400020: Armature|Bone.004_R
+    400022: Armature|Bone.004_R.001
+    400024: Armature|Bone.004_R.002
+    400026: Armature|Bone.007
+    400028: Armature|Bone.008
+    400030: Armature|Bone.009
+    400032: Armature|Bone.010
+    400034: Armature|Bone.011
+    400036: Armature|Bone.012
+    400038: Armature|Bone.013
+    400040: Armature|Bone.014
+    400042: Armature|Bone.015
+    400044: Armature|Bone.016
+    400046: Cube
+    4300000: Cube
+    9500000: //RootNode
+    13700000: Cube
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 0
+    splitTangentsAcrossUV: 1
+    normalImportMode: 1
+    tangentImportMode: 1
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: Armature
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
