@@ -112,16 +112,8 @@ Material:
         second: 0
       data:
         first:
-          name: _CullDistance
-        second: 1000
-      data:
-        first:
-          name: _Glossiness
-        second: 0
-      data:
-        first:
-          name: _Metallic
-        second: 0
+          name: _Occlusion
+        second: 0.075
       data:
         first:
           name: _Parallax
@@ -130,6 +122,10 @@ Material:
         first:
           name: _ZWrite
         second: 1
+      data:
+        first:
+          name: _Glossiness
+        second: 0
       data:
         first:
           name: _BumpScale
@@ -148,12 +144,20 @@ Material:
         second: 0
       data:
         first:
+          name: _Mode
+        second: 0
+      data:
+        first:
+          name: _Metallic
+        second: 0
+      data:
+        first:
           name: _EmissionScaleUI
         second: 0
       data:
         first:
-          name: _Mode
-        second: 0
+          name: _CullDistance
+        second: 1000
       data:
         first:
           name: _Exponent
@@ -174,10 +178,6 @@ Material:
         first:
           name: _SquashAmount
         second: 1
-      data:
-        first:
-          name: _Occlusion
-        second: 0.075
     m_Colors:
       data:
         first:
@@ -197,16 +197,12 @@ Material:
         second: {r: 0, g: 0, b: 0, a: 0}
       data:
         first:
-          name: White
-        second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
-          name: _TintColor
-        second: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
-      data:
-        first:
           name: _EmissionColorUI
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: White
+        second: {r: 0, g: 0, b: 0, a: 1}
       data:
         first:
           name: Wind
@@ -219,6 +215,10 @@ Material:
         first:
           name: _TreeInstanceScale
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _TintColor
+        second: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
       data:
         first:
           name: _TreeInfo0

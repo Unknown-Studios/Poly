@@ -39,14 +39,7 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _ReflectionTex
-        second:
-          m_Texture: {fileID: 8400000, guid: 21bb33409d118354d000dcabe39e7c39, type: 2}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ShoreTex
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -95,14 +88,21 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
+          name: _Cube
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Cube
+          name: _ReflectionTex
+        second:
+          m_Texture: {fileID: 8400000, guid: 21bb33409d118354d000dcabe39e7c39, type: 2}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ShoreTex
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -232,44 +232,16 @@ Material:
         second: 0
       data:
         first:
-          name: _CullDistance
-        second: 2500
-      data:
-        first:
-          name: _FresnelScale
-        second: 0.75
-      data:
-        first:
-          name: _GerstnerIntensity
-        second: 1
-      data:
-        first:
-          name: _SkyExponent1
-        second: 2
-      data:
-        first:
-          name: _SkyIntensity
-        second: 1.75
-      data:
-        first:
-          name: _SunIntensity
-        second: 10
-      data:
-        first:
-          name: _Glossiness
-        second: 0.6
-      data:
-        first:
-          name: _Metallic
-        second: 0
-      data:
-        first:
           name: _Parallax
         second: 0.02
       data:
         first:
           name: _ZWrite
         second: 0
+      data:
+        first:
+          name: _Glossiness
+        second: 0.6
       data:
         first:
           name: _BumpScale
@@ -288,15 +260,43 @@ Material:
         second: 0
       data:
         first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
           name: _Mode
         second: 3
       data:
         first:
+          name: _Metallic
+        second: 0
+      data:
+        first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
           name: _InvFade
+        second: 1
+      data:
+        first:
+          name: _CullDistance
+        second: 2500
+      data:
+        first:
+          name: _SkyExponent1
+        second: 2
+      data:
+        first:
+          name: _SkyIntensity
+        second: 1.75
+      data:
+        first:
+          name: _SunIntensity
+        second: 10
+      data:
+        first:
+          name: _FresnelScale
+        second: 0.75
+      data:
+        first:
+          name: _GerstnerIntensity
         second: 1
       data:
         first:
@@ -357,8 +357,16 @@ Material:
         second: {r: 1, g: 1, b: 0, a: 0}
       data:
         first:
+          name: _EmissionColorUI
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
           name: White
         second: {r: 0.8455882, g: 0.83937067, b: 0.83937067, a: 0}
+      data:
+        first:
+          name: _TintColor
+        second: {r: 0, g: 0, b: 0.11764706, a: 0.3764706}
       data:
         first:
           name: _Emission
@@ -367,6 +375,26 @@ Material:
         first:
           name: _BumpMap_ST
         second: {r: 1, g: 1, b: 0, a: 0}
+      data:
+        first:
+          name: _SkyColor1
+        second: {r: 0.37, g: 0.52, b: 0.73, a: 0}
+      data:
+        first:
+          name: _SkyColor2
+        second: {r: 0.89, g: 0.96, b: 1, a: 0}
+      data:
+        first:
+          name: _MoonVector
+        second: {r: 0.269, g: 0.615, b: 0.74, a: 0}
+      data:
+        first:
+          name: _SunColor
+        second: {r: 1, g: 0.99, b: 0.87, a: 1}
+      data:
+        first:
+          name: _ReflectColor
+        second: {r: 1, g: 1, b: 1, a: 0.5}
       data:
         first:
           name: _DistortParams
@@ -435,34 +463,6 @@ Material:
         first:
           name: _GDirectionCD
         second: {r: 0.1, g: 0.9, b: 0.5, a: 0.5}
-      data:
-        first:
-          name: _TintColor
-        second: {r: 0, g: 0, b: 0.11764706, a: 0.3764706}
-      data:
-        first:
-          name: _SkyColor1
-        second: {r: 0.37, g: 0.52, b: 0.73, a: 0}
-      data:
-        first:
-          name: _SkyColor2
-        second: {r: 0.89, g: 0.96, b: 1, a: 0}
-      data:
-        first:
-          name: _MoonVector
-        second: {r: 0.269, g: 0.615, b: 0.74, a: 0}
-      data:
-        first:
-          name: _SunColor
-        second: {r: 1, g: 0.99, b: 0.87, a: 1}
-      data:
-        first:
-          name: _EmissionColorUI
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _ReflectColor
-        second: {r: 1, g: 1, b: 1, a: 0.5}
       data:
         first:
           name: _Tint
