@@ -1,5 +1,4 @@
-﻿using OnePathfinding;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -111,17 +110,14 @@ public class PCEditor : Editor
         PC.WidthTick = EditorGUILayout.IntSlider("Width Tick: ", PC.WidthTick, 3, 10);
         PC.Width = Mathf.RoundToInt(Mathf.Pow(2, PC.WidthTick));
         EditorGUILayout.LabelField("Width: " + PC.Width);
-        PC.Radius = EditorGUILayout.IntField("Radius: ", PC.Radius);
-        GUILayout.Space(20f);
+        PC.TerrainMaterial = (Material)EditorGUILayout.ObjectField(PC.TerrainMaterial, typeof(Material), true);
 
-        EditorGUILayout.LabelField("Level Of Detail: ", EditorStyles.boldLabel);
-        PC.LODLevel = EditorGUILayout.IntSlider("Simplification Level: ", PC.LODLevel, 0, 4);
-
-        GUILayout.Space(20f);
+        GUILayout.Space(10f);
 
         EditorGUILayout.LabelField("Terrain Settings: ", EditorStyles.boldLabel);
-        PC.Radius = EditorGUILayout.IntField("TerrainHeight: ", PC.MaxHeight);
-        PC.Radius = EditorGUILayout.IntField("Octaves: ", PC.Octaves);
+        PC.Radius = EditorGUILayout.IntField("Radius: ", PC.Radius);
+        PC.MaxHeight = EditorGUILayout.IntField("TerrainHeight: ", PC.MaxHeight);
+        PC.Octaves = EditorGUILayout.IntField("Octaves: ", PC.Octaves);
 
         GUILayout.Space(10f);
     }

@@ -14,10 +14,8 @@ public class Login : MonoBehaviour
 
     private string LoadText = "Loading, please wait!";
     private string error = "";
-    private JSONNode N;
     private bool LoggingIn = false;
     private string text = "Login";
-    private string PlayerData;
 
     private static string Md5Sum(string strToEncrypt)
     {

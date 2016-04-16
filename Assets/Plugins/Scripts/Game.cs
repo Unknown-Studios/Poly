@@ -33,8 +33,6 @@ public class Game : MonoBehaviour
 
     private static float CurrentTime;
 
-    private static int CW;
-
     private static float dt;
 
     private static float fps;
@@ -59,11 +57,7 @@ public class Game : MonoBehaviour
 
     private static bool Reachable = true;
 
-    private static Rect rect;
-
     private static int Repeat = 1;
-
-    private static bool state;
 
     private static float time1;
 

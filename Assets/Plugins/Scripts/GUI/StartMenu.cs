@@ -16,18 +16,12 @@ public class StartMenu : MonoBehaviour
     public Font TitleFont;
     private string ActualVersion;
     private string ConnectingText = "Loading level!";
-    private GUIStyle currentButtonStyle;
     private int currentindex = 0;
     private string CurrentlyShowing;
     private List<MenuItem> currentmenu;
-    private GUIStyle currentStyle;
     private int Direction = 0;
-    private int f;
-    private bool Fullscreen;
-    private float GrassDist;
     private float height;
 
-    private float MaxFramerate;
     private string MaxPlayers = "32";
     private Game.SaveData PlayerData;
     private string Port = "35000";
