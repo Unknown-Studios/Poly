@@ -30,7 +30,7 @@ public class PCEditor : Editor
         PC.Width = Mathf.RoundToInt(Mathf.Pow(2, PC.WidthTick));
         EditorGUILayout.LabelField("Width: " + PC.Width);
         PC.TerrainMaterial = (Material)EditorGUILayout.ObjectField(PC.TerrainMaterial, typeof(Material), true);
-        PC.curve = EditorGUILayout.CurveField("Height curve: ", PC.curve);
+		PC.curve = EditorGUILayout.CurveField("Height curve: ", PC.curve, Color.cyan ,new Rect(0,0,1,1));
 
         serializedObject.Update();
         SerializedProperty tps = serializedObject.FindProperty("Regions");
