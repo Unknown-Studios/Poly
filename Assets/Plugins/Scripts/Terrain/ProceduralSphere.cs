@@ -20,6 +20,8 @@ public class ProceduralSphere : MonoBehaviour
     public string currentAction;
     public float progress;
 
+    public Region[] Regions;
+    public AnimationCurve curve;
     private int ve;
     private GameObject[] sides;
 
@@ -62,6 +64,8 @@ public class ProceduralSphere : MonoBehaviour
                 lod.Chunk = new Vector2(x, y);
                 lod.Width = Width;
                 lod.terrainMaterial = TerrainMaterial;
+                lod.Regions = Regions;
+                lod.curve = curve;
 
                 lod.Radius = Radius;
                 lod.MaxHeight = MaxHeight;
@@ -92,5 +96,13 @@ public class ProceduralSphere : MonoBehaviour
             yield return null;
         }
         yield return null;
+    }
+
+    [System.Serializable]
+    public class Region
+    {
+        public string Name;
+        public float height = 0f;
+        public Color color = new Color(1, 1, 1, 1);
     }
 }

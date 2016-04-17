@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using CoherentNoise.Generation.Fractal;
 using System.Collections;
-using CoherentNoise.Generation.Fractal;
+using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer))]
 public class LOD : MonoBehaviour
@@ -8,30 +8,55 @@ public class LOD : MonoBehaviour
     public int TargetLOD = 4;
 
     public float Distance;
-    private Mesh mesh;
-    private int _LODLevel;
+
+    [HideInInspector]
     public Vector2 Chunk;
+
+    [HideInInspector]
     public int side;
 
     public int Radius;
     public int MaxHeight;
-
     public int Octaves = 3;
-    private int LODLevel;
     public float groundFrq = 0.25f;
+    public int Width;
 
-	public void UpdateLODSettings(Vector3 pos, int[] lodlevels)
+    [HideInInspector]
+    public Material terrainMaterial;
+
+    public ProceduralSphere.Region[] Regions;
+    public AnimationCurve curve;
+    private Mesh mesh;
+    private int _LODLevel;
+    private int LODLevel;
+    private int ve;
+    private RidgeNoise noise;
+    private PinkNoise pink;
+    private MeshRenderer mr0;
+    private MeshCollider mc0;
+    private int ChunkWidth = 16;
+
+    private Vector3[] vert;
+    private Vector3[] norm;
+    private int[] tri;
+    private Vector2[] uv;
+
+    private Color[] colors;
+
+    public void UpdateLODSettings(Vector3 pos, int[] lodlevels)
     {
         Distance = Vector3.Distance(pos, mc0.bounds.center);
-        
+
         //Calculate which LODLevel should be used.
-		TargetLOD = 4;
-		for (int x = 0; x < lodlevels.Length; x++) {
-			if (Distance < lodlevels [x]) {
-				TargetLOD = x;
-				break;
-			}
-		}
+        TargetLOD = 4;
+        for (int x = 0; x < lodlevels.Length; x++)
+        {
+            if (Distance < lodlevels[x])
+            {
+                TargetLOD = x;
+                break;
+            }
+        }
 
         if (LODLevel != TargetLOD)
         {
@@ -41,51 +66,69 @@ public class LOD : MonoBehaviour
         }
     }
 
-    private int ve;
-    public int Width;
-
-    private Vector3[] vertices;
-
-    private void CreateTriangle(ref int[] triangles, ref int index, int x, int y)
+    private void CreateTriangle(ref int index, int x, int y)
     {
         int LODWidth = (16 / _LODLevel) + 1;
 
-        triangles[index] = (y * LODWidth) + x;
-        triangles[index + 1] = ((y + 1) * LODWidth) + x;
-        triangles[index + 2] = (y * LODWidth) + x + 1;
+        tri[index] = (y * LODWidth) + x;
+        tri[index + 1] = ((y + 1) * LODWidth) + x;
+        tri[index + 2] = (y * LODWidth) + x + 1;
 
-        triangles[index + 3] = ((y + 1) * LODWidth) + x;
-        triangles[index + 4] = ((y + 1) * LODWidth) + x + 1;
-        triangles[index + 5] = (y * LODWidth) + x + 1;
+        tri[index + 3] = ((y + 1) * LODWidth) + x;
+        tri[index + 4] = ((y + 1) * LODWidth) + x + 1;
+        tri[index + 5] = (y * LODWidth) + x + 1;
         index += 6;
     }
 
-    private int AddVertex(ref Vector3[] vert, ref Vector3[] norm, int x, int y, int z)
+    /// <summary>
+    /// Adds a vertex point (Used in mesh creation)
+    /// </summary>
+    /// <param name="x">X-coordinate for vertex</param>
+    /// <param name="y">Y-coordinate for vertex</param>
+    /// <param name="z">Z-coordinate for vertex</param>
+    /// <returns></returns>
+    private void AddVertex(int x, int y, int z)
+    {
+        Vector3 s = normalizedPoint(x, y, z);
+
+        float plain = pink.GetValue(x, y, z - 111) / 2.0f;
+        float mountains = Mathf.Max(0f, noise.GetValue(x - 549, y + 2585, z + 54) - 0.75f) / 2.0f;
+
+        float h = curve.Evaluate(Mathf.Clamp01(plain + mountains));
+        norm[ve] = s;
+        vert[ve] = norm[ve] * (Radius + MaxHeight * h);
+
+        for (int i = 0; i < Regions.Length; i++)
+        {
+            float steepsness = Vector3.Angle(s, vert[ve].normalized);
+
+            if (0.2f < steepsness)
+            {
+                colors[ve] = new Color(0.1f, 0.1f, 0.1f);
+            }
+            //Height
+            else if (Regions[i].height <= h)
+            {
+                colors[ve] = Regions[i].color;
+            }
+        }
+
+        ve++;
+    }
+
+    private Vector3 normalizedPoint(int x, int y, int z)
     {
         Vector3 v = new Vector3(x, y, z) * 2f / Width - Vector3.one;
         float x2 = v.x * v.x;
         float y2 = v.y * v.y;
         float z2 = v.z * v.z;
-        Vector3 s = new Vector3(x, y, z);
-
+        Vector3 s;
         s.x = v.x * Mathf.Sqrt(1f - y2 / 2f - z2 / 2f + y2 * z2 / 3f);
         s.y = v.y * Mathf.Sqrt(1f - x2 / 2f - z2 / 2f + x2 * z2 / 3f);
         s.z = v.z * Mathf.Sqrt(1f - x2 / 2f - y2 / 2f + x2 * y2 / 3f);
 
-        float plain = (pink.GetValue(s.x - 245, s.y, s.z + 567) + 1.0f) / 2.0f;
-        float mountains = Mathf.Max(0f, noise.GetValue(s.x + 17235 - s.y, s.y - 54358, s.z + 459) - 0.75f);
-
-        float h = Mathf.Clamp01(plain + mountains);
-        vert[ve] = s * (Radius + (MaxHeight * h));
-        norm[ve] = vert[ve];
-
-        ve++;
-        return ve;
+        return s;
     }
-
-    private RidgeNoise noise;
-    private PinkNoise pink;
-    private MeshRenderer mr0;
 
     private void Start()
     {
@@ -93,15 +136,11 @@ public class LOD : MonoBehaviour
         Random.seed = PlayerPrefs.GetInt("Seed");
         noise = new RidgeNoise(PlayerPrefs.GetInt("Seed"));
         pink = new PinkNoise(PlayerPrefs.GetInt("Seed"));
-        pink.Lacunarity = 4f;
-        pink.Persistence = 0.5f;
         pink.OctaveCount = Octaves;
-        pink.Frequency = groundFrq;
+        pink.Frequency = 0.01f;
 
-        noise.OctaveCount = Octaves * 2;
-        noise.Exponent = 2.0f;
-        noise.Gain = 1.2f;
-        noise.Frequency = 0.5f;
+        noise.OctaveCount = Octaves;
+        noise.Frequency = 0.01f;
         mesh = GetComponent<MeshFilter>().mesh;
         mc0 = GetComponent<MeshCollider>();
         mr0 = GetComponent<MeshRenderer>();
@@ -110,18 +149,15 @@ public class LOD : MonoBehaviour
         StartCoroutine(GenerateMesh());
     }
 
-    public Material terrainMaterial;
-    private MeshCollider mc0;
-    private int ChunkWidth = 16;
-
     private IEnumerator GenerateMesh()
     {
         int LODW = ChunkWidth / _LODLevel;
 
-        Vector3[] v0 = new Vector3[(LODW + 1) * (LODW + 1)];
-        Vector3[] n0 = new Vector3[v0.Length];
-        Vector2[] u0 = new Vector2[v0.Length];
-        int[] t0 = new int[v0.Length * 6];
+        vert = new Vector3[(LODW + 1) * (LODW + 1)];
+        norm = new Vector3[vert.Length];
+        uv = new Vector2[vert.Length];
+        tri = new int[vert.Length * 6];
+        colors = new Color[vert.Length];
         ve = 0;
 
         switch (side)
@@ -131,7 +167,7 @@ public class LOD : MonoBehaviour
                 {
                     for (int x = 0; x <= ChunkWidth; x += _LODLevel)
                     {
-                        AddVertex(ref v0, ref n0, (int)(ChunkWidth * Chunk.x) + x, (int)(ChunkWidth * Chunk.y) + y, 0);
+                        AddVertex((int)(ChunkWidth * Chunk.x) + x, (int)(ChunkWidth * Chunk.y) + y, 0);
                     }
                 }
                 break;
@@ -141,7 +177,7 @@ public class LOD : MonoBehaviour
                 {
                     for (int z = 0; z <= ChunkWidth; z += _LODLevel)
                     {
-                        AddVertex(ref v0, ref n0, Width, (int)(ChunkWidth * Chunk.x) + y, (int)(ChunkWidth * Chunk.y) + z);
+                        AddVertex(Width, (int)(ChunkWidth * Chunk.x) + y, (int)(ChunkWidth * Chunk.y) + z);
                     }
                 }
                 break;
@@ -151,7 +187,7 @@ public class LOD : MonoBehaviour
                 {
                     for (int x = ChunkWidth; x >= 0; x -= _LODLevel)
                     {
-                        AddVertex(ref v0, ref n0, (int)(ChunkWidth * Chunk.x) + x, (int)(ChunkWidth * Chunk.y) + y, Width);
+                        AddVertex((int)(ChunkWidth * Chunk.x) + x, (int)(ChunkWidth * Chunk.y) + y, Width);
                     }
                 }
                 break;
@@ -161,7 +197,7 @@ public class LOD : MonoBehaviour
                 {
                     for (int z = 0; z <= ChunkWidth; z += _LODLevel)
                     {
-                        AddVertex(ref v0, ref n0, 0, (int)(ChunkWidth * Chunk.x) + z, (int)(ChunkWidth * Chunk.y) + y);
+                        AddVertex(0, (int)(ChunkWidth * Chunk.x) + z, (int)(ChunkWidth * Chunk.y) + y);
                     }
                 }
                 break;
@@ -171,7 +207,7 @@ public class LOD : MonoBehaviour
                 {
                     for (int x = 0; x <= ChunkWidth; x += _LODLevel)
                     {
-                        AddVertex(ref v0, ref n0, (int)(ChunkWidth * Chunk.x) + x, Width, (int)(ChunkWidth * Chunk.y) + z);
+                        AddVertex((int)(ChunkWidth * Chunk.x) + x, Width, (int)(ChunkWidth * Chunk.y) + z);
                     }
                 }
                 break;
@@ -181,13 +217,12 @@ public class LOD : MonoBehaviour
                 {
                     for (int z = 0; z <= ChunkWidth; z += _LODLevel)
                     {
-                        AddVertex(ref v0, ref n0, (int)(ChunkWidth * Chunk.x) + x, 0, (int)(ChunkWidth * Chunk.y) + z);
+                        AddVertex((int)(ChunkWidth * Chunk.x) + x, 0, (int)(ChunkWidth * Chunk.y) + z);
                     }
                 }
                 break;
 
             default:
-                Debug.LogError("No side defined");
                 break;
         }
         int ti = 0;
@@ -195,25 +230,25 @@ public class LOD : MonoBehaviour
         {
             for (int y = 0; y < LODW; y++)
             {
-                CreateTriangle(ref t0, ref ti, x, y);
+                CreateTriangle(ref ti, x, y);
             }
         }
 
-        for (int x = 0; x < LODW; x++)
+        int i = 0;
+        for (int y = 0; y <= LODW; y++)
         {
-            for (int y = 0; y < LODW; y++)
+            for (int x = 0; x <= LODW; x++, i++)
             {
-                u0[(y * LODW) + x] = new Vector2(1.0f / (float)ChunkWidth, 1.0f / (float)ChunkWidth);
+                uv[i] = new Vector2((float)x / LODW, (float)y / LODW);
             }
         }
 
         mesh.Clear();
-        mesh.vertices = v0;
-        mesh.normals = n0;
-        mesh.triangles = t0;
-        mesh.uv = u0;
-
-        vertices = v0;
+        mesh.vertices = vert;
+        mesh.normals = norm;
+        mesh.triangles = tri;
+        mesh.uv = uv;
+        mesh.colors = colors;
 
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();

@@ -8,13 +8,11 @@ public class Mouse : MonoBehaviour
     private float maximumY = 100f;
     private float minimumY = -60f;
     private GameObject player;
-    private ProceduralTerrain PT;
     private float v;
 
     private void Start()
     {
         player = transform.root.gameObject;
-        PT = GameObject.Find("GameController").GetComponent<ProceduralTerrain>();
         Hands = transform.root.Find("Hands").Find("Armature");
     }
 

@@ -1,34 +1,38 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.Networking;
+﻿using System.Collections;
+using UnityEngine;
 
-[RequireComponent(typeof(NetworkIdentity))]
-public class LODController : NetworkBehaviour {
+public class LODController : MonoBehaviour
+{
+    public int[] lodLevels;
 
-	public int[] lodLevels;
+    public LayerMask layerMask;
 
-	void Start() {
-		if (isLocalPlayer) {
-			StartCoroutine (StartUpdater ());
-		}
-	}
+    public IEnumerator StartUpdater()
+    {
+        while (true)
+        {
+            UpdateMesh();
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
 
-	public IEnumerator StartUpdater() {
-		while (true) {
-			UpdateMesh ();
-			yield return new WaitForSeconds (0.1f);
-		}
-	}
+    private void Start()
+    {
+        StartCoroutine(StartUpdater());
+    }
 
-	void UpdateMesh() {
-		int layerMask = 1 << LayerMask.NameToLayer ("LOD");
-		layerMask = ~layerMask;
-		if (lodLevels != null && lodLevels.Length > 0) {
-			Collider[] colliders = Physics.OverlapSphere (transform.position, lodLevels [lodLevels.Length - 1], layerMask);
-
-			for (int i = 0; i < colliders.Length; i++) {
-				colliders [i].GetComponent<LOD> ().UpdateLODSettings (transform.position, lodLevels);
-			}
-		}
-	}
+    private void UpdateMesh()
+    {
+        if (lodLevels != null && lodLevels.Length != 0)
+        {
+            Collider[] colliders = Physics.OverlapSphere(transform.position, lodLevels[lodLevels.Length - 1]);
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                if (colliders[i].GetComponent<LOD>())
+                {
+                    colliders[i].GetComponent<LOD>().UpdateLODSettings(transform.position, lodLevels);
+                }
+            }
+        }
+    }
 }

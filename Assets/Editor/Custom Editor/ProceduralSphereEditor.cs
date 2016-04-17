@@ -25,11 +25,19 @@ public class PCEditor : Editor
         }
 
         EditorGUILayout.LabelField("General: ", EditorStyles.boldLabel);
-        EditorGUILayout.LabelField("Progress: " + PC.progress * 100.0f);
+        EditorGUILayout.LabelField("Progress: " + PC.progress * 100.0f + "%");
         PC.WidthTick = EditorGUILayout.IntSlider("Width Tick: ", PC.WidthTick, 4, 10);
         PC.Width = Mathf.RoundToInt(Mathf.Pow(2, PC.WidthTick));
         EditorGUILayout.LabelField("Width: " + PC.Width);
         PC.TerrainMaterial = (Material)EditorGUILayout.ObjectField(PC.TerrainMaterial, typeof(Material), true);
+        PC.curve = EditorGUILayout.CurveField("Height curve: ", PC.curve);
+
+        serializedObject.Update();
+        SerializedProperty tps = serializedObject.FindProperty("Regions");
+        EditorGUI.BeginChangeCheck();
+        EditorGUILayout.PropertyField(tps, true);
+        if (EditorGUI.EndChangeCheck())
+            serializedObject.ApplyModifiedProperties();
 
         GUILayout.Space(10f);
 

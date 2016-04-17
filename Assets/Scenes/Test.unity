@@ -150,6 +150,19 @@ MonoBehaviour:
   TerrainMaterial: {fileID: 2100000, guid: 08aeff6d473330a4597b4ce7d53eed3e, type: 2}
   currentAction: 
   progress: 0
+  Regions:
+  - Name: Water
+    height: 0
+    color: {r: 0.25886676, g: 0.47862723, b: 0.83823526, a: 1}
+  - Name: Sand
+    height: 0.1
+    color: {r: 0.9632353, g: 0.9095052, b: 0.6091047, a: 1}
+  - Name: Grass
+    height: 0.2
+    color: {r: 0.29065743, g: 0.61764705, b: 0.31997365, a: 1}
+  - Name: Snow
+    height: 0.85
+    color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1350958404
 GameObject:
   m_ObjectHideFlags: 0
@@ -162,7 +175,6 @@ GameObject:
   - 136: {fileID: 1350958407}
   - 23: {fileID: 1350958406}
   - 54: {fileID: 1350958405}
-  - 114: {fileID: 1350958411}
   - 114: {fileID: 1350958410}
   m_Layer: 9
   m_Name: Capsule
@@ -255,39 +267,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2bcde0a14e53442a2c5b472bd9eaba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lodLevels: c800000090010000ee020000e8030000
---- !u!114 &1350958411
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1350958404}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 0
-    i1: 0
-    i2: 0
-    i3: 0
-    i4: 0
-    i5: 0
-    i6: 0
-    i7: 0
-    i8: 0
-    i9: 0
-    i10: 0
-    i11: 0
-    i12: 0
-    i13: 0
-    i14: 0
-    i15: 0
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
+  lodLevels: 960000002c0100009001000058020000
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 4294959103
 --- !u!1001 &1594312964
 Prefab:
   m_ObjectHideFlags: 0

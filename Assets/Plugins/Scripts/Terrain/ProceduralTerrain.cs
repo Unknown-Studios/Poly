@@ -190,7 +190,7 @@ public class ProceduralTerrain : NetworkBehaviour
             int hw = Chunk.terrainData.heightmapWidth;
             int aw = Chunk.terrainData.alphamapWidth;
 
-            PerlinNoise perlin = new PerlinNoise(Seed);
+            PinkNoise perlin = new PinkNoise(Seed);
             var mountain = new RidgeNoise(Seed);
             mountain.OctaveCount = Octaves * 2;
             mountain.Frequency = 0.0005f;
@@ -208,7 +208,7 @@ public class ProceduralTerrain : NetworkBehaviour
                 {
                     int worldPosZ = Mathf.RoundToInt((z * 1f / hw * 1f) * (terrainWidth * 1f));
 
-                    float plain = perlin.FractalNoise2D(worldPosX - 245, worldPosZ + 567, Octaves, groundFrq, 0.4f) + 0.5f / 2.0f;
+                    float plain = perlin.GetValue(worldPosX - 245, worldPosZ + 567, 0) + 0.5f / 2.0f;
                     float mountains = Mathf.Max(0f, mountain.GetValue(worldPosX + 17235, worldPosZ - 54358, 0f) - 0.75f) / 2.0f;
 
                     float h = mountains + plain;
