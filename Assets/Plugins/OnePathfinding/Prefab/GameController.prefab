@@ -42,7 +42,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36076c5a956b9d246848be8476557a82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wind: {x: 0, y: 0}
   RepeatRate: 300
 --- !u!114 &11406890
 MonoBehaviour:
@@ -59,7 +58,6 @@ MonoBehaviour:
   - {fileID: 113616, guid: a3239caa8ae8bdc4a8ed2b8f1c1bfa3c, type: 2}
   - {fileID: 113616, guid: 85dd87e4e6d49094092486c4a2628040, type: 2}
   - {fileID: 113918, guid: 833b2552490f0164ebd46bae2ba70ed3, type: 2}
-  NumberOfAIs: 100
 --- !u!114 &11456018
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -71,6 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81ea3d07684bd2b4880f0d8375192e96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxAIs: 100
 --- !u!114 &11466874
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -84,15 +83,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugLvl: 1
   grid:
-  - _NodeRadius: 2.5
-    _WorldSize: {x: 100, y: 100}
+  - _gridType: 0
+    _NodeRadius: 2.5
     angleLimit: 25
-    center: {x: 0, y: 0, z: 0}
     name: Main
+    offset: {x: 0, y: 0, z: 0}
+    Radius: 0
     Scanning: 1
-    WalkableMask:
+    ScanOnLoad: 1
+    UnWalkableMask:
       serializedVersion: 2
       m_Bits: 0
+    WorldSize: {x: 1000, y: 1000}
   ShowFlockColor: 1
   ShowGizmos: 1
   ShowPaths: 1

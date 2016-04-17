@@ -101,7 +101,6 @@ public class Movement : NetworkBehaviour
         }
         else
         {
-            moveDirection.y -= gravity * Time.deltaTime;
             Swimming = false;
         }
         controller.Move(moveDirection * Time.deltaTime);

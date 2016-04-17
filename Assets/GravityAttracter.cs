@@ -19,11 +19,15 @@ public class GravityAttracter : MonoBehaviour
         Collider[] col = Physics.OverlapSphere(transform.position, Range);
         foreach (Collider c in col)
         {
-            if (c.attachedRigidbody != null)
+            if (c.GetComponent<Rigidbody>() != null)
             {
-                Rigidbody body = c.attachedRigidbody;
+                Rigidbody body = c.GetComponent<Rigidbody>();
                 body.useGravity = false;
                 body.constraints = RigidbodyConstraints.FreezeRotation;
+            }
+            if (c.tag == "Player")
+            {
+                Attract(c.transform);
             }
         }
     }

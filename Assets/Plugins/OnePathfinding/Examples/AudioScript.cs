@@ -24,6 +24,10 @@ public class AudioScript : MonoBehaviour
     private float audioValue;
 
     /// <summary>
+    /// </summary>
+    private float[] spectrum;
+
+    /// <summary>
     /// Alert the AI agents nearby.
     /// </summary>
     private void AlertObjects()

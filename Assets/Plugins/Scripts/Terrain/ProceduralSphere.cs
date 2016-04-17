@@ -28,6 +28,11 @@ public class ProceduralSphere : MonoBehaviour
         StartCoroutine(GenerateTerrain());
     }
 
+    private void Start()
+    {
+        OnBeforeSpawn(Vector3.zero);
+    }
+
     private IEnumerator AddSide(int side)
     {
         GameObject s0 = new GameObject();

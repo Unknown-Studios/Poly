@@ -69,7 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81ea3d07684bd2b4880f0d8375192e96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxAIs: 100
+  MaxAIs: 25
 --- !u!114 &11481290
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -83,18 +83,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugLvl: 2
   grid:
-  - _gridType: 0
+  - _gridType: 1
     _NodeRadius: 2.5
     angleLimit: 45
     name: 'Grid #1'
     offset: {x: 0, y: 0, z: 0}
-    Radius: 0
+    Radius: 100
     Scanning: 0
     ScanOnLoad: 1
     UnWalkableMask:
       serializedVersion: 2
       m_Bits: 0
-    WorldSize: {x: 100, y: 100}
+    WorldSize: {x: 10, y: 0}
   ShowFlockColor: 1
   ShowGizmos: 1
   ShowPaths: 1

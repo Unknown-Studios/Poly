@@ -160,18 +160,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!1 &427081693
+--- !u!1 &1187005816
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 102886, guid: 873807d681103624d83ed3272c4c4d6d, type: 2}
   m_PrefabInternal: {fileID: 1781598140}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 427081698}
-  - 114: {fileID: 427081697}
-  - 114: {fileID: 427081696}
-  - 114: {fileID: 427081695}
-  - 114: {fileID: 427081694}
+  - 4: {fileID: 1187005821}
+  - 114: {fileID: 1187005820}
+  - 114: {fileID: 1187005819}
+  - 114: {fileID: 1187005818}
+  - 114: {fileID: 1187005817}
   m_Layer: 0
   m_Name: PlanetController
   m_TagString: Untagged
@@ -179,13 +179,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &427081694
+--- !u!114 &1187005817
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11401010, guid: 873807d681103624d83ed3272c4c4d6d,
     type: 2}
   m_PrefabInternal: {fileID: 1781598140}
-  m_GameObject: {fileID: 427081693}
+  m_GameObject: {fileID: 1187005816}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ecd4b70dc466b048b6dfcbaaab60e16, type: 3}
@@ -195,26 +195,26 @@ MonoBehaviour:
   - {fileID: 113616, guid: a3239caa8ae8bdc4a8ed2b8f1c1bfa3c, type: 2}
   - {fileID: 113616, guid: 85dd87e4e6d49094092486c4a2628040, type: 2}
   - {fileID: 113918, guid: 833b2552490f0164ebd46bae2ba70ed3, type: 2}
-  NumberOfAIs: 100
---- !u!114 &427081695
+--- !u!114 &1187005818
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11428610, guid: 873807d681103624d83ed3272c4c4d6d,
     type: 2}
   m_PrefabInternal: {fileID: 1781598140}
-  m_GameObject: {fileID: 427081693}
+  m_GameObject: {fileID: 1187005816}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81ea3d07684bd2b4880f0d8375192e96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &427081696
+  MaxAIs: 25
+--- !u!114 &1187005819
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11481290, guid: 873807d681103624d83ed3272c4c4d6d,
     type: 2}
   m_PrefabInternal: {fileID: 1781598140}
-  m_GameObject: {fileID: 427081693}
+  m_GameObject: {fileID: 1187005816}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 11b8bde1059ff37429823f0f74c5ee0c, type: 3}
@@ -222,38 +222,40 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugLvl: 2
   grid:
-  - _NodeRadius: 2.5
-    _WorldSize: {x: 100, y: 100}
+  - _gridType: 1
+    _NodeRadius: 2.5
     angleLimit: 45
-    center: {x: 0, y: 0, z: 0}
     name: 'Grid #1'
+    offset: {x: 0, y: 0, z: 0}
+    Radius: 100
     Scanning: 0
-    WalkableMask:
+    ScanOnLoad: 1
+    UnWalkableMask:
       serializedVersion: 2
       m_Bits: 0
+    WorldSize: {x: 10, y: 0}
   ShowFlockColor: 1
   ShowGizmos: 1
   ShowPaths: 1
---- !u!114 &427081697
+--- !u!114 &1187005820
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11427860, guid: 873807d681103624d83ed3272c4c4d6d,
     type: 2}
   m_PrefabInternal: {fileID: 1781598140}
-  m_GameObject: {fileID: 427081693}
+  m_GameObject: {fileID: 1187005816}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36076c5a956b9d246848be8476557a82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wind: {x: 0, y: 0}
   RepeatRate: 300
---- !u!4 &427081698
+--- !u!4 &1187005821
 Transform:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 420262, guid: 873807d681103624d83ed3272c4c4d6d, type: 2}
   m_PrefabInternal: {fileID: 1781598140}
-  m_GameObject: {fileID: 427081693}
+  m_GameObject: {fileID: 1187005816}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -301,5 +303,5 @@ Prefab:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 873807d681103624d83ed3272c4c4d6d, type: 2}
-  m_RootGameObject: {fileID: 427081693}
+  m_RootGameObject: {fileID: 1187005816}
   m_IsPrefabParent: 0

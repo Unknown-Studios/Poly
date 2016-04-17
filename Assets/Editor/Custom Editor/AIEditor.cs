@@ -49,6 +49,11 @@ public class AIEditor : Editor
         public override void OnInspectorGUI()
         {
             _target = (AdvancedAI)target;
+            if (GridManager.instance == null)
+            {
+                Debug.LogError("GridManager not found");
+                return;
+            }
             if (options == null || options.Length != GridManager.Grids.Count)
             {
                 options = new string[GridManager.Grids.Count];

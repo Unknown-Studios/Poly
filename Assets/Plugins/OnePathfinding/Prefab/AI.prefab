@@ -173,24 +173,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _target: {fileID: 0}
   AIState: 0
-  AlertSound: {fileID: 0}
-  automatedNoise: 0
   Damage: 5
-  FlockAnimal: 0
-  FlockID: 0
-  FlockMember: {fileID: 0}
   Flyheight: 50
   Flying: 0
-  IsMaster: 0
-  master: {fileID: 0}
-  maxFlockSize: 3
-  minFlockSize: 2
+  GridIndex: 0
+  grid:
+    _gridType: 0
+    _NodeRadius: 2
+    angleLimit: 45
+    name: 'Grid #1'
+    offset: {x: 0, y: 0, z: 0}
+    Radius: 100
+    Scanning: 0
+    ScanOnLoad: 1
+    UnWalkableMask:
+      serializedVersion: 2
+      m_Bits: 0
+    WorldSize: {x: 100, y: 100}
   NoiseDistance: 100
+  pt: 0
   RandomAddSpeed: 1
   Size: 0
-  SmellDistance: 5
   speed: 6
-  TillNoise: 0
   Type: 0
   ViewDistance: 75
 --- !u!114 &11413548

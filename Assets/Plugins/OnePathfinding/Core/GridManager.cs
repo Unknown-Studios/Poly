@@ -118,7 +118,11 @@ public class GridManager : MonoBehaviour
     {
         get
         {
-            return instance.ShowGizmos;
+            if (instance != null)
+            {
+                return instance.ShowGizmos;
+            }
+            return false;
         }
         set
         {
