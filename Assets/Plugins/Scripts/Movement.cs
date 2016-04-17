@@ -20,9 +20,7 @@ public class Movement : NetworkBehaviour
 
     private bool isSliding;
 
-    private int terrainHeight;
-    private float waterHeight;
-    private ProceduralTerrain PT;
+    private ProceduralSphere PS;
     private CharacterController controller;
 
     private float time;
@@ -44,12 +42,9 @@ public class Movement : NetworkBehaviour
     private void Start()
     {
         controller = GetComponent<CharacterController>();
-        PT = GameObject.Find("GameController").GetComponent<ProceduralTerrain>();
-        terrainHeight = PT.terrainHeight;
-        waterHeight = PT.WaterLevel * 1f;
+        PS = GameObject.Find("GameController").GetComponent<ProceduralSphere>();
         anim = transform.Find("Hands").GetComponent<Animator>();
         anim1 = transform.Find("Player").GetComponent<Animator>();
-        InvokeRepeating("TooLow", 0, 1.0f);
 
         InitialHeight = controller.height;
     }
@@ -57,10 +52,6 @@ public class Movement : NetworkBehaviour
     private void Update()
     {
         moveDirection.y = Mathf.Clamp(moveDirection.y, -9.81f, 9.81f);
-        if (Swimming)
-        {
-            transform.position = new Vector3(transform.position.x, Mathf.Max(waterHeight - 1, transform.position.y), transform.position.z);
-        }
         bool Crouch = Input.GetButtonDown("Crouch");
         if (controller.isGrounded || Swimming)
         {
@@ -102,12 +93,6 @@ public class Movement : NetworkBehaviour
                 moveDirection.y = jumpSpeed;
             }
         }
-        if (transform.position.y <= waterHeight - 1)
-        {
-            moveDirection.x /= 2;
-            moveDirection.z /= 2;
-            Swimming = true;
-        }
         else if (Crouch)
         {
             moveDirection.x /= 2;
@@ -120,33 +105,6 @@ public class Movement : NetworkBehaviour
             Swimming = false;
         }
         controller.Move(moveDirection * Time.deltaTime);
-    }
-
-    private void TooLow()
-    {
-        if (transform.position.y <= waterHeight)
-        {
-            Vector3 hitPos = transform.position;
-            hitPos.y = terrainHeight;
-            RaycastHit hit;
-            Vector3 startPos = transform.position;
-            startPos.y += 3.1f;
-            if (Physics.Linecast(startPos, hitPos, out hit))
-            {
-                if (hit.collider)
-                {
-                    if (hit.collider.tag != "Player" && hit.collider.tag != "Water")
-                    {
-                        if (hit.collider.tag == "Chunk")
-                        {
-                            transform.position = new Vector3(transform.position.x, hit.point.y - 1, transform.position.z); ;
-                            return;
-                        }
-                    }
-                }
-            }
-            transform.position = new Vector3(transform.position.x, waterHeight, transform.position.z); ;
-        }
     }
 
     [Command]

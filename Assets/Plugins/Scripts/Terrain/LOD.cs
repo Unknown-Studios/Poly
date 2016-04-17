@@ -2,18 +2,11 @@
 using System.Collections;
 using CoherentNoise.Generation.Fractal;
 
-#if UNITY_EDITOR
-
-using UnityEditor;
-
-#endif
-
 [RequireComponent(typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer))]
 public class LOD : MonoBehaviour
 {
     public int TargetLOD = 4;
 
-    private Vector3 ppos;
     public float Distance;
     private Mesh mesh;
     private int _LODLevel;
@@ -27,45 +20,18 @@ public class LOD : MonoBehaviour
     private int LODLevel;
     public float groundFrq = 0.25f;
 
-    private void Update()
+	public void UpdateLODSettings(Vector3 pos, int[] lodlevels)
     {
-#if UNITY_EDITOR
-        if (SceneView.lastActiveSceneView != null)
-        {
-            ppos = SceneView.lastActiveSceneView.camera.ViewportToWorldPoint(new Vector3(1, 1, SceneView.lastActiveSceneView.camera.nearClipPlane));
-        }
-
-#endif
-
-        if (Game.player != null)
-        {
-            ppos = Game.player.transform.position;
-        }
-        if (ppos != Vector3.zero)
-        {
-            Distance = Vector3.Distance(ppos, mc0.bounds.center);
-        }
+        Distance = Vector3.Distance(pos, mc0.bounds.center);
+        
         //Calculate which LODLevel should be used.
-        if (Distance < 100)
-        {
-            TargetLOD = 0;
-        }
-        else if (Distance < 200)
-        {
-            TargetLOD = 1;
-        }
-        else if (Distance < 400)
-        {
-            TargetLOD = 2;
-        }
-        else if (Distance < 800)
-        {
-            TargetLOD = 3;
-        }
-        else
-        {
-            TargetLOD = 4;
-        }
+		TargetLOD = 4;
+		for (int x = 0; x < lodlevels.Length; x++) {
+			if (Distance < lodlevels [x]) {
+				TargetLOD = x;
+				break;
+			}
+		}
 
         if (LODLevel != TargetLOD)
         {

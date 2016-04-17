@@ -78,7 +78,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _GUIColor: {r: 0.11764706, g: 0.15686275, b: 0.23529412, a: 0.74509805}
   _GUISKIN: {fileID: 11400000, guid: d8468add08f7aa641b6a457970dffed3, type: 2}
-  _Offline: 0
+  _Offline: 1
   _player: {fileID: 0}
   _time: 0
   _Version: 0.0.1
@@ -164,7 +164,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36076c5a956b9d246848be8476557a82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wind: {x: 0, y: 0}
   RepeatRate: 0
 --- !u!114 &11438358
 MonoBehaviour:

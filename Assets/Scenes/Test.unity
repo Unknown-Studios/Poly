@@ -112,11 +112,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a58ef42f0b583a41b97c5600b230c83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 10
-  Radius: 100
+  WidthTick: 8
+  Width: 256
+  Radius: 1000
   MaxHeight: 200
   Octaves: 3
-  groundFrq: 1
+  TerrainMaterial: {fileID: 0}
 --- !u!4 &17005513
 Transform:
   m_ObjectHideFlags: 0
@@ -129,6 +130,79 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!1 &463034323
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 463034325}
+  - 114: {fileID: 463034324}
+  - 114: {fileID: 463034326}
+  m_Layer: 0
+  m_Name: Player Placeholder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &463034324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 463034323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b2bcde0a14e53442a2c5b472bd9eaba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lodLevels: c800000090010000ee020000e8030000
+--- !u!4 &463034325
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 463034323}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+--- !u!114 &463034326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 463034323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 1
 --- !u!1001 &1594312964
 Prefab:
   m_ObjectHideFlags: 0
@@ -166,10 +240,6 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 49c77a60e95de4d43bae8f9176456206, type: 2}
       propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400000, guid: 49c77a60e95de4d43bae8f9176456206, type: 2}
-      propertyPath: _Offline
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

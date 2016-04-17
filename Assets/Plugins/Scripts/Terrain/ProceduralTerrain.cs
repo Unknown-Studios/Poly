@@ -106,10 +106,10 @@ public class ProceduralTerrain : NetworkBehaviour
 
     public GameObject[] trees;
 
-    public static void OnBeforeSpawn(Vector3 sp)
+    /*public static void OnBeforeSpawn(Vector3 sp)
     {
         instance.StartCoroutine(instance.BeforeSpawn(sp));
-    }
+    }*/
 
     public void CreateProtoTypes()
     {

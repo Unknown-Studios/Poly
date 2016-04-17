@@ -11,13 +11,19 @@ public class ProceduralSphere : MonoBehaviour
     public int Radius;
     public int MaxHeight;
 
+    [HideInInspector]
+    public bool done;
+
     public int Octaves;
     public Material TerrainMaterial;
+    public string currentAction;
+    public float progress;
+
     private int ve;
     private GameObject[] sides;
 
     // Use this for initialization
-    private void Start()
+    public void OnBeforeSpawn(Vector3 SpawnPos)
     {
         StartCoroutine(GenerateTerrain());
     }
@@ -69,6 +75,8 @@ public class ProceduralSphere : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             StartCoroutine(AddSide(i));
+            progress = 1.0f / (6 - i);
+            progress = Mathf.Clamp01(progress);
             yield return null;
         }
         yield return null;

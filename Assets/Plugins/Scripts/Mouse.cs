@@ -33,14 +33,7 @@ public class Mouse : MonoBehaviour
         if (Input.GetAxis("Mouse Y") != 0.0f)
         {
             float mY = 0f;
-            if (player.transform.position.y < PT.WaterLevel)
-            {
-                mY = -20f;
-            }
-            else
-            {
-                mY = minimumY;
-            }
+            mY = minimumY;
 
             v += PlayerPrefs.GetFloat("Sensitivity Y") * Input.GetAxis("Mouse Y");
 

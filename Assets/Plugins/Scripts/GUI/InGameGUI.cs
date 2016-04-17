@@ -19,7 +19,7 @@ public class InGameGUI : NetworkBehaviour
     private bool CanCancel;
     private string CurrentlyLoading;
     private int maxWindow;
-    private ProceduralTerrain PT;
+    private ProceduralSphere PS;
     private float scrollPosition;
     private bool ShowConsole = false;
     private bool ShowInfo = false;
@@ -90,7 +90,7 @@ public class InGameGUI : NetworkBehaviour
         {
             QualitySettings.SetQualityLevel(0);
         }
-        PT = GameObject.Find("GameController").GetComponent<ProceduralTerrain>();
+        PS = GameObject.Find("GameController").GetComponent<ProceduralSphere>();
     }
 
     private Game.SaveData GetPlayerData(string ID)
@@ -138,9 +138,9 @@ public class InGameGUI : NetworkBehaviour
             GUI.color = Game.SetColor(255, 255, 255, 1);
             GUI.Label(Game.Rect(-1), CurrentlyLoading);
             GUI.color = Game.SetColor(127, 127, 127, 1);
-            GUI.Label(new Rect(Screen.width / 2 - 200, Screen.height / 2, 400, 25), PT.currentAction);
+            GUI.Label(new Rect(Screen.width / 2 - 200, Screen.height / 2, 400, 25), PS.currentAction);
             GUI.color = Game.SetColor(255, 255, 255, 1);
-            Game.ProgressBar(Game.Rect(1), Mathf.Floor(PT.progress * 100));
+            Game.ProgressBar(Game.Rect(1), Mathf.Floor(PS.progress * 100));
             if (CanCancel)
             {
                 if (GUI.Button(Game.Rect(3), "Cancel"))
@@ -148,7 +148,6 @@ public class InGameGUI : NetworkBehaviour
                     Network.Disconnect(200);
                 }
             }
-            //Game.GIFPlayer( new Rect(Screen.width-50,Screen.height-50,40,40), "Loading.gif", 5);
         }
         else if (ShowRespawnScreen)
         {
@@ -169,7 +168,7 @@ public class InGameGUI : NetworkBehaviour
             {
                 ShowRespawnScreen = false;
                 ShowLoading = true;
-                SpawnPos = new Vector3(Random.Range(150, PT.terrainWidth - 150), 0, Random.Range(150, PT.terrainWidth - 150));
+                SpawnPos = new Vector3(Random.Range(150, PS.Width - 150), 0, Random.Range(150, PS.Width - 150));
                 SpawnPlayer();
             }
             GUI.skin.button.alignment = TextAnchor.MiddleLeft;
@@ -234,8 +233,6 @@ public class InGameGUI : NetworkBehaviour
                         data[0] = "Position: " + Game.player.transform.position;
                         data[7] = "Player ID: " + Game.player.name;
                     }
-                    data[1] = "Trees: " + PT.Trees;
-                    data[2] = "Caves: " + PT.Caves;
                     data[4] = "Season: " + Game.Season;
                     //data[5] = "Weather: " + sky.CurWeather;
                     data[10] = "Network players: " + (Network.connections.Length + 1);
@@ -301,7 +298,7 @@ public class InGameGUI : NetworkBehaviour
     {
         CurrentlyLoading = "Loading terrain..";
         ShowLoading = true;
-        ProceduralTerrain.OnBeforeSpawn(SpawnPos);
+        GameObject.Find("GameController").GetComponent<ProceduralSphere>().OnBeforeSpawn(SpawnPos);
     }
 
     private void Start()
@@ -324,15 +321,12 @@ public class InGameGUI : NetworkBehaviour
         useGUILayout = false;
 
         data.Add("Position: None");
-        data.Add("Trees: " + PT.Trees.ToString());
-        data.Add("Caves: " + PT.Caves.ToString());
-        data.Add("Map Resolution: " + PT.terrainSize.ToString() + "x" + PT.terrainSize.ToString());
+        data.Add("Map Resolution: " + PS.Width.ToString() + "x" + PS.Width.ToString());
         data.Add("Season: None");
         data.Add("Weather: None");
-        data.Add("Generated Tiles: " + PT.GeneratedTiles);
         data.Add("Player ID: " + PlayerPrefs.GetString("UserID"));
         data.Add("Player Name: " + PlayerPrefs.GetString("Username"));
-        data.Add("Seed: " + PT.Seed);
+        data.Add("Seed: " + PlayerPrefs.GetInt("Seed"));
         data.Add("Network Players: " + (Network.connections.Length + 1));
         data.Add("Connected: False");
 
@@ -359,7 +353,7 @@ public class InGameGUI : NetworkBehaviour
         else
         {
             //A save file wasn't found, creating a new character.
-            SpawnPos = new Vector3(Random.Range(0, PT.terrainWidth), 0, Random.Range(0, PT.terrainWidth));
+            SpawnPos = new Vector3(Random.Range(0, PS.Width), 0, Random.Range(0, PS.Width));
             SpawnPlayer();
         }
 
@@ -382,7 +376,7 @@ public class InGameGUI : NetworkBehaviour
         }
         if (start)
         {
-            if (PT && PT.GeneratedTiles == 1)
+            if (PS && PS.done)
             {
                 if (Game.player != null)
                 {
