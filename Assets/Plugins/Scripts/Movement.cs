@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 
-[RequireComponent(typeof(CharacterController))]
 public class Movement : NetworkBehaviour
 {
     public float speed = 5.0f;
     public float sprintSpeed = 10.0f;
     public float jumpSpeed = 8.0f;
-    public float gravity = 20.0f;
     public Vector3 moveDirection = Vector3.zero;
 
     private float slideAngle;
@@ -21,7 +19,6 @@ public class Movement : NetworkBehaviour
     private bool isSliding;
 
     private ProceduralSphere PS;
-    private CharacterController controller;
 
     private float time;
 
@@ -39,26 +36,42 @@ public class Movement : NetworkBehaviour
 
     private bool cursprint;
 
+    private Rigidbody body;
+
+    private bool isGrounded;
+
     private void Start()
     {
-        controller = GetComponent<CharacterController>();
         PS = GameObject.Find("GameController").GetComponent<ProceduralSphere>();
         anim = transform.Find("Hands").GetComponent<Animator>();
         anim1 = transform.Find("Player").GetComponent<Animator>();
+        body = GetComponent<Rigidbody>();
 
-        InitialHeight = controller.height;
+        InitialHeight = GetComponent<CapsuleCollider>().height;
+    }
+
+    private void OnCollisionEnter(Collision collisionInfo)
+    {
+        if (collisionInfo.collider.tag == "Chunk")
+        {
+            isGrounded = true;
+        }
+    }
+
+    private void OnCollisionExit(Collision collisionInfo)
+    {
+        isGrounded = false;
     }
 
     private void Update()
     {
-        moveDirection.y = Mathf.Clamp(moveDirection.y, -9.81f, 9.81f);
         bool Crouch = Input.GetButtonDown("Crouch");
-        if (controller.isGrounded || Swimming)
+        if (isGrounded)
         {
             if (Crouch)
             {
                 Debug.Log("Crouching");
-                controller.height = InitialHeight / 2;
+                GetComponent<CapsuleCollider>().height = InitialHeight / 2;
             }
             moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
             moveDirection = transform.TransformDirection(moveDirection);
@@ -93,17 +106,7 @@ public class Movement : NetworkBehaviour
                 moveDirection.y = jumpSpeed;
             }
         }
-        else if (Crouch)
-        {
-            moveDirection.x /= 2;
-            moveDirection.z /= 2;
-            Swimming = false;
-        }
-        else
-        {
-            Swimming = false;
-        }
-        controller.Move(moveDirection * Time.deltaTime);
+        body.AddForce(moveDirection * Time.deltaTime);
     }
 
     [Command]

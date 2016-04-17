@@ -44,6 +44,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravity: 9.81
   Range: 1500
+  LM:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!114 &11445856
 MonoBehaviour:
   m_ObjectHideFlags: 1

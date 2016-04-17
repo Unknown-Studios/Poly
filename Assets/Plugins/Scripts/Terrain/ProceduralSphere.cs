@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class ProceduralSphere : MonoBehaviour
@@ -30,7 +31,8 @@ public class ProceduralSphere : MonoBehaviour
 
     private void Start()
     {
-        OnBeforeSpawn(Vector3.zero);
+        if (SceneManager.GetActiveScene().name != "Game")
+            OnBeforeSpawn(Vector3.zero);
     }
 
     private IEnumerator AddSide(int side)
@@ -53,6 +55,7 @@ public class ProceduralSphere : MonoBehaviour
                 GameObject gm = new GameObject();
                 gm.transform.parent = s0.transform;
                 gm.name = "Chunk (" + x + "," + y + ") side #" + side;
+                gm.layer = LayerMask.NameToLayer("LOD");
 
                 LOD lod = gm.AddComponent<LOD>();
                 lod.side = side;
@@ -65,6 +68,12 @@ public class ProceduralSphere : MonoBehaviour
                 lod.Octaves = Octaves;
             }
             yield return null;
+        }
+        progress = 1.0f / (6 - side);
+        progress = Mathf.Clamp01(progress);
+        if (progress == 1.0f)
+        {
+            done = true;
         }
     }
 
@@ -80,8 +89,6 @@ public class ProceduralSphere : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             StartCoroutine(AddSide(i));
-            progress = 1.0f / (6 - i);
-            progress = Mathf.Clamp01(progress);
             yield return null;
         }
         yield return null;
