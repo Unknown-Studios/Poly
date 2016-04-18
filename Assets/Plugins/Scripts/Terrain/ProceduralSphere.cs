@@ -21,6 +21,7 @@ public class ProceduralSphere : MonoBehaviour
     public float progress;
 
     public Region[] Regions;
+
     public AnimationCurve curve;
     private int ve;
     private GameObject[] sides;
@@ -33,6 +34,7 @@ public class ProceduralSphere : MonoBehaviour
 
     private void Start()
     {
+		
         if (SceneManager.GetActiveScene().name != "Game")
             OnBeforeSpawn(Vector3.zero);
     }

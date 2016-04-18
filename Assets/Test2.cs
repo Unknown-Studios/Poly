@@ -1,20 +1,18 @@
 ﻿using CoherentNoise.Generation.Fractal;
 using UnityEngine;
+using System.Collections;
 
 public class Test2 : MonoBehaviour
 {
     public int Octaves = 3;
-    public float groundFrq = 0.005f;
-    public Texture2D tex;
+    public float groundFrq = 0.01f;
+	public float Persistence = 0.17f;
 
     public int mOctaves = 3;
     public float mFreq = 0.1f;
 
     private RidgeNoise noise;
     private PinkNoise pink;
-
-    private int CurOct;
-    private float CurFrq;
 
     private void Start()
     {
@@ -23,41 +21,43 @@ public class Test2 : MonoBehaviour
         pink = new PinkNoise(Random.seed);
         pink.OctaveCount = Octaves;
         pink.Frequency = groundFrq;
+		pink.Persistence = Persistence;
+		pink.Lacunarity = 4.0f;
 
         noise.OctaveCount = mOctaves;
         noise.Frequency = mFreq;
-        GenerateTexture();
+		StartCoroutine (GenerateTexture ());
     }
 
-    private void Update()
+	public AnimationCurve curve;
+	public float scale;
+
+    private IEnumerator GenerateTexture()
     {
-        if (CurOct != mOctaves || CurFrq != mFreq)
-        {
-            CurFrq = mFreq;
-            CurOct = mOctaves;
-            noise.OctaveCount = mOctaves;
-            noise.Frequency = mFreq;
-            GenerateTexture();
-        }
-    }
+		while (true) {
+			pink.OctaveCount = Octaves;
+			pink.Frequency = groundFrq;
 
-    private void GenerateTexture()
-    {
-        tex = new Texture2D(512, 512);
-        for (int x = 0; x < 512; x++)
-        {
-            for (int y = 0; y < 512; y++)
-            {
-                float plain = pink.GetValue(x, y, 0) / 2.0f;
-                float mountains = Mathf.Max(0f, noise.GetValue(x - 549, y + 2585, 0f) - 0.75f) / 2.0f;
+			noise.OctaveCount = mOctaves;
+			noise.Frequency = mFreq;
 
-                float h = plain + mountains;
+			Mesh mesh = GetComponent<MeshFilter> ().mesh;
+			Vector3[] vert = mesh.vertices;
+			for (int i = 0; i < vert.Length; i++) {
+				float plain = (pink.GetValue (transform.position.x + vert [i].x, transform.position.z + vert [i].z, 0)+1.0f) / 3.0f;
+				float mountains = Mathf.Max (0f, noise.GetValue (transform.position.x + vert [i].x - 549, transform.position.z + vert [i].z + 2585, 0f) - 0.75f) / 2.0f;
 
-                tex.SetPixel(x, y, Color.white * h);
-            }
-        }
-        tex.Apply();
+				float h = plain + mountains;
 
-        tex.mipMapBias = 1;
+				vert [i].y = curve.Evaluate (h) * 50f;
+				if (i % 50 == 0) {
+					yield return null;
+				}
+			}
+			mesh.vertices = vert;
+
+			mesh.RecalculateBounds ();
+			mesh.RecalculateNormals ();
+		}
     }
 }

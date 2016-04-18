@@ -18,7 +18,7 @@ public class LOD : MonoBehaviour
     public int Radius;
     public int MaxHeight;
     public int Octaves = 3;
-    public float groundFrq = 0.25f;
+    public float groundFrq = 0.01f;
     public int Width;
 
     [HideInInspector]
@@ -91,7 +91,7 @@ public class LOD : MonoBehaviour
     {
         Vector3 s = normalizedPoint(x, y, z);
 
-        float plain = pink.GetValue(x, y, z - 111) / 2.0f;
+		float plain = (pink.GetValue(x, y, z - 111)+1.0f) / 3.0f;
         float mountains = Mathf.Max(0f, noise.GetValue(x - 549, y + 2585, z + 54) - 0.75f) / 2.0f;
 
         float h = curve.Evaluate(Mathf.Clamp01(plain + mountains));
@@ -138,9 +138,13 @@ public class LOD : MonoBehaviour
         pink = new PinkNoise(PlayerPrefs.GetInt("Seed"));
         pink.OctaveCount = Octaves;
         pink.Frequency = 0.01f;
+		pink.Lacunarity = 4f;
+		pink.Persistence = 0.17f;
 
         noise.OctaveCount = Octaves;
         noise.Frequency = 0.01f;
+
+
         mesh = GetComponent<MeshFilter>().mesh;
         mc0 = GetComponent<MeshCollider>();
         mr0 = GetComponent<MeshRenderer>();

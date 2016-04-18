@@ -152,17 +152,38 @@ MonoBehaviour:
   progress: 0
   Regions:
   - Name: Water
-    height: 0
+    height: 0.1
     color: {r: 0.25886676, g: 0.47862723, b: 0.83823526, a: 1}
   - Name: Sand
-    height: 0.1
+    height: 0.2
     color: {r: 0.9632353, g: 0.9095052, b: 0.6091047, a: 1}
   - Name: Grass
-    height: 0.2
+    height: 0.85
     color: {r: 0.29065743, g: 0.61764705, b: 0.31997365, a: 1}
   - Name: Snow
-    height: 0.85
+    height: 1
     color: {r: 1, g: 1, b: 1, a: 1}
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0.006250009
+      value: 0.0043750033
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+    - time: 0.4479589
+      value: 0.6613896
+      inSlope: -0.026533004
+      outSlope: -0.026533004
+      tangentMode: 0
+    - time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!1 &1350958404
 GameObject:
   m_ObjectHideFlags: 0
