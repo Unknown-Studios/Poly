@@ -72,7 +72,7 @@ public class PCEditor : Editor
         GUI.backgroundColor = Color.clear;
         if (GUILayout.Button(tex))
         {
-            RegionEditor.Init();
+            RegionEditor.Init(PC.MaxHeight);
         }
 
         GUILayout.Space(10f);
