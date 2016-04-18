@@ -175,7 +175,7 @@ Material:
       data:
         first:
           name: White
-        second: {r: 0.9998596, g: 0.9998596, b: 0.9998596, a: 1}
+        second: {r: 0, g: 0, b: 0, a: 1}
       data:
         first:
           name: Wind

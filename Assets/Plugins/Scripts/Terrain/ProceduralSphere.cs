@@ -34,7 +34,6 @@ public class ProceduralSphere : MonoBehaviour
 
     private void Start()
     {
-		
         if (SceneManager.GetActiveScene().name != "Game")
             OnBeforeSpawn(Vector3.zero);
     }
@@ -104,7 +103,7 @@ public class ProceduralSphere : MonoBehaviour
     public class Region
     {
         public string Name;
-        public float height = 0f;
         public Color color = new Color(1, 1, 1, 1);
+        public float height;
     }
 }

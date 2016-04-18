@@ -8,13 +8,12 @@ using UnityEngine;
 [CustomEditor(typeof(ProceduralSphere))]
 public class PCEditor : Editor
 {
-
     /// <summary>
     /// An instance to this object.
     /// </summary>
     private ProceduralSphere PC;
 
-	ProceduralSphere.Region Selected;
+    private ProceduralSphere.Region Selected;
 
     /// <summary>
     /// Used to draw the inspectorGUI.
@@ -38,38 +37,45 @@ public class PCEditor : Editor
         SerializedProperty tps = serializedObject.FindProperty("Regions");
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.PropertyField(tps, true);
-		EditorGUILayout.PropertyField (serializedObject.FindProperty("curve"),new GUIContent("Height Curve: "));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("curve"), new GUIContent("Height Curve: "));
         if (EditorGUI.EndChangeCheck())
             serializedObject.ApplyModifiedProperties();
 
-		GUILayout.Space (10f);
-		EditorGUILayout.LabelField("Region: ", EditorStyles.boldLabel);
-		if (PC.Regions == null) {
-			PC.Regions = new ProceduralSphere.Region[1];
-		}
-		if (Selected == null) {
-			Selected = PC.Regions [0];
-		}
-		Texture2D tex = new Texture2D(50,100);
+        GUILayout.Space(10f);
+        EditorGUILayout.LabelField("Region: ", EditorStyles.boldLabel);
+        if (PC.Regions == null)
+        {
+            PC.Regions = new ProceduralSphere.Region[1];
+        }
+        if (Selected == null)
+        {
+            Selected = PC.Regions[0];
+        }
+        Texture2D tex = new Texture2D(50, 100);
 
-		for (int y = 0; y < tex.height; y++) {
-			for (int x = 0; x < tex.width; x++) {
-				Color col = PC.Regions[0].color;
-				for (int i = 0; i < PC.Regions.Length; i++) {
-					float height = (float)y / tex.height;
-					if (height <= PC.Regions [i].height) {
-						col = PC.Regions [i].color;
-						break;
-					}
-				}
-				tex.SetPixel (x,y,col);
-			}
-		}
-		tex.Apply ();
-		GUI.backgroundColor = Color.clear;
-		if (GUILayout.Button (tex)) {
-			RegionEditor.Init (PC.Regions);
-		}
+        for (int y = 0; y < tex.height; y++)
+        {
+            for (int x = 0; x < tex.width; x++)
+            {
+                Color col = PC.Regions[0].color;
+                for (int i = 0; i < PC.Regions.Length; i++)
+                {
+                    float height = (float)y / tex.height;
+                    if (height <= PC.Regions[i].height)
+                    {
+                        col = PC.Regions[i].color;
+                        break;
+                    }
+                }
+                tex.SetPixel(x, y, col);
+            }
+        }
+        tex.Apply();
+        GUI.backgroundColor = Color.clear;
+        if (GUILayout.Button(tex))
+        {
+            RegionEditor.Init();
+        }
 
         GUILayout.Space(10f);
 

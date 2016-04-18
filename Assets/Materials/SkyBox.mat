@@ -23,7 +23,7 @@ Material:
       data:
         first:
           name: _SkyIntensity
-        second: 0.50000006
+        second: 1
       data:
         first:
           name: _SunIntensity
@@ -32,11 +32,11 @@ Material:
       data:
         first:
           name: _SkyColor1
-        second: {r: 0.16686884, g: 0.18117191, b: 0.46314618, a: 0.99980766}
+        second: {r: 0.16690095, g: 0.18120678, b: 0.46323532, a: 1}
       data:
         first:
           name: _SkyColor2
-        second: {r: 0.16686884, g: 0.18117191, b: 0.46314618, a: 0.99980766}
+        second: {r: 0.16690095, g: 0.18120678, b: 0.46323532, a: 1}
       data:
         first:
           name: _MoonVector
