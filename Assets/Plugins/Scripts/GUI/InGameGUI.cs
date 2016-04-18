@@ -192,7 +192,7 @@ public class InGameGUI : NetworkBehaviour
                     //Disconnect
                     if (GUI.Button(Game.Rect(1), "Disconnect"))
                     {
-                        Network.Disconnect(200);
+                        Network.Disconnect();
                     }
                     //Quit
                     if (GUI.Button(Game.Rect(2), "Quit"))

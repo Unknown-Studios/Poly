@@ -387,6 +387,11 @@ public class MainMenu : MonoBehaviour
         GUI.skin.button.fontSize = 14;
     }
 
+    private void OnEnable()
+    {
+        Game.SetMouse(true);
+    }
+
     private IEnumerator GetData(string url)
     {
         WWW dataW = new WWW(url);

@@ -61,11 +61,12 @@ public class DataHolder : NetworkManager
 
     private void SetupServer()
     {
-        singleton.StartHost();
+        NetworkManager.singleton.StartHost();
 
-		if (myClient == null) {
-			myClient = new NetworkClient ();
-		}
+        if (myClient == null)
+        {
+            myClient = new NetworkClient();
+        }
         myClient.RegisterHandler(MsgType.Connect, OnConnected);
     }
 }
