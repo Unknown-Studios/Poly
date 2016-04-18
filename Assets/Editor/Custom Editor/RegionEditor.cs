@@ -24,11 +24,10 @@ public class RegionEditor : EditorWindow
         }
         else
         {
-            GUILayout.Space(10f);
             if (Selected != -1)
             {
                 PS.Regions[Selected].Name = EditorGUILayout.TextField("Name: ", PS.Regions[Selected].Name);
-                EditorGUILayout.LabelField("Height: " + PS.Regions[Selected].height);
+                EditorGUILayout.LabelField("Height: " + Mathf.RoundToInt(PS.Regions[Selected].height * 100.0f) / 100.0f);
                 GUILayout.Space(10f);
             }
             EditorGUILayout.BeginHorizontal(GUILayout.Height(300f));
@@ -61,7 +60,19 @@ public class RegionEditor : EditorWindow
         EditorGUILayout.EndVertical();
         if (Selected != -1)
         {
-            PS.Regions[Selected].height = GUILayout.VerticalSlider(PS.Regions[Selected].height, 0.0f, 1.0f);
+            float low = 0.01f;
+            float high = 0.99f;
+
+            if (Selected + 1 < PS.Regions.Length)
+            {
+                high = PS.Regions[Selected + 1].height - 0.01f;
+            }
+            if (Selected - 1 >= 0)
+            {
+                low = PS.Regions[Selected - 1].height + 0.01f;
+            }
+
+            PS.Regions[Selected].height = GUILayout.VerticalSlider(PS.Regions[Selected].height, low, high);
         }
         EditorGUILayout.EndHorizontal();
         GUILayout.Space(10f);

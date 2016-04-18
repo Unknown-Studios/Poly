@@ -89,13 +89,4 @@ public class PCEditor : Editor
             EditorUtility.SetDirty(target);
         }
     }
-
-    /// <summary>
-    /// Update the inspector.
-    /// </summary>
-    public void OnInspectorUpdate()
-    {
-        // This will only get called 10 times per second.
-        Repaint();
-    }
 }
