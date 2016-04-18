@@ -364,37 +364,15 @@ public class Game : MonoBehaviour
 
     public static void LogToFile(string s)
     {
-        if (LastLog == s)
-        {
-            Repeat++;
-            File.AppendAllText(Application.dataPath + "/../UnknownStudios.txt",
-                               string.Format("{0:MM/dd/yy hh:mm:ss}  " + Repeat + "x [CLIENT]: " + s, DateTime.Now));
-        }
-        else
-        {
-            LastLog = s;
-            Repeat = 1;
-            File.AppendAllText(Application.dataPath + "/../UnknownStudios.txt",
-                               string.Format("\r\n{0:MM/dd/yy hh:mm:ss}  [CLIENT]: " + s, DateTime.Now));
-        }
+        File.AppendAllText(Application.dataPath + "/../UnknownStudios.txt",
+                           string.Format("\r\n{0:MM/dd/yy hh:mm:ss}  [CLIENT]: " + s, DateTime.Now));
     }
 
     public static void LogToFile(string s, string name)
     {
         name = name.ToUpper();
-        if (LastLog == s)
-        {
-            Repeat++;
-            File.AppendAllText(Application.dataPath + "/../UnknownStudios.txt",
-                               String.Format("{0:MM/dd/yy hh:mm:ss}  " + Repeat + "x [" + name + "]: " + s, DateTime.Now));
-        }
-        else
-        {
-            LastLog = s;
-            Repeat = 1;
-            File.AppendAllText(Application.dataPath + "/../UnknownStudios.txt",
-                               String.Format("\r\n{0:MM/dd/yy hh:mm:ss}  [" + name + "]: " + s, DateTime.Now));
-        }
+        File.AppendAllText(Application.dataPath + "/../UnknownStudios.txt",
+                           string.Format("\r\n{0:MM/dd/yy hh:mm:ss}  [" + name + "]: " + s, DateTime.Now));
     }
 
     public static void Notice(string Msg)
@@ -402,7 +380,7 @@ public class Game : MonoBehaviour
         if (!string.IsNullOrEmpty(Msg))
         {
             instance.Msg = Msg;
-            instance.color = Game.GUIColor;
+            instance.color = GUIColor;
             instance.StartCoroutine(instance.notice(2));
         }
     }
@@ -412,7 +390,7 @@ public class Game : MonoBehaviour
         if (!string.IsNullOrEmpty(Msg) || ti > 0)
         {
             instance.Msg = Msg;
-            instance.color = Game.GUIColor;
+            instance.color = GUIColor;
             instance.StartCoroutine(instance.notice(ti));
         }
     }
@@ -439,15 +417,15 @@ public class Game : MonoBehaviour
 
     public static void Popup(string text, Action onYes)
     {
-        Game.ShowPopup = true;
-        Game.PopupText = text;
+        ShowPopup = true;
+        PopupText = text;
         OnYes = onYes;
     }
 
     public static void Popup(string text, Action onYes, Action onNo)
     {
-        Game.ShowPopup = true;
-        Game.PopupText = text;
+        ShowPopup = true;
+        PopupText = text;
         OnYes = onYes;
         OnNo = onNo;
     }
@@ -455,29 +433,29 @@ public class Game : MonoBehaviour
     public static void ProgressBar(Rect rct, float Progress)
     {
         Progress = Mathf.Clamp(Progress, 0, 100);
-        Color c = Game.GUIColor;
+        Color c = GUIColor;
         GUI.backgroundColor = new Color(c.r, c.g, c.b, 0.50f);
         GUI.Label(rct, "");
-        GUI.backgroundColor = Game.Color(33, 125, 48, 0.50f);
+        GUI.backgroundColor = Color(33, 125, 48, 0.50f);
         Rect ProgressRect = new Rect(rct.x, rct.y, (rct.width / 100.0f) * Progress, rct.height);
         GUI.Label(ProgressRect, "");
-        GUI.backgroundColor = Game.Color(0, 0, 0, 0);
+        GUI.backgroundColor = Color(0, 0, 0, 0);
         GUI.Label(rct, Progress.ToString() + "/100%");
-        GUI.backgroundColor = Game.GUIColor;
+        GUI.backgroundColor = GUIColor;
     }
 
     public static void ProgressBar(Rect rct, float Progress, Color color)
     {
         Progress = Mathf.Clamp(Progress, 0, 100);
-        Color c = Game.GUIColor;
+        Color c = GUIColor;
         GUI.backgroundColor = new Color(c.r, c.g, c.b, 0.50f);
         GUI.Label(rct, "");
         GUI.backgroundColor = color;
         Rect ProgressRect = new Rect(rct.x, rct.y, (rct.width / 100.0f) * Progress, rct.height);
         GUI.Label(ProgressRect, "");
-        GUI.backgroundColor = Game.Color(0, 0, 0, 0);
+        GUI.backgroundColor = Color(0, 0, 0, 0);
         GUI.Label(rct, Progress.ToString() + "/100%");
-        GUI.backgroundColor = Game.GUIColor;
+        GUI.backgroundColor = GUIColor;
     }
 
     public static Rect Rect(int i)
@@ -504,12 +482,12 @@ public class Game : MonoBehaviour
     {
         if (data != null)
         {
-            if (!Directory.Exists(Game.path + "Saves/" + PlayerPrefs.GetInt("Seed").ToString()))
+            if (!Directory.Exists(path + "Saves/" + PlayerPrefs.GetInt("Seed").ToString()))
             {
-                Directory.CreateDirectory(Game.path + "Saves/" + PlayerPrefs.GetInt("Seed").ToString());
+                Directory.CreateDirectory(path + "Saves/" + PlayerPrefs.GetInt("Seed").ToString());
                 Debug.Log("Creating save directory");
             }
-            FileStream stream = File.Create(Game.path + "Saves/" + PlayerPrefs.GetInt("Seed").ToString() + "/" + data.ID + ".dat");
+            FileStream stream = File.Create(path + "Saves/" + PlayerPrefs.GetInt("Seed").ToString() + "/" + data.ID + ".dat");
             BinaryFormatter bf = new BinaryFormatter();
 
             SaveData SD = new SaveData();
@@ -520,7 +498,7 @@ public class Game : MonoBehaviour
             SD.health = data.health;
             SD.food = data.food;
             SD.water = data.water;
-            SD.Version = Game.Version;
+            SD.Version = Version;
             SD.Username = data.Username;
 
             bf.Serialize(stream, SD);
@@ -794,6 +772,8 @@ public class Game : MonoBehaviour
 
     private void Start()
     {
+        File.Delete(Application.dataPath + "/../UnknownStudios.txt");
+
         string dp = Application.persistentDataPath;
         string[] s = dp.Split("/"[0]);
         _ProjectName = s[s.Length - 1];
