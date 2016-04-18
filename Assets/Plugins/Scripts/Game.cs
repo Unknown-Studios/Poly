@@ -293,7 +293,7 @@ public class Game : MonoBehaviour
 
     public static Color InterColor(Color color)
     {
-        return new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b, 1);
+        return new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b, color.a);
     }
 
     public static SaveData Load(string UserID, string Username)
