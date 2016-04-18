@@ -81,20 +81,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _ReflectionTex
-        second:
-          m_Texture: {fileID: 8400000, guid: 21bb33409d118354d000dcabe39e7c39, type: 2}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ShoreTex
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _Detail
         second:
           m_Texture: {fileID: 0}
@@ -103,6 +89,20 @@ Material:
       data:
         first:
           name: _Cube
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ReflectionTex
+        second:
+          m_Texture: {fileID: 8400000, guid: 21bb33409d118354d000dcabe39e7c39, type: 2}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ShoreTex
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -272,6 +272,10 @@ Material:
         second: 0
       data:
         first:
+          name: _CullDistance
+        second: 2500
+      data:
+        first:
           name: _SkyExponent1
         second: 2
       data:
@@ -284,8 +288,8 @@ Material:
         second: 10
       data:
         first:
-          name: _CullDistance
-        second: 2500
+          name: _InvFade
+        second: 1
       data:
         first:
           name: _FresnelScale
@@ -293,10 +297,6 @@ Material:
       data:
         first:
           name: _GerstnerIntensity
-        second: 1
-      data:
-        first:
-          name: _InvFade
         second: 1
       data:
         first:
@@ -365,6 +365,10 @@ Material:
         second: {r: 0, g: 0, b: 0, a: 0}
       data:
         first:
+          name: White
+        second: {r: 0.8455882, g: 0.83937067, b: 0.83937067, a: 0}
+      data:
+        first:
           name: _SkyColor1
         second: {r: 0.37, g: 0.52, b: 0.73, a: 0}
       data:
@@ -381,8 +385,12 @@ Material:
         second: {r: 1, g: 0.99, b: 0.87, a: 1}
       data:
         first:
-          name: White
-        second: {r: 0.8455882, g: 0.83937067, b: 0.83937067, a: 0}
+          name: _TintColor
+        second: {r: 0, g: 0, b: 0.11764706, a: 0.3764706}
+      data:
+        first:
+          name: _ReflectColor
+        second: {r: 1, g: 1, b: 1, a: 0.5}
       data:
         first:
           name: _BumpMap_ST
@@ -455,14 +463,6 @@ Material:
         first:
           name: _GDirectionCD
         second: {r: 0.1, g: 0.9, b: 0.5, a: 0.5}
-      data:
-        first:
-          name: _TintColor
-        second: {r: 0, g: 0, b: 0.11764706, a: 0.3764706}
-      data:
-        first:
-          name: _ReflectColor
-        second: {r: 1, g: 1, b: 1, a: 0.5}
       data:
         first:
           name: _Tint

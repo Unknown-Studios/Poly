@@ -34,9 +34,7 @@ public class PCEditor : Editor
         PC.TerrainMaterial = (Material)EditorGUILayout.ObjectField(PC.TerrainMaterial, typeof(Material), true);
 
         serializedObject.Update();
-        SerializedProperty tps = serializedObject.FindProperty("Regions");
         EditorGUI.BeginChangeCheck();
-        EditorGUILayout.PropertyField(tps, true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("curve"), new GUIContent("Height Curve: "));
         if (EditorGUI.EndChangeCheck())
             serializedObject.ApplyModifiedProperties();
