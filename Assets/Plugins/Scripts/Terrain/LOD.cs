@@ -98,21 +98,20 @@ public class LOD : MonoBehaviour
         norm[ve] = s;
         vert[ve] = norm[ve] * (Radius + MaxHeight * h);
 
-        for (int i = 0; i < Regions.Length; i++)
-        {
-            float steepsness = Vector3.Angle(s, vert[ve].normalized);
+		float steepsness = Vector3.Angle(s, vert[ve].normalized);
 
-            if (0.2f < steepsness)
-            {
-                colors[ve] = new Color(0.1f, 0.1f, 0.1f);
-            }
-            //Height
-            else if (Regions[i].height <= h)
-            {
-                colors[ve] = Regions[i].color;
-            }
-        }
-
+		if (0.2f < steepsness) {
+			colors [ve] = new Color (0.1f, 0.1f, 0.1f);
+		} else {
+			for (int i = Regions.Length - 1; i > 0; i--)
+	        {
+	            //Height
+	            if (Regions[i].height <= h)
+	            {
+	                colors[ve] = Regions[i].color;
+	            }
+	        }
+		}
         ve++;
     }
 
