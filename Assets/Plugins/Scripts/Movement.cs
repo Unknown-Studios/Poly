@@ -14,11 +14,8 @@ public class Movement : NetworkBehaviour
     private Animator anim1;
     private int SpeedHash = Animator.StringToHash("Speed");
     private int SprintHash = Animator.StringToHash("Sprint");
-    private int CrouchHash = Animator.StringToHash("Crouch");
 
     private bool isSliding;
-
-    private ProceduralSphere PS;
 
     private float time;
 
@@ -42,7 +39,6 @@ public class Movement : NetworkBehaviour
 
     private void Start()
     {
-        PS = GameObject.Find("GameController").GetComponent<ProceduralSphere>();
         anim = transform.Find("Hands").GetComponent<Animator>();
         anim1 = transform.Find("Player").GetComponent<Animator>();
         body = GetComponent<Rigidbody>();

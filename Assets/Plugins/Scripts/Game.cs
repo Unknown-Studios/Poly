@@ -57,8 +57,6 @@ public class Game : MonoBehaviour
 
     private static bool Reachable = true;
 
-    private static int Repeat = 1;
-
     private static float time1;
 
     private static float Y = -50;
