@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 public class Splash : MonoBehaviour
 {
     public Texture2D icon;
+	Texture2D iconInvert;
+
     public string Name;
 
     private Color color = new Color(1, 1, 1, 1);
@@ -24,7 +26,7 @@ public class Splash : MonoBehaviour
         GUI.skin.label.fontSize = 25;
         GUI.backgroundColor = Color.clear;
         GUI.Label(new Rect(0, Screen.height / 2, Screen.width, 50), Name);
-        GUI.DrawTexture(new Rect(Screen.width / 2 - 50, Screen.height / 2 - 100, 100, 100), icon);
+		GUI.DrawTexture(new Rect(Screen.width / 2 - 50, Screen.height / 2 - 100, 100, 100), iconInvert);
         GUI.skin.label.fontSize = fonts;
     }
 
@@ -33,6 +35,15 @@ public class Splash : MonoBehaviour
         Screen.SetResolution(PlayerPrefs.GetInt("Screenmanager Resolution Width"), PlayerPrefs.GetInt("Screenmanager Resolution Height"), Game.ToBoolean(PlayerPrefs.GetInt("Screenmanager Is Fullscreen mode")));
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+
+		iconInvert = new Texture2D (icon.width, icon.height, TextureFormat.RGBA32, true);
+		for (int x = 0; x < icon.width; x++) {
+			for (int y = 0; y < icon.height; y++) {
+				iconInvert.SetPixel (x, y, Game.InterColor (icon.GetPixel (x, y)));
+			}
+		}
+		iconInvert.Apply ();
     }
 
     private void Update()

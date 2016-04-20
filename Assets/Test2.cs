@@ -11,53 +11,43 @@ public class Test2 : MonoBehaviour
     public int mOctaves = 3;
     public float mFreq = 0.1f;
 
-    private RidgeNoise noise;
-    private PinkNoise pink;
 
-    private void Start()
-    {
-        Random.seed = PlayerPrefs.GetInt("Seed");
-        noise = new RidgeNoise(Random.seed);
-        pink = new PinkNoise(Random.seed);
-        pink.OctaveCount = Octaves;
-        pink.Frequency = groundFrq;
-		pink.Persistence = Persistence;
-		pink.Lacunarity = 4.0f;
+	void Update() {
+		if (!drawing) {
+			StartCoroutine (GenerateTexture ());
+		}
+	}
 
-        noise.OctaveCount = mOctaves;
-        noise.Frequency = mFreq;
-		StartCoroutine (GenerateTexture ());
-    }
+	void Start() {
 
-	public AnimationCurve curve;
+		tex = new Texture2D (250, 250);
+	}
+
+	void OnGUI() {
+		GUI.DrawTexture (new Rect ((Screen.width/2)-125,(Screen.height/2)-125, 250, 250), tex);
+	}
+
+	private bool drawing;
+	public Texture2D tex;
 	public float scale;
+	public float speed = 1.0f;
 
     private IEnumerator GenerateTexture()
     {
-		while (true) {
-			pink.OctaveCount = Octaves;
-			pink.Frequency = groundFrq;
+		drawing = true;
+		for (int x = 0; x < tex.width; x++) {
+			for (int y = 0; y < tex.height; y++) {
+				
+				float h = Mathf.PerlinNoise((((float)(x+(Time.time*speed))/tex.width)/scale), ((float)(y+(Time.time*speed))/tex.height)/scale);
 
-			noise.OctaveCount = mOctaves;
-			noise.Frequency = mFreq;
-
-			Mesh mesh = GetComponent<MeshFilter> ().mesh;
-			Vector3[] vert = mesh.vertices;
-			for (int i = 0; i < vert.Length; i++) {
-				float plain = (pink.GetValue (transform.position.x + vert [i].x, transform.position.z + vert [i].z, 0)+1.0f) / 3.0f;
-				float mountains = Mathf.Max (0f, noise.GetValue (transform.position.x + vert [i].x - 549, transform.position.z + vert [i].z + 2585, 0f) - 0.75f) / 2.0f;
-
-				float h = plain + mountains;
-
-				vert [i].y = curve.Evaluate (h) * 50f;
-				if (i % 50 == 0) {
-					yield return null;
-				}
+				tex.SetPixel (x, y,  new Color(h,h,h,1));
 			}
-			mesh.vertices = vert;
-
-			mesh.RecalculateBounds ();
-			mesh.RecalculateNormals ();
+			if (x % 10 == 0) {
+				yield return null;
+			}
 		}
+		tex.Apply ();
+		yield return null;
+		drawing = false;
     }
 }
