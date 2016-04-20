@@ -26,6 +26,7 @@ public class LOD : MonoBehaviour
 
     public ProceduralSphere.Region[] Regions;
     public AnimationCurve curve;
+    public float scale;
     private Mesh mesh;
     private int _LODLevel;
     private int LODLevel;
@@ -91,27 +92,33 @@ public class LOD : MonoBehaviour
     {
         Vector3 s = normalizedPoint(x, y, z);
 
-		float plain = (pink.GetValue(x, y, z - 111)+1.0f) / 3.0f;
-        float mountains = Mathf.Max(0f, noise.GetValue(x - 549, y + 2585, z + 54) - 0.75f) / 2.0f;
+        float plain = (pink.GetValue(x, y, z - 111) + 1.0f) / 3.0f;
+        Vector3 position = new Vector3(x, y, z) * scale;
 
-        float h = curve.Evaluate(Mathf.Clamp01(plain + mountains));
+        float n = Mathf.Max(0.0f, noise.GetValue(x - 549, y + 2585, z + 54));
+        float mountains = Mathf.Max(0f, (n - 0.5f));
+
+        float h = plain + curve.Evaluate(mountains);
         norm[ve] = s;
         vert[ve] = norm[ve] * (Radius + MaxHeight * h);
 
-		float steepsness = Vector3.Angle(s, vert[ve].normalized);
+        float steepsness = Vector3.Angle(s, vert[ve].normalized);
 
-		if (0.2f < steepsness) {
-			colors [ve] = new Color (0.1f, 0.1f, 0.1f);
-		} else {
-			for (int i = Regions.Length - 1; i > 0; i--)
-	        {
-	            //Height
-	            if (Regions[i].height <= h)
-	            {
-	                colors[ve] = Regions[i].color;
-	            }
-	        }
-		}
+        if (mountains > 0.05f)
+        {
+            colors[ve] = new Color(0.1f, 0.1f, 0.1f, 1);
+        }
+        else
+        {
+            for (int i = Regions.Length - 1; i > 0; i--)
+            {
+                //Height
+                if (h < Regions[i].height)
+                {
+                    colors[ve] = Regions[i].color;
+                }
+            }
+        }
         ve++;
     }
 
@@ -121,7 +128,7 @@ public class LOD : MonoBehaviour
         float x2 = v.x * v.x;
         float y2 = v.y * v.y;
         float z2 = v.z * v.z;
-        Vector3 s;
+        Vector3 s = new Vector3(x, y, z);
         s.x = v.x * Mathf.Sqrt(1f - y2 / 2f - z2 / 2f + y2 * z2 / 3f);
         s.y = v.y * Mathf.Sqrt(1f - x2 / 2f - z2 / 2f + x2 * z2 / 3f);
         s.z = v.z * Mathf.Sqrt(1f - x2 / 2f - y2 / 2f + x2 * y2 / 3f);
@@ -137,12 +144,13 @@ public class LOD : MonoBehaviour
         pink = new PinkNoise(PlayerPrefs.GetInt("Seed"));
         pink.OctaveCount = Octaves;
         pink.Frequency = 0.01f;
-		pink.Lacunarity = 4f;
-		pink.Persistence = 0.17f;
+        pink.Lacunarity = 4f;
+        pink.Persistence = 0.17f;
 
         noise.OctaveCount = Octaves;
-        noise.Frequency = 0.01f;
-
+        noise.Frequency = 0.0025f;
+        noise.Gain = 1f;
+        noise.Exponent = 2f;
 
         mesh = GetComponent<MeshFilter>().mesh;
         mc0 = GetComponent<MeshCollider>();

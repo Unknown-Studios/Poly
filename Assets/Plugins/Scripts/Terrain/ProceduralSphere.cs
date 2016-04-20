@@ -23,6 +23,7 @@ public class ProceduralSphere : MonoBehaviour
     public Region[] Regions;
 
     public AnimationCurve curve;
+    public float scale;
     private int ve;
     private GameObject[] sides;
 
@@ -67,6 +68,7 @@ public class ProceduralSphere : MonoBehaviour
                 lod.terrainMaterial = TerrainMaterial;
                 lod.Regions = Regions;
                 lod.curve = curve;
+                lod.scale = scale;
 
                 lod.Radius = Radius;
                 lod.MaxHeight = MaxHeight;

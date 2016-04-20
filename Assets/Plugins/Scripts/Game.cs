@@ -28,33 +28,22 @@ public class Game : MonoBehaviour
     public float DayLength;
     public int TimeOut;
     private static Game _instance;
-
     private static Action Clear = () => { };
 
     private static float CurrentTime;
-
     private static float dt;
-
     private static float fps;
-
     private static int frames;
-
     private static float intendedY;
 
     private static float Last1;
-
     private static float Last2;
-
     private static string LastLog;
-
     private static string MessageForLog;
 
     private static Action OnNo = () => { };
-
     private static Action OnYes = () => { };
-
     private static string PopupText;
-
     private static bool Reachable = true;
 
     private static float time1;

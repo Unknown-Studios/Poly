@@ -76,8 +76,9 @@ public class PCEditor : Editor
         }
 
         GUILayout.Space(10f);
-
+        GUI.backgroundColor = Color.gray;
         EditorGUILayout.LabelField("Terrain Settings: ", EditorStyles.boldLabel);
+        PC.scale = EditorGUILayout.FloatField("Scale: ", PC.scale);
         PC.Radius = EditorGUILayout.IntField("Radius: ", PC.Radius);
         PC.MaxHeight = EditorGUILayout.IntField("TerrainHeight: ", PC.MaxHeight);
         PC.Octaves = EditorGUILayout.IntField("Octaves: ", PC.Octaves);
