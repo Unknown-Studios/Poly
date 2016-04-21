@@ -1,4 +1,5 @@
-﻿using CoherentNoise.Generation.Fractal;
+﻿using CoherentNoise.Generation;
+using CoherentNoise.Generation.Fractal;
 using System.Collections;
 using UnityEngine;
 
@@ -67,9 +68,30 @@ public class LOD : MonoBehaviour
         }
     }
 
+    public IEnumerator SetMountains()
+    {
+        Vector3[] vertices = vert;
+        Vector3 endPoint = new Vector3();
+
+        for (int e = 0; e < vertices.Length; e++)
+        {
+            Vector3 StartPoint = norm[e] * (MaxHeight + 50.0f);
+            RaycastHit hit;
+            if (Physics.Raycast(StartPoint, endPoint, out hit))
+            {
+                if (Vector3.Angle(hit.normal, norm[e]) <= 45.0f)
+                {
+                    colors[e] = new Color(0.5f, 0.5f, 0.5f, 1.0f);
+                }
+            }
+        }
+
+        yield return null;
+    }
+
     private void CreateTriangle(ref int index, int x, int y)
     {
-        int LODWidth = (16 / _LODLevel) + 1;
+        int LODWidth = (ChunkWidth / _LODLevel) + 1;
 
         tri[index] = (y * LODWidth) + x;
         tri[index + 1] = ((y + 1) * LODWidth) + x;
@@ -92,33 +114,24 @@ public class LOD : MonoBehaviour
     {
         Vector3 s = normalizedPoint(x, y, z);
 
-        float plain = (pink.GetValue(x, y, z - 111) + 1.0f) / 3.0f;
-        Vector3 position = new Vector3(x, y, z) * scale;
+        float plain = (pink.GetValue(x, y, z) + 1.0f) / 2f;
 
         float n = Mathf.Max(0.0f, noise.GetValue(x - 549, y + 2585, z + 54));
-        float mountains = Mathf.Max(0f, (n - 0.5f));
+        float mountains = Mathf.Max(0f, (n - 0.75f));
 
         float h = plain + curve.Evaluate(mountains);
         norm[ve] = s;
         vert[ve] = norm[ve] * (Radius + MaxHeight * h);
 
-        float steepsness = Vector3.Angle(s, vert[ve].normalized);
-
-        if (mountains > 0.05f)
+        for (int i = Regions.Length - 1; i > 0; i--)
         {
-            colors[ve] = new Color(0.1f, 0.1f, 0.1f, 1);
-        }
-        else
-        {
-            for (int i = Regions.Length - 1; i > 0; i--)
+            //Height
+            if (h <= Regions[i].height || i == Regions.Length - 1)
             {
-                //Height
-                if (h < Regions[i].height)
-                {
-                    colors[ve] = Regions[i].color;
-                }
+                colors[ve] = Regions[i].color;
             }
         }
+
         ve++;
     }
 
@@ -142,9 +155,8 @@ public class LOD : MonoBehaviour
         Random.seed = PlayerPrefs.GetInt("Seed");
         noise = new RidgeNoise(PlayerPrefs.GetInt("Seed"));
         pink = new PinkNoise(PlayerPrefs.GetInt("Seed"));
-        pink.OctaveCount = Octaves;
-        pink.Frequency = 0.01f;
-        pink.Lacunarity = 4f;
+        pink.Frequency = 0.005f;
+        pink.Lacunarity = 1.2f;
         pink.Persistence = 0.17f;
 
         noise.OctaveCount = Octaves;
@@ -259,11 +271,14 @@ public class LOD : MonoBehaviour
         mesh.normals = norm;
         mesh.triangles = tri;
         mesh.uv = uv;
-        mesh.colors = colors;
 
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
         mc0.sharedMesh = mesh;
+        yield return null;
+        mc0.convex = true;
+        SetMountains();
+        mesh.colors = colors;
         yield return null;
     }
 }
