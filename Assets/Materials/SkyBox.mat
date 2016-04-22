@@ -32,11 +32,11 @@ Material:
       data:
         first:
           name: _SkyColor1
-        second: {r: 0.16271915, g: 0.17666657, b: 0.45162874, a: 0.97494453}
+        second: {r: 0.100063875, g: 0.10864081, b: 0.27772838, a: 0.59954053}
       data:
         first:
           name: _SkyColor2
-        second: {r: 0.16271915, g: 0.17666657, b: 0.45162874, a: 0.97494453}
+        second: {r: 0.100063875, g: 0.10864081, b: 0.27772838, a: 0.59954053}
       data:
         first:
           name: _MoonVector

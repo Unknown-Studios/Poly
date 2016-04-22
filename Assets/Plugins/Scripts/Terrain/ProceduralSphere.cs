@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -41,16 +42,31 @@ public class ProceduralSphere : MonoBehaviour
 
     private IEnumerator AddSide(int side)
     {
+        Stopwatch watch = new Stopwatch();
+        watch.Start();
         GameObject s0 = new GameObject();
         sides[side] = s0;
         s0.name = "Side #" + side;
         s0.transform.parent = transform;
 
-        MeshFilter mf0 = s0.AddComponent<MeshFilter>();
-        s0.AddComponent<MeshRenderer>();
-        s0.AddComponent<MeshCollider>();
-        Mesh m0 = mf0.mesh = new Mesh();
-        m0.name = "Side #" + side;
+        Texture2D tex = new Texture2D(Width, Width);
+        Material SideMaterial = new Material(TerrainMaterial);
+        for (int x = 0; x < Width; x++)
+        {
+            for (int y = 0; y < Width; y++)
+            {
+                if (x % 32 == 0 || y % 32 == 0)
+                {
+                    tex.SetPixel(x, y, Color.black);
+                }
+                else
+                {
+                    tex.SetPixel(x, y, Color.green);
+                }
+            }
+        }
+        tex.Apply();
+        SideMaterial.mainTexture = tex;
 
         for (int x = 0; x < Width / 16; x++)
         {
@@ -65,7 +81,7 @@ public class ProceduralSphere : MonoBehaviour
                 lod.side = side;
                 lod.Chunk = new Vector2(x, y);
                 lod.Width = Width;
-                lod.terrainMaterial = TerrainMaterial;
+                lod.terrainMaterial = SideMaterial;
                 lod.Regions = Regions;
                 lod.curve = curve;
                 lod.scale = scale;
@@ -73,8 +89,11 @@ public class ProceduralSphere : MonoBehaviour
                 lod.Radius = Radius;
                 lod.MaxHeight = MaxHeight;
                 lod.Octaves = Octaves;
+                if (y % 2 == 0)
+                {
+                    yield return null;
+                }
             }
-            yield return null;
         }
         progress = 1.0f / (6 - side);
         progress = Mathf.Clamp01(progress);
@@ -82,6 +101,8 @@ public class ProceduralSphere : MonoBehaviour
         {
             done = true;
         }
+        watch.Stop();
+        UnityEngine.Debug.Log(watch.ElapsedMilliseconds / 1000.0f);
     }
 
     private IEnumerator GenerateTerrain()

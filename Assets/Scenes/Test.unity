@@ -96,7 +96,7 @@ GameObject:
   - 114: {fileID: 17005512}
   - 114: {fileID: 17005514}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -141,8 +141,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a58ef42f0b583a41b97c5600b230c83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WidthTick: 9
-  Width: 512
+  WidthTick: 7
+  Width: 128
   Radius: 1000
   MaxHeight: 200
   done: 0
@@ -268,7 +268,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1350958404}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.07835552, y: 0.56345963, z: 0.29222524}
+  m_LocalPosition: {x: 5.38, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

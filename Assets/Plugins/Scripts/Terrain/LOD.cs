@@ -1,12 +1,11 @@
-﻿using CoherentNoise.Generation;
-using CoherentNoise.Generation.Fractal;
+﻿using CoherentNoise.Generation.Fractal;
 using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer))]
 public class LOD : MonoBehaviour
 {
-    public int TargetLOD = 4;
+    public int TargetLOD = 0;
 
     public float Distance;
 
@@ -45,8 +44,16 @@ public class LOD : MonoBehaviour
 
     private Color[] colors;
 
+    private bool SplashIt;
+
+    private bool FirstTime = false;
+
     public void UpdateLODSettings(Vector3 pos, int[] lodlevels)
     {
+        if (mc0 == null)
+        {
+            mc0 = GetComponent<MeshCollider>();
+        }
         Distance = Vector3.Distance(pos, mc0.bounds.center);
 
         //Calculate which LODLevel should be used.
@@ -68,25 +75,36 @@ public class LOD : MonoBehaviour
         }
     }
 
-    public IEnumerator SetMountains()
+    public void SetTargetLOD(int TargetLOD)
     {
-        Vector3[] vertices = vert;
-        Vector3 endPoint = new Vector3();
+        LODLevel = TargetLOD;
+        _LODLevel = (int)Mathf.Pow(2f, LODLevel);
+        StartCoroutine(GenerateMesh());
+    }
 
-        for (int e = 0; e < vertices.Length; e++)
+    public void SetMountains()
+    {
+        Vector3 endPoint = Vector3.zero;
+        for (int e = 0; e < norm.Length; e++)
         {
-            Vector3 StartPoint = norm[e] * (MaxHeight + 50.0f);
+            Vector3 StartPoint = norm[e] * (Radius + MaxHeight + 10.0f);
             RaycastHit hit;
-            if (Physics.Raycast(StartPoint, endPoint, out hit))
+            if (Physics.Raycast(endPoint, StartPoint, out hit))
             {
-                if (Vector3.Angle(hit.normal, norm[e]) <= 45.0f)
-                {
-                    colors[e] = new Color(0.5f, 0.5f, 0.5f, 1.0f);
-                }
+                colors[e] = Color.green;
             }
         }
+    }
 
+    public IEnumerator AddColliders()
+    {
+        mc0 = GetComponent<MeshCollider>();
+        mc0.sharedMesh = mesh;
         yield return null;
+        if (mesh.vertices.Length > 3 && mesh.triangles.Length > 3)
+        {
+            mc0.convex = true;
+        }
     }
 
     private void CreateTriangle(ref int index, int x, int y)
@@ -123,15 +141,6 @@ public class LOD : MonoBehaviour
         norm[ve] = s;
         vert[ve] = norm[ve] * (Radius + MaxHeight * h);
 
-        for (int i = Regions.Length - 1; i > 0; i--)
-        {
-            //Height
-            if (h <= Regions[i].height || i == Regions.Length - 1)
-            {
-                colors[ve] = Regions[i].color;
-            }
-        }
-
         ve++;
     }
 
@@ -165,7 +174,6 @@ public class LOD : MonoBehaviour
         noise.Exponent = 2f;
 
         mesh = GetComponent<MeshFilter>().mesh;
-        mc0 = GetComponent<MeshCollider>();
         mr0 = GetComponent<MeshRenderer>();
         mr0.material = terrainMaterial;
 
@@ -180,7 +188,6 @@ public class LOD : MonoBehaviour
         norm = new Vector3[vert.Length];
         uv = new Vector2[vert.Length];
         tri = new int[vert.Length * 6];
-        colors = new Color[vert.Length];
         ve = 0;
 
         switch (side)
@@ -262,7 +269,7 @@ public class LOD : MonoBehaviour
         {
             for (int x = 0; x <= LODW; x++, i++)
             {
-                uv[i] = new Vector2((float)x / LODW, (float)y / LODW);
+                uv[i] = new Vector2(1.0f - (float)y / LODW, (float)x / LODW);
             }
         }
 
@@ -274,11 +281,16 @@ public class LOD : MonoBehaviour
 
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
-        mc0.sharedMesh = mesh;
-        yield return null;
-        mc0.convex = true;
-        SetMountains();
-        mesh.colors = colors;
+
+        if (!FirstTime)
+        {
+            FirstTime = true;
+            StartCoroutine(AddColliders());
+            yield return null;
+            SetMountains();
+            yield return null;
+            SetTargetLOD(4);
+        }
         yield return null;
     }
 }

@@ -31,7 +31,6 @@ public class PCEditor : Editor
         PC.WidthTick = EditorGUILayout.IntSlider("Width Tick: ", PC.WidthTick, 4, 10);
         PC.Width = Mathf.RoundToInt(Mathf.Pow(2, PC.WidthTick));
         EditorGUILayout.LabelField("Width: " + PC.Width);
-        PC.TerrainMaterial = (Material)EditorGUILayout.ObjectField(PC.TerrainMaterial, typeof(Material), true);
 
         serializedObject.Update();
         EditorGUI.BeginChangeCheck();
@@ -78,6 +77,7 @@ public class PCEditor : Editor
         GUILayout.Space(10f);
         GUI.backgroundColor = Color.gray;
         EditorGUILayout.LabelField("Terrain Settings: ", EditorStyles.boldLabel);
+        PC.TerrainMaterial = (Material)EditorGUILayout.ObjectField(PC.TerrainMaterial, typeof(Material), true);
         PC.scale = EditorGUILayout.FloatField("Scale: ", PC.scale);
         PC.Radius = EditorGUILayout.IntField("Radius: ", PC.Radius);
         PC.MaxHeight = EditorGUILayout.IntField("TerrainHeight: ", PC.MaxHeight);
