@@ -72,7 +72,7 @@ public class LOD : MonoBehaviour
         {
             LODLevel = TargetLOD;
             _LODLevel = (int)Mathf.Pow(2f, LODLevel);
-            StartCoroutine(GenerateMesh());
+			StartCoroutine(GenerateMesh(LODLevel == 0));
         }
     }
 
@@ -80,7 +80,7 @@ public class LOD : MonoBehaviour
     {
         LODLevel = TargetLOD;
         _LODLevel = (int)Mathf.Pow(2f, LODLevel);
-        StartCoroutine(GenerateMesh());
+		StartCoroutine(GenerateMesh());
     }
 
     private void CreateTriangle(ref int index, int x, int y)
@@ -168,7 +168,7 @@ public class LOD : MonoBehaviour
         StartCoroutine(GenerateMesh());
     }
 
-    private IEnumerator GenerateMesh()
+	private IEnumerator GenerateMesh(bool forceCollider = false)
     {
         int LODW = ChunkWidth / _LODLevel;
 
@@ -265,10 +265,19 @@ public class LOD : MonoBehaviour
         {
             FirstTime = true;
             StartCoroutine(AddSplash());
-            mc0.sharedMesh = mesh;
+			mc0.sharedMesh = mesh;
+			while (!SplashDone) {
+				yield return null;
+			}
+			SetTargetLOD (4);
         }
+		if (forceCollider && !mc0.convex) {
+			mc0.convex = true;
+		}
         yield return null;
     }
+
+	bool SplashDone = false;
 
     private void AddUV(int LODW)
     {
@@ -457,5 +466,6 @@ public class LOD : MonoBehaviour
         }
         tex.Apply();
         mr0.material.mainTexture = tex;
+		SplashDone = true;
     }
 }

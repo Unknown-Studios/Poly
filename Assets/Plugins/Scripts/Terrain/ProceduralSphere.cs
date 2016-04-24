@@ -36,57 +36,93 @@ public class ProceduralSphere : MonoBehaviour
         StartCoroutine(GenerateTerrain());
     }
 
+	//Called on script load.
     private void Start()
     {
         if (SceneManager.GetActiveScene().name != "Game")
             OnBeforeSpawn(Vector3.zero);
     }
 
+	public void Update() {
+		if (done == true) {
+			done = false;
+
+		}
+	}
+
+	//Redirect to GetHeight(Vector3);
+	public Vector3 GetHeight(float x, float y, float z) {
+		return GetHeight (new Vector3 (x, y, z));
+	}
+
+	//Get the height of the terrain in any point
+	public Vector3 GetHeight(Vector3 v3) {
+		Vector3 startPos = new Vector3 ();
+		RaycastHit hit;
+		//If height found
+		if (Physics.Raycast (startPos, Vector3.zero, out hit, (MaxHeight+Radius)*2f)) {
+			//Add 0.5 to the height
+			Vector3 normal = hit.point / (Radius + MaxHeight);
+			Vector3 position = normal * (Radius + MaxHeight + 0.5f);
+
+			return position;
+		} else {
+			return Vector3.zero * Mathf.Infinity;
+		}
+	}
+
+	int numSides = 0;
+
+	//Add a side of the cube/cubesphere
     private IEnumerator AddSide(int side)
     {
-        GameObject s0 = new GameObject();
-        sides[side] = s0;
-        s0.name = "Side #" + side;
-        s0.transform.parent = transform;
+		if (numSides < 6) { 
+			GameObject s0 = new GameObject ();
+			sides [side] = s0;
+			s0.name = "Side #" + side;
+			s0.transform.parent = transform;
 
-        Texture2D tex = new Texture2D(Width, Width);
-        tex.wrapMode = TextureWrapMode.Clamp;
-        tex.filterMode = FilterMode.Point;
-        Material SideMaterial = new Material(TerrainMaterial);
-        SideMaterial.mainTexture = tex;
-        float localProgress = 0.0f;
-        for (int x = 0; x < Width / 16; x++)
-        {
-            for (int y = 0; y < Width / 16; y++)
-            {
-                GameObject gm = new GameObject();
-                gm.transform.parent = s0.transform;
-                gm.name = "Chunk (" + x + "," + y + ") side #" + side;
-                gm.layer = LayerMask.NameToLayer("LOD");
+			Texture2D tex = new Texture2D (Width, Width);
+			tex.wrapMode = TextureWrapMode.Clamp;
+			tex.filterMode = FilterMode.Point;
+			Material SideMaterial = new Material (TerrainMaterial);
+			SideMaterial.mainTexture = tex;
+			float localProgress = 0.0f;
+			for (int x = 0; x < Width / 16; x++) {
+				for (int y = 0; y < Width / 16; y++) {
+					GameObject gm = new GameObject ();
+					gm.transform.parent = s0.transform;
+					gm.name = "Chunk (" + x + "," + y + ") side #" + side;
+					gm.layer = LayerMask.NameToLayer ("LOD");
 
-                LOD lod = gm.AddComponent<LOD>();
-                lod.side = side;
-                lod.Chunk = new Vector2(x, y);
-                lod.Width = Width;
-                lod.terrainMaterial = SideMaterial;
-                lod.Regions = Regions;
-                lod.curve = curve;
-                lod.scale = scale;
+					LOD lod = gm.AddComponent<LOD> ();
+					lod.side = side;
+					lod.Chunk = new Vector2 (x, y);
+					lod.Width = Width;
+					lod.terrainMaterial = SideMaterial;
+					lod.Regions = Regions;
+					lod.curve = curve;
+					lod.scale = scale;
 
-                lod.Radius = Radius;
-                lod.MaxHeight = MaxHeight;
-                lod.Octaves = Octaves;
-                queue.Enqueue(gm);
-                if (y % 2 == 0)
-                {
-                    yield return null;
-                }
-            }
-            localProgress = (x + 1) / (Width / 16f);
+					lod.Radius = Radius;
+					lod.MaxHeight = MaxHeight;
+					lod.Octaves = Octaves;
+					queue.Enqueue (gm);
+					if (y % 2 == 0) {
+						yield return null;
+					}
+				}
+				localProgress = (x + 1) / (Width / 16f);
 
-            progress = Mathf.Clamp01(localProgress / (6 - side));
-        }
-
+				progress = Mathf.Clamp01 (localProgress / (6 - side));
+			}
+			while (progress != 1.0f) {
+				yield return null;
+			}
+			numSides++;
+		} else {
+			progress = 1.0f;
+		}
         if (progress == 1.0f)
         {
             done = true;
@@ -109,6 +145,7 @@ public class ProceduralSphere : MonoBehaviour
                 lod.SetTargetLOD(4);
             }
         }
+		Debug.Log (GetHeight(Random.onUnitSphere));
     }
 
     private IEnumerator GenerateTerrain()
