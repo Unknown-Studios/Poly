@@ -251,7 +251,7 @@ public class LOD : MonoBehaviour
                 CreateTriangle(ref ti, x, y);
             }
         }
-        AddUV(LODW);
+		AddUV(LODW);
 
         mesh.Clear();
         mesh.vertices = vert;
@@ -274,7 +274,7 @@ public class LOD : MonoBehaviour
     {
         int i = 0;
         Vector2 start = new Vector2((LODW * Chunk.x), (LODW * Chunk.y));
-        int UVSize = LODW * 8;
+        int UVSize = LODW * 16;
         switch (side)
         {
             case 0:
