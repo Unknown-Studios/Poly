@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -28,6 +28,8 @@ public class ProceduralSphere : MonoBehaviour
     private int ve;
     private GameObject[] sides;
 
+    private Queue<GameObject> queue;
+
     // Use this for initialization
     public void OnBeforeSpawn(Vector3 SpawnPos)
     {
@@ -42,32 +44,17 @@ public class ProceduralSphere : MonoBehaviour
 
     private IEnumerator AddSide(int side)
     {
-        Stopwatch watch = new Stopwatch();
-        watch.Start();
         GameObject s0 = new GameObject();
         sides[side] = s0;
         s0.name = "Side #" + side;
         s0.transform.parent = transform;
 
         Texture2D tex = new Texture2D(Width, Width);
+        tex.wrapMode = TextureWrapMode.Clamp;
+        tex.filterMode = FilterMode.Point;
         Material SideMaterial = new Material(TerrainMaterial);
-        for (int x = 0; x < Width; x++)
-        {
-            for (int y = 0; y < Width; y++)
-            {
-                if (x % 32 == 0 || y % 32 == 0)
-                {
-                    tex.SetPixel(x, y, Color.black);
-                }
-                else
-                {
-                    tex.SetPixel(x, y, Color.green);
-                }
-            }
-        }
-        tex.Apply();
         SideMaterial.mainTexture = tex;
-
+        float localProgress = 0.0f;
         for (int x = 0; x < Width / 16; x++)
         {
             for (int y = 0; y < Width / 16; y++)
@@ -89,24 +76,44 @@ public class ProceduralSphere : MonoBehaviour
                 lod.Radius = Radius;
                 lod.MaxHeight = MaxHeight;
                 lod.Octaves = Octaves;
+                queue.Enqueue(gm);
                 if (y % 2 == 0)
                 {
                     yield return null;
                 }
             }
+            localProgress = (x + 1) / (Width / 16f);
+
+            progress = Mathf.Clamp01(localProgress / (6 - side));
         }
-        progress = 1.0f / (6 - side);
-        progress = Mathf.Clamp01(progress);
+
         if (progress == 1.0f)
         {
             done = true;
         }
-        watch.Stop();
-        UnityEngine.Debug.Log(watch.ElapsedMilliseconds / 1000.0f);
+    }
+
+    private IEnumerator AddColliders()
+    {
+        while (queue.Count > 0)
+        {
+            GameObject current = queue.Dequeue();
+            MeshCollider mc = current.GetComponent<MeshCollider>();
+            if (mc.convex != true)
+            {
+                LOD lod = current.GetComponent<LOD>();
+                lod.SetTargetLOD(0);
+                yield return null;
+                mc.convex = true;
+                yield return null;
+                lod.SetTargetLOD(4);
+            }
+        }
     }
 
     private IEnumerator GenerateTerrain()
     {
+        queue = new Queue<GameObject>();
         sides = new GameObject[6];
 
         if (!PlayerPrefs.HasKey("Seed"))
@@ -119,6 +126,11 @@ public class ProceduralSphere : MonoBehaviour
             StartCoroutine(AddSide(i));
             yield return null;
         }
+        while (!done)
+        {
+            yield return null;
+        }
+        StartCoroutine(AddColliders());
         yield return null;
     }
 

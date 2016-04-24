@@ -141,10 +141,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a58ef42f0b583a41b97c5600b230c83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WidthTick: 7
-  Width: 128
+  WidthTick: 8
+  Width: 256
   Radius: 1000
-  MaxHeight: 200
+  MaxHeight: 350
   done: 0
   Octaves: 3
   TerrainMaterial: {fileID: 2100000, guid: 08aeff6d473330a4597b4ce7d53eed3e, type: 2}
@@ -171,7 +171,7 @@ MonoBehaviour:
       inSlope: 0
       outSlope: 0
       tangentMode: 0
-    - time: 0.8010753
+    - time: 1
       value: 1
       inSlope: 2
       outSlope: 2

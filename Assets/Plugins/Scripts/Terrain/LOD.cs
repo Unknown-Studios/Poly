@@ -32,6 +32,7 @@ public class LOD : MonoBehaviour
     private int LODLevel;
     private int ve;
     private RidgeNoise noise;
+    private RidgeNoise hills;
     private PinkNoise pink;
     private MeshRenderer mr0;
     private MeshCollider mc0;
@@ -82,31 +83,6 @@ public class LOD : MonoBehaviour
         StartCoroutine(GenerateMesh());
     }
 
-    public void SetMountains()
-    {
-        Vector3 endPoint = Vector3.zero;
-        for (int e = 0; e < norm.Length; e++)
-        {
-            Vector3 StartPoint = norm[e] * (Radius + MaxHeight + 10.0f);
-            RaycastHit hit;
-            if (Physics.Raycast(endPoint, StartPoint, out hit))
-            {
-                colors[e] = Color.green;
-            }
-        }
-    }
-
-    public IEnumerator AddColliders()
-    {
-        mc0 = GetComponent<MeshCollider>();
-        mc0.sharedMesh = mesh;
-        yield return null;
-        if (mesh.vertices.Length > 3 && mesh.triangles.Length > 3)
-        {
-            mc0.convex = true;
-        }
-    }
-
     private void CreateTriangle(ref int index, int x, int y)
     {
         int LODWidth = (ChunkWidth / _LODLevel) + 1;
@@ -132,14 +108,18 @@ public class LOD : MonoBehaviour
     {
         Vector3 s = normalizedPoint(x, y, z);
 
-        float plain = (pink.GetValue(x, y, z) + 1.0f) / 2f;
+        float plain = (pink.GetValue(x, y, z) + 1.0f) / 4f;
 
-        float n = Mathf.Max(0.0f, noise.GetValue(x - 549, y + 2585, z + 54));
-        float mountains = Mathf.Max(0f, (n - 0.75f));
+        float n = Mathf.Max(0f, noise.GetValue(x - 549, y + 2585, z + 54));
+        float mountains = Mathf.Max(0f, (n - 0.75f) * 1.25f);
 
-        float h = plain + curve.Evaluate(mountains);
+        float hill = Mathf.Max(0f, hills.GetValue(x + 549, y - 2585, z - 544));
+        hill = Mathf.Max(0f, (hill - 0.5f) / 10f);
+
+        mountains = curve.Evaluate(mountains);
+
         norm[ve] = s;
-        vert[ve] = norm[ve] * (Radius + MaxHeight * h);
+        vert[ve] = norm[ve] * (Radius + MaxHeight * (mountains + plain + hill));
 
         ve++;
     }
@@ -164,17 +144,25 @@ public class LOD : MonoBehaviour
         Random.seed = PlayerPrefs.GetInt("Seed");
         noise = new RidgeNoise(PlayerPrefs.GetInt("Seed"));
         pink = new PinkNoise(PlayerPrefs.GetInt("Seed"));
+        hills = new RidgeNoise(PlayerPrefs.GetInt("Seed"));
+
         pink.Frequency = 0.005f;
         pink.Lacunarity = 1.2f;
         pink.Persistence = 0.17f;
 
-        noise.OctaveCount = Octaves;
+        noise.OctaveCount = Octaves * 2;
         noise.Frequency = 0.0025f;
         noise.Gain = 1f;
         noise.Exponent = 2f;
 
+        hills.OctaveCount = 2;
+        hills.Frequency = 0.01f;
+        hills.Gain = 1f;
+        hills.Exponent = 2f;
+
         mesh = GetComponent<MeshFilter>().mesh;
         mr0 = GetComponent<MeshRenderer>();
+        mc0 = GetComponent<MeshCollider>();
         mr0.material = terrainMaterial;
 
         StartCoroutine(GenerateMesh());
@@ -263,15 +251,7 @@ public class LOD : MonoBehaviour
                 CreateTriangle(ref ti, x, y);
             }
         }
-
-        int i = 0;
-        for (int y = 0; y <= LODW; y++)
-        {
-            for (int x = 0; x <= LODW; x++, i++)
-            {
-                uv[i] = new Vector2(1.0f - (float)y / LODW, (float)x / LODW);
-            }
-        }
+        AddUV(LODW);
 
         mesh.Clear();
         mesh.vertices = vert;
@@ -281,16 +261,201 @@ public class LOD : MonoBehaviour
 
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
-
         if (!FirstTime)
         {
             FirstTime = true;
-            StartCoroutine(AddColliders());
-            yield return null;
-            SetMountains();
-            yield return null;
-            SetTargetLOD(4);
+            StartCoroutine(AddSplash());
+            mc0.sharedMesh = mesh;
         }
         yield return null;
+    }
+
+    private void AddUV(int LODW)
+    {
+        int i = 0;
+        Vector2 start = new Vector2((LODW * Chunk.x), (LODW * Chunk.y));
+        int UVSize = LODW * 8;
+        switch (side)
+        {
+            case 0:
+                for (int y = 0; y <= LODW; y++)
+                {
+                    for (int x = 0; x <= LODW; x++, i++)
+                    {
+                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
+                    }
+                }
+                break;
+
+            case 1:
+                for (int x = 0; x <= LODW; x++)
+                {
+                    for (int y = 0; y <= LODW; y++, i++)
+                    {
+                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
+                    }
+                }
+                break;
+
+            case 2:
+                for (int y = 0; y <= LODW; y++)
+                {
+                    for (int x = LODW; x >= 0; x--, i++)
+                    {
+                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
+                    }
+                }
+                break;
+
+            case 3:
+                for (int y = 0; y <= LODW; y++)
+                {
+                    for (int x = 0; x <= LODW; x++, i++)
+                    {
+                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
+                    }
+                }
+                break;
+
+            case 4:
+                for (int y = 0; y <= LODW; y++)
+                {
+                    for (int x = 0; x <= LODW; x++, i++)
+                    {
+                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
+                    }
+                }
+                break;
+
+            case 5:
+                for (int x = 0; x <= LODW; x++)
+                {
+                    for (int y = 0; y <= LODW; y++, i++)
+                    {
+                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private IEnumerator AddSplash()
+    {
+        Texture2D tex = (Texture2D)mr0.material.mainTexture;
+        Vector2 start = new Vector2(ChunkWidth * Chunk.x, ChunkWidth * Chunk.y);
+        int i = 0;
+
+        switch (side)
+        {
+            case 0:
+                for (int y = 0; y <= ChunkWidth; y++)
+                {
+                    yield return null;
+                    for (int x = 0; x <= ChunkWidth; x++, i++)
+                    {
+                        for (int r = Regions.Length - 1; r > 0; r--)
+                        {
+                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            {
+                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case 1:
+                for (int x = 0; x <= ChunkWidth; x++)
+                {
+                    yield return null;
+                    for (int y = 0; y <= ChunkWidth; y++, i++)
+                    {
+                        for (int r = Regions.Length - 1; r > 0; r--)
+                        {
+                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            {
+                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case 2:
+                for (int y = 0; y <= ChunkWidth; y++)
+                {
+                    yield return null;
+                    for (int x = ChunkWidth; x >= 0; x--, i++)
+                    {
+                        for (int r = Regions.Length - 1; r > 0; r--)
+                        {
+                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            {
+                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case 3:
+                for (int y = 0; y <= ChunkWidth; y++)
+                {
+                    yield return null;
+                    for (int x = 0; x <= ChunkWidth; x++, i++)
+                    {
+                        for (int r = Regions.Length - 1; r > 0; r--)
+                        {
+                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            {
+                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case 4:
+                for (int y = 0; y <= ChunkWidth; y++)
+                {
+                    yield return null;
+                    for (int x = 0; x <= ChunkWidth; x++, i++)
+                    {
+                        for (int r = Regions.Length - 1; r > 0; r--)
+                        {
+                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            {
+                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case 5:
+                for (int x = 0; x <= ChunkWidth; x++)
+                {
+                    yield return null;
+                    for (int y = 0; y <= ChunkWidth; y++, i++)
+                    {
+                        for (int r = Regions.Length - 1; r > 0; r--)
+                        {
+                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            {
+                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }
+        tex.Apply();
+        mr0.material.mainTexture = tex;
     }
 }
