@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
-[System.Serializable]
+[Serializable]
 public class ProceduralSphere : MonoBehaviour
 {
     public int WidthTick;
@@ -13,7 +15,7 @@ public class ProceduralSphere : MonoBehaviour
     public int Radius;
     public int MaxHeight;
 
-	public int Seed;
+    public int Seed;
 
     [HideInInspector]
     public bool done;
@@ -32,103 +34,127 @@ public class ProceduralSphere : MonoBehaviour
 
     private Queue<GameObject> queue;
 
+    private int numSides = 0;
+
+    private ThreadedJob thread;
+
     // Use this for initialization
     public void OnBeforeSpawn(Vector3 SpawnPos)
     {
         StartCoroutine(GenerateTerrain());
     }
 
-	//Called on script load.
+    public void Update()
+    {
+        if (done == true)
+        {
+            done = false;
+        }
+    }
+
+    //Redirect to GetHeight(Vector3);
+    public Vector3 GetHeight(float x, float y, float z)
+    {
+        return GetHeight(new Vector3(x, y, z));
+    }
+
+    //Get the height of the terrain in any point
+    public Vector3 GetHeight(Vector3 v3)
+    {
+        Vector3 startPos = new Vector3();
+        RaycastHit hit;
+        //If height found
+        if (Physics.Raycast(startPos, Vector3.zero, out hit, (MaxHeight + Radius) * 2f))
+        {
+            //Add 0.5 to the height
+            Vector3 normal = hit.point / (Radius + MaxHeight);
+            Vector3 position = normal * (Radius + MaxHeight + 0.5f);
+
+            return position;
+        }
+        else
+        {
+            return Vector3.zero * Mathf.Infinity;
+        }
+    }
+
+    //Called on script load.
     private void Start()
     {
         if (SceneManager.GetActiveScene().name != "Game")
             OnBeforeSpawn(Vector3.zero);
     }
 
-	public void Update() {
-		if (done == true) {
-			done = false;
+    private void Awake()
+    {
+        PlayerPrefs.SetInt("Seed", Seed);
+        PlayerPrefs.Save();
+    }
 
-		}
-	}
-	void Awake() {
-		PlayerPrefs.SetInt ("Seed", Seed);
-		PlayerPrefs.Save ();
-	}
-
-	//Redirect to GetHeight(Vector3);
-	public Vector3 GetHeight(float x, float y, float z) {
-		return GetHeight (new Vector3 (x, y, z));
-	}
-
-	//Get the height of the terrain in any point
-	public Vector3 GetHeight(Vector3 v3) {
-		Vector3 startPos = new Vector3 ();
-		RaycastHit hit;
-		//If height found
-		if (Physics.Raycast (startPos, Vector3.zero, out hit, (MaxHeight+Radius)*2f)) {
-			//Add 0.5 to the height
-			Vector3 normal = hit.point / (Radius + MaxHeight);
-			Vector3 position = normal * (Radius + MaxHeight + 0.5f);
-
-			return position;
-		} else {
-			return Vector3.zero * Mathf.Infinity;
-		}
-	}
-
-	int numSides = 0;
-
-	//Add a side of the cube/cubesphere
+    //Add a side of the cube/cubesphere
     private IEnumerator AddSide(int side)
     {
-		if (numSides < 6) { 
-			GameObject s0 = new GameObject ();
-			sides [side] = s0;
-			s0.name = "Side #" + side;
-			s0.transform.parent = transform;
+        if (numSides < 6)
+        {
+            if (thread == null)
+            {
+                thread = new ThreadedJob();
+            }
 
-			Texture2D tex = new Texture2D (Width, Width);
-			tex.wrapMode = TextureWrapMode.Clamp;
-			tex.filterMode = FilterMode.Point;
-			Material SideMaterial = new Material (TerrainMaterial);
-			SideMaterial.mainTexture = tex;
-			float localProgress = 0.0f;
-			for (int x = 0; x < Width / 16; x++) {
-				for (int y = 0; y < Width / 16; y++) {
-					GameObject gm = new GameObject ();
-					gm.transform.parent = s0.transform;
-					gm.name = "Chunk (" + x + "," + y + ") side #" + side;
-					gm.layer = LayerMask.NameToLayer ("LOD");
+            GameObject s0 = new GameObject();
+            sides[side] = s0;
+            s0.name = "Side #" + side;
+            s0.transform.parent = transform;
 
-					LOD lod = gm.AddComponent<LOD> ();
-					lod.side = side;
-					lod.Chunk = new Vector2 (x, y);
-					lod.Width = Width;
-					lod.terrainMaterial = SideMaterial;
-					lod.Regions = Regions;
-					lod.curve = curve;
-					lod.scale = scale;
+            Texture2D tex = new Texture2D(Width, Width);
+            tex.wrapMode = TextureWrapMode.Clamp;
+            tex.filterMode = FilterMode.Point;
+            Material SideMaterial = new Material(TerrainMaterial);
+            SideMaterial.mainTexture = tex;
+            float localProgress = 0.0f;
+            for (int x = 0; x < Width / 16; x++)
+            {
+                for (int y = 0; y < Width / 16; y++)
+                {
+                    GameObject gm = new GameObject();
+                    gm.transform.parent = s0.transform;
+                    gm.name = "Chunk (" + x + "," + y + ")";
+                    gm.layer = LayerMask.NameToLayer("LOD");
 
-					lod.Radius = Radius;
-					lod.MaxHeight = MaxHeight;
-					lod.Octaves = Octaves;
-					queue.Enqueue (gm);
-					if (y % 2 == 0) {
-						yield return null;
-					}
-				}
-				localProgress = (x + 1) / (Width / 16f);
+                    LOD lod = gm.AddComponent<LOD>();
+                    lod.side = side;
+                    lod.Chunk = new Vector2(x, y);
+                    lod.Width = Width;
+                    lod.terrainMaterial = SideMaterial;
+                    lod.Regions = Regions;
+                    lod.curve = curve;
+                    lod.scale = scale;
+                    lod.thread = thread;
 
-				progress = Mathf.Clamp01 (localProgress / (6 - side));
-			}
-			while (progress != 1.0f) {
-				yield return null;
-			}
-			numSides++;
-		} else {
-			progress = 1.0f;
-		}
+                    lod.Radius = Radius;
+                    lod.MaxHeight = MaxHeight;
+                    lod.Octaves = Octaves;
+                    queue.Enqueue(gm);
+                    if (y % 2 == 0)
+                    {
+                        yield return null;
+                    }
+                }
+                localProgress = (x + 1) / (Width / 16f);
+
+                progress = Mathf.Clamp01(localProgress / (6 - side));
+            }
+
+            while (progress != 1.0f)
+            {
+                yield return null;
+            }
+            numSides++;
+        }
+        else
+        {
+            progress = 1.0f;
+        }
         if (progress == 1.0f)
         {
             done = true;
@@ -151,7 +177,7 @@ public class ProceduralSphere : MonoBehaviour
                 lod.SetTargetLOD(4);
             }
         }
-		Debug.Log (GetHeight(Random.onUnitSphere));
+        Debug.Log(GetHeight(Random.onUnitSphere));
     }
 
     private IEnumerator GenerateTerrain()
@@ -169,6 +195,7 @@ public class ProceduralSphere : MonoBehaviour
             StartCoroutine(AddSide(i));
             yield return null;
         }
+        StartCoroutine(thread.Start(Seed));
         while (!done)
         {
             yield return null;
@@ -177,11 +204,60 @@ public class ProceduralSphere : MonoBehaviour
         yield return null;
     }
 
-    [System.Serializable]
+    public struct V3
+    {
+        public float x;
+        public float y;
+        public float z;
+
+        public V3(float X, float Y, float Z)
+        {
+            x = X;
+            y = Y;
+            z = Z;
+        }
+
+        public static V3 one
+        {
+            get
+            {
+                return new V3(1, 1, 1);
+            }
+        }
+
+        public static V3 operator -(V3 v1, V3 scalar)
+        {
+            return new V3(v1.x - scalar.x, v1.y - scalar.y, v1.z - scalar.z);
+        }
+
+        public static V3 operator *(V3 v1, float scalar)
+        {
+            return new V3(v1.x * scalar, v1.y * scalar, v1.z * scalar);
+        }
+
+        public static V3 operator /(V3 v1, float scalar)
+        {
+            return new V3(v1.x / scalar, v1.y / scalar, v1.z / scalar);
+        }
+    }
+
+    [Serializable]
     public class Region
     {
         public string Name;
         public Color color = new Color(1, 1, 1, 1);
         public float height;
+    }
+
+    public class MeshData
+    {
+        public float[] heightmap;
+        public V3[] v3;
+    }
+
+    public class ProcCallback
+    {
+        public Action<MeshData> callback;
+        public Func<MeshData> Function;
     }
 }

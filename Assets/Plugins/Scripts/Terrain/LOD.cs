@@ -1,8 +1,7 @@
 ﻿using CoherentNoise.Generation.Fractal;
 using System.Collections;
 using UnityEngine;
-using System;
-using System.Threading;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer))]
 public class LOD : MonoBehaviour
@@ -29,6 +28,7 @@ public class LOD : MonoBehaviour
     public ProceduralSphere.Region[] Regions;
     public AnimationCurve curve;
     public float scale;
+    public ThreadedJob thread;
     private Mesh mesh;
     private int _LODLevel;
     private int LODLevel;
@@ -50,6 +50,10 @@ public class LOD : MonoBehaviour
     private bool SplashIt;
 
     private bool FirstTime = false;
+
+    private bool SplashDone = false;
+
+    private bool CallbackDone;
 
     public void UpdateLODSettings(Vector3 pos, int[] lodlevels)
     {
@@ -74,7 +78,7 @@ public class LOD : MonoBehaviour
         {
             LODLevel = TargetLOD;
             _LODLevel = (int)Mathf.Pow(2f, LODLevel);
-			StartCoroutine(GenerateMesh(LODLevel == 0));
+            StartCoroutine(GenerateMesh(LODLevel == 0));
         }
     }
 
@@ -82,12 +86,18 @@ public class LOD : MonoBehaviour
     {
         LODLevel = TargetLOD;
         _LODLevel = (int)Mathf.Pow(2f, LODLevel);
-		StartCoroutine(GenerateMesh());
+        StartCoroutine(GenerateMesh());
     }
 
     private void CreateTriangle(ref int index, int x, int y)
     {
         int LODWidth = (ChunkWidth / _LODLevel) + 1;
+
+        if (index >= tri.Length)
+        {
+            Debug.LogWarning(index + "/" + tri.Length);
+            Debug.LogWarning("Vert: " + index + "/" + vert.Length);
+        }
 
         tri[index] = (y * LODWidth) + x;
         tri[index + 1] = ((y + 1) * LODWidth) + x;
@@ -106,38 +116,34 @@ public class LOD : MonoBehaviour
     /// <param name="y">Y-coordinate for vertex</param>
     /// <param name="z">Z-coordinate for vertex</param>
     /// <returns></returns>
-    private void AddVertex(int x, int y, int z)
+    private void AddVertex(int x, int y, int z, ref float[] H, ref ProceduralSphere.V3[] N)
     {
-        Vector3 s = normalizedPoint(x, y, z);
-
-        float plain = (pink.GetValue(x, y, z) + 1.0f) / 4f;
-
-        float n = Mathf.Max(0f, noise.GetValue(x - 549, y + 2585, z + 54));
-        float mountains = Mathf.Max(0f, (n - 0.75f) * 1.25f);
-
-        float hill = Mathf.Max(0f, hills.GetValue(x + 549, y - 2585, z - 544));
-        hill = Mathf.Max(0f, (hill - 0.5f) / 10f);
-
-        mountains = curve.Evaluate(mountains);
-
-        norm[ve] = s;
-        vert[ve] = norm[ve] * (Radius + MaxHeight * (mountains + plain + hill));
-
-        ve++;
-    }
-
-    private Vector3 normalizedPoint(int x, int y, int z)
-    {
-        Vector3 v = new Vector3(x, y, z) * 2f / Width - Vector3.one;
+        ProceduralSphere.V3 v = new ProceduralSphere.V3(x, y, z) * 2f / Width - ProceduralSphere.V3.one;
         float x2 = v.x * v.x;
         float y2 = v.y * v.y;
         float z2 = v.z * v.z;
-        Vector3 s = new Vector3(x, y, z);
+        ProceduralSphere.V3 s = new ProceduralSphere.V3(x, y, z);
         s.x = v.x * Mathf.Sqrt(1f - y2 / 2f - z2 / 2f + y2 * z2 / 3f);
         s.y = v.y * Mathf.Sqrt(1f - x2 / 2f - z2 / 2f + x2 * z2 / 3f);
         s.z = v.z * Mathf.Sqrt(1f - x2 / 2f - y2 / 2f + x2 * y2 / 3f);
 
-        return s;
+        float plain = (pink.GetValue(x, y, z) + 1.0f) / 4f;
+
+        float val = noise.GetValue(x - 549, y + 2585, z + 54);
+        float n = val < 0 ? 0 : val;
+        val = (n - 0.75f) * 1.25f;
+        float mountains = val < 0 ? 0 : val;
+
+        val = hills.GetValue(x + 549, y - 2585, z - 544);
+        float hill = val < 0 ? 0 : val;
+        val = (hill - 0.5f) / 10f;
+        hill = val < 0 ? 0 : val;
+
+        H[ve] = (mountains + plain + hill);
+
+        N[ve] = s;
+
+        ve++;
     }
 
     private void Start()
@@ -170,15 +176,23 @@ public class LOD : MonoBehaviour
         StartCoroutine(GenerateMesh());
     }
 
-	private IEnumerator GenerateMesh(bool forceCollider = false)
+    private void AddToThread(ProceduralSphere.ProcCallback item)
+    {
+        if (thread == null)
+        {
+            Debug.LogWarning("thread doesn't exist");
+        }
+        thread.Add(item);
+    }
+
+    private ProceduralSphere.MeshData AddVertices()
     {
         int LODW = ChunkWidth / _LODLevel;
 
-        vert = new Vector3[(LODW + 1) * (LODW + 1)];
-        norm = new Vector3[vert.Length];
-        uv = new Vector2[vert.Length];
-        tri = new int[vert.Length * 6];
-        ve = 0;
+        ProceduralSphere.MeshData data = new ProceduralSphere.MeshData();
+
+        ProceduralSphere.V3[] NO = new ProceduralSphere.V3[(LODW + 1) * (LODW + 1)];
+        float[] heightmap = new float[NO.Length];
 
         switch (side)
         {
@@ -187,7 +201,7 @@ public class LOD : MonoBehaviour
                 {
                     for (int x = 0; x <= ChunkWidth; x += _LODLevel)
                     {
-                        AddVertex((int)(ChunkWidth * Chunk.x) + x, (int)(ChunkWidth * Chunk.y) + y, 0);
+                        AddVertex((int)(ChunkWidth * Chunk.x) + x, (int)(ChunkWidth * Chunk.y) + y, 0, ref heightmap, ref NO);
                     }
                 }
                 break;
@@ -197,7 +211,7 @@ public class LOD : MonoBehaviour
                 {
                     for (int z = 0; z <= ChunkWidth; z += _LODLevel)
                     {
-                        AddVertex(Width, (int)(ChunkWidth * Chunk.x) + y, (int)(ChunkWidth * Chunk.y) + z);
+                        AddVertex(Width, (int)(ChunkWidth * Chunk.x) + y, (int)(ChunkWidth * Chunk.y) + z, ref heightmap, ref NO);
                     }
                 }
                 break;
@@ -207,7 +221,7 @@ public class LOD : MonoBehaviour
                 {
                     for (int x = ChunkWidth; x >= 0; x -= _LODLevel)
                     {
-                        AddVertex((int)(ChunkWidth * Chunk.x) + x, (int)(ChunkWidth * Chunk.y) + y, Width);
+                        AddVertex((int)(ChunkWidth * Chunk.x) + x, (int)(ChunkWidth * Chunk.y) + y, Width, ref heightmap, ref NO);
                     }
                 }
                 break;
@@ -217,7 +231,7 @@ public class LOD : MonoBehaviour
                 {
                     for (int z = 0; z <= ChunkWidth; z += _LODLevel)
                     {
-                        AddVertex(0, (int)(ChunkWidth * Chunk.x) + z, (int)(ChunkWidth * Chunk.y) + y);
+                        AddVertex(0, (int)(ChunkWidth * Chunk.x) + z, (int)(ChunkWidth * Chunk.y) + y, ref heightmap, ref NO);
                     }
                 }
                 break;
@@ -227,7 +241,7 @@ public class LOD : MonoBehaviour
                 {
                     for (int x = 0; x <= ChunkWidth; x += _LODLevel)
                     {
-                        AddVertex((int)(ChunkWidth * Chunk.x) + x, Width, (int)(ChunkWidth * Chunk.y) + z);
+                        AddVertex((int)(ChunkWidth * Chunk.x) + x, Width, (int)(ChunkWidth * Chunk.y) + z, ref heightmap, ref NO);
                     }
                 }
                 break;
@@ -237,7 +251,7 @@ public class LOD : MonoBehaviour
                 {
                     for (int z = 0; z <= ChunkWidth; z += _LODLevel)
                     {
-                        AddVertex((int)(ChunkWidth * Chunk.x) + x, 0, (int)(ChunkWidth * Chunk.y) + z);
+                        AddVertex((int)(ChunkWidth * Chunk.x) + x, 0, (int)(ChunkWidth * Chunk.y) + z, ref heightmap, ref NO);
                     }
                 }
                 break;
@@ -245,6 +259,50 @@ public class LOD : MonoBehaviour
             default:
                 break;
         }
+        data.v3 = NO;
+        data.heightmap = heightmap;
+        return data;
+    }
+
+    private void Callback(ProceduralSphere.MeshData data)
+    {
+        Vector3[] arr = new Vector3[data.v3.Length];
+
+        for (int i = 0; i < data.v3.Length; i++)
+        {
+            arr[i] = new Vector3(data.v3[i].x, data.v3[i].y, data.v3[i].z);
+        }
+        norm = arr;
+
+        for (int ve = 0; ve < arr.Length; ve++)
+        {
+            vert[ve] = norm[ve] * (Radius + MaxHeight * data.heightmap[ve]);
+        }
+        CallbackDone = true;
+    }
+
+    private IEnumerator GenerateMesh(bool forceCollider = false)
+    {
+        CallbackDone = false;
+        int LODW = ChunkWidth / _LODLevel;
+
+        vert = new Vector3[(LODW + 1) * (LODW + 1)];
+        norm = new Vector3[vert.Length];
+        uv = new Vector2[vert.Length];
+        tri = new int[vert.Length * 6];
+        ve = 0;
+
+        ProceduralSphere.ProcCallback t = new ProceduralSphere.ProcCallback();
+        t.Function = () => { return AddVertices(); };
+        t.callback = Callback;
+
+        AddToThread(t);
+
+        while (!CallbackDone)
+        {
+            yield return null;
+        }
+
         int ti = 0;
         for (int x = 0; x < LODW; x++)
         {
@@ -253,7 +311,7 @@ public class LOD : MonoBehaviour
                 CreateTriangle(ref ti, x, y);
             }
         }
-		AddUV(LODW);
+        AddUV(LODW);
 
         mesh.Clear();
         mesh.vertices = vert;
@@ -266,20 +324,20 @@ public class LOD : MonoBehaviour
         if (!FirstTime)
         {
             FirstTime = true;
-            StartCoroutine(AddSplash());
-			mc0.sharedMesh = mesh;
-			while (!SplashDone) {
-				yield return null;
-			}
-			SetTargetLOD (4);
+            AddSplash(LODW);
+            mc0.sharedMesh = mesh;
+            while (!SplashDone)
+            {
+                yield return null;
+            }
+            SetTargetLOD(4);
         }
-		if (forceCollider && !mc0.convex) {
-			mc0.convex = true;
-		}
-        yield return null;
+        if (forceCollider && !mc0.convex)
+        {
+            forceCollider = false;
+            mc0.convex = true;
+        }
     }
-
-	bool SplashDone = false;
 
     private void AddUV(int LODW)
     {
@@ -353,7 +411,7 @@ public class LOD : MonoBehaviour
         }
     }
 
-    private IEnumerator AddSplash()
+    private void AddSplash(int LODW)
     {
         Texture2D tex = (Texture2D)mr0.material.mainTexture;
         Vector2 start = new Vector2(ChunkWidth * Chunk.x, ChunkWidth * Chunk.y);
@@ -362,10 +420,9 @@ public class LOD : MonoBehaviour
         switch (side)
         {
             case 0:
-                for (int y = 0; y <= ChunkWidth; y++)
+                for (int y = 0; y <= LODW; y++)
                 {
-                    yield return null;
-                    for (int x = 0; x <= ChunkWidth; x++, i++)
+                    for (int x = 0; x <= LODW; x++, i++)
                     {
                         for (int r = Regions.Length - 1; r > 0; r--)
                         {
@@ -379,10 +436,9 @@ public class LOD : MonoBehaviour
                 break;
 
             case 1:
-                for (int x = 0; x <= ChunkWidth; x++)
+                for (int x = 0; x <= LODW; x++)
                 {
-                    yield return null;
-                    for (int y = 0; y <= ChunkWidth; y++, i++)
+                    for (int y = 0; y <= LODW; y++, i++)
                     {
                         for (int r = Regions.Length - 1; r > 0; r--)
                         {
@@ -396,10 +452,9 @@ public class LOD : MonoBehaviour
                 break;
 
             case 2:
-                for (int y = 0; y <= ChunkWidth; y++)
+                for (int y = 0; y <= LODW; y++)
                 {
-                    yield return null;
-                    for (int x = ChunkWidth; x >= 0; x--, i++)
+                    for (int x = LODW; x >= 0; x--, i++)
                     {
                         for (int r = Regions.Length - 1; r > 0; r--)
                         {
@@ -413,10 +468,9 @@ public class LOD : MonoBehaviour
                 break;
 
             case 3:
-                for (int y = 0; y <= ChunkWidth; y++)
+                for (int y = 0; y <= LODW; y++)
                 {
-                    yield return null;
-                    for (int x = 0; x <= ChunkWidth; x++, i++)
+                    for (int x = 0; x <= LODW; x++, i++)
                     {
                         for (int r = Regions.Length - 1; r > 0; r--)
                         {
@@ -430,10 +484,9 @@ public class LOD : MonoBehaviour
                 break;
 
             case 4:
-                for (int y = 0; y <= ChunkWidth; y++)
+                for (int y = 0; y <= LODW; y++)
                 {
-                    yield return null;
-                    for (int x = 0; x <= ChunkWidth; x++, i++)
+                    for (int x = 0; x <= LODW; x++, i++)
                     {
                         for (int r = Regions.Length - 1; r > 0; r--)
                         {
@@ -447,10 +500,9 @@ public class LOD : MonoBehaviour
                 break;
 
             case 5:
-                for (int x = 0; x <= ChunkWidth; x++)
+                for (int x = 0; x <= LODW; x++)
                 {
-                    yield return null;
-                    for (int y = 0; y <= ChunkWidth; y++, i++)
+                    for (int y = 0; y <= LODW; y++, i++)
                     {
                         for (int r = Regions.Length - 1; r > 0; r--)
                         {
@@ -468,6 +520,6 @@ public class LOD : MonoBehaviour
         }
         tex.Apply();
         mr0.material.mainTexture = tex;
-		SplashDone = true;
+        SplashDone = true;
     }
 }

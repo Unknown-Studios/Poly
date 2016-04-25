@@ -320,32 +320,32 @@ public class Game : MonoBehaviour
 
     public static void Log(string Ms)
     {
-        Game.LogToFile(Ms);
-        Game.AddToConsole(Ms);
+        LogToFile(Ms);
+        AddToConsole(Ms);
     }
 
     public static void Logger(string logString, string stackTrace, LogType type)
     {
-        Game.AddToConsole(logString);
+        AddToConsole(logString);
         if (type == LogType.Error || type == LogType.Assert || type == LogType.Exception)
         {
-            Game.MessageForLog = logString;
+            MessageForLog = logString;
             if (!string.IsNullOrEmpty(stackTrace))
             {
-                Game.LogToFile(logString + "\n" + stackTrace, "ERROR");
+                LogToFile(logString + "\n" + stackTrace, "ERROR");
             }
             else
             {
-                Game.LogToFile(logString, "ERROR");
+                LogToFile(logString, "ERROR");
             }
         }
         else if (type == LogType.Warning)
         {
-            Game.LogToFile(logString, "WARNING");
+            LogToFile(logString, "WARNING");
         }
         else
         {
-            Game.LogToFile(logString, "LOG");
+            LogToFile(logString, "LOG");
         }
     }
 
