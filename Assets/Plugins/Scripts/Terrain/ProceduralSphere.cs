@@ -13,6 +13,8 @@ public class ProceduralSphere : MonoBehaviour
     public int Radius;
     public int MaxHeight;
 
+	public int Seed;
+
     [HideInInspector]
     public bool done;
 
@@ -48,6 +50,10 @@ public class ProceduralSphere : MonoBehaviour
 			done = false;
 
 		}
+	}
+	void Awake() {
+		PlayerPrefs.SetInt ("Seed", Seed);
+		PlayerPrefs.Save ();
 	}
 
 	//Redirect to GetHeight(Vector3);

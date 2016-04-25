@@ -77,6 +77,7 @@ public class PCEditor : Editor
         GUILayout.Space(10f);
         GUI.backgroundColor = Color.gray;
         EditorGUILayout.LabelField("Terrain Settings: ", EditorStyles.boldLabel);
+		PC.Seed = EditorGUILayout.IntField ("Seed: ", PC.Seed);
         PC.TerrainMaterial = (Material)EditorGUILayout.ObjectField(PC.TerrainMaterial, typeof(Material), true);
         PC.scale = EditorGUILayout.FloatField("Scale: ", PC.scale);
         PC.Radius = EditorGUILayout.IntField("Radius: ", PC.Radius);
