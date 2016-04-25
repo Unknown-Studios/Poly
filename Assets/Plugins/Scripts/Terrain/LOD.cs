@@ -1,6 +1,8 @@
 ﻿using CoherentNoise.Generation.Fractal;
 using System.Collections;
 using UnityEngine;
+using System;
+using System.Threading;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer))]
 public class LOD : MonoBehaviour
