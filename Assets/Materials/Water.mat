@@ -272,14 +272,6 @@ Material:
         second: 0
       data:
         first:
-          name: _CullDistance
-        second: 2500
-      data:
-        first:
-          name: _InvFade
-        second: 1
-      data:
-        first:
           name: _SkyExponent1
         second: 2
       data:
@@ -290,6 +282,14 @@ Material:
         first:
           name: _SunIntensity
         second: 10
+      data:
+        first:
+          name: _CullDistance
+        second: 2500
+      data:
+        first:
+          name: _InvFade
+        second: 1
       data:
         first:
           name: _FresnelScale
@@ -365,18 +365,6 @@ Material:
         second: {r: 0, g: 0, b: 0, a: 0}
       data:
         first:
-          name: _TintColor
-        second: {r: 0, g: 0, b: 0.11764706, a: 0.3764706}
-      data:
-        first:
-          name: White
-        second: {r: 0.8455882, g: 0.83937067, b: 0.83937067, a: 0}
-      data:
-        first:
-          name: _ReflectColor
-        second: {r: 1, g: 1, b: 1, a: 0.5}
-      data:
-        first:
           name: _SkyColor1
         second: {r: 0.37, g: 0.52, b: 0.73, a: 0}
       data:
@@ -391,6 +379,18 @@ Material:
         first:
           name: _SunColor
         second: {r: 1, g: 0.99, b: 0.87, a: 1}
+      data:
+        first:
+          name: White
+        second: {r: 0.8455882, g: 0.83937067, b: 0.83937067, a: 0}
+      data:
+        first:
+          name: _TintColor
+        second: {r: 0, g: 0, b: 0.11764706, a: 0.3764706}
+      data:
+        first:
+          name: _ReflectColor
+        second: {r: 1, g: 1, b: 1, a: 0.5}
       data:
         first:
           name: _BumpMap_ST

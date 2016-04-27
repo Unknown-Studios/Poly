@@ -29,12 +29,14 @@ public class LOD : MonoBehaviour
     public AnimationCurve curve;
     public float scale;
     public ThreadedJob thread;
+    public bool isDone;
+    public ProceduralSphere PS;
     private Mesh mesh;
     private int _LODLevel;
     private int LODLevel;
     private int ve;
     private RidgeNoise noise;
-    private RidgeNoise hills;
+    private BillowNoise hills;
     private PinkNoise pink;
     private MeshRenderer mr0;
     private MeshCollider mc0;
@@ -89,23 +91,21 @@ public class LOD : MonoBehaviour
         StartCoroutine(GenerateMesh());
     }
 
-    private void CreateTriangle(ref int index, int x, int y)
+    private void CreateTriangle(int LODW, ref int index, ref int[] triangles, int x, int y)
     {
-        int LODWidth = (ChunkWidth / _LODLevel) + 1;
-
-        if (index >= tri.Length)
+        if (LODW != Mathf.Sqrt(triangles.Length / 6) - 1)
         {
-            Debug.LogWarning(index + "/" + tri.Length);
-            Debug.LogWarning("Vert: " + index + "/" + vert.Length);
+            LODW = (int)Mathf.Sqrt(triangles.Length / 6) - 1;
         }
+        int LODWidth = LODW + 1;
 
-        tri[index] = (y * LODWidth) + x;
-        tri[index + 1] = ((y + 1) * LODWidth) + x;
-        tri[index + 2] = (y * LODWidth) + x + 1;
+        triangles[index] = (y * LODWidth) + x;
+        triangles[index + 1] = ((y + 1) * LODWidth) + x;
+        triangles[index + 2] = (y * LODWidth) + x + 1;
 
-        tri[index + 3] = ((y + 1) * LODWidth) + x;
-        tri[index + 4] = ((y + 1) * LODWidth) + x + 1;
-        tri[index + 5] = (y * LODWidth) + x + 1;
+        triangles[index + 3] = ((y + 1) * LODWidth) + x;
+        triangles[index + 4] = ((y + 1) * LODWidth) + x + 1;
+        triangles[index + 5] = (y * LODWidth) + x + 1;
         index += 6;
     }
 
@@ -152,7 +152,7 @@ public class LOD : MonoBehaviour
         Random.seed = PlayerPrefs.GetInt("Seed");
         noise = new RidgeNoise(PlayerPrefs.GetInt("Seed"));
         pink = new PinkNoise(PlayerPrefs.GetInt("Seed"));
-        hills = new RidgeNoise(PlayerPrefs.GetInt("Seed"));
+        hills = new BillowNoise(PlayerPrefs.GetInt("Seed"));
 
         pink.Frequency = 0.005f;
         pink.Lacunarity = 1.2f;
@@ -165,8 +165,6 @@ public class LOD : MonoBehaviour
 
         hills.OctaveCount = 2;
         hills.Frequency = 0.01f;
-        hills.Gain = 1f;
-        hills.Exponent = 2f;
 
         mesh = GetComponent<MeshFilter>().mesh;
         mr0 = GetComponent<MeshRenderer>();
@@ -183,16 +181,19 @@ public class LOD : MonoBehaviour
             Debug.LogWarning("thread doesn't exist");
         }
         thread.Add(item);
+        if (!thread.Started)
+        {
+            StartCoroutine(thread.Start(PlayerPrefs.GetInt("Seed")));
+        }
     }
 
-    private ProceduralSphere.MeshData AddVertices()
+    private ProceduralSphere.MeshData AddVertices(int LODW)
     {
-        int LODW = ChunkWidth / _LODLevel;
-
         ProceduralSphere.MeshData data = new ProceduralSphere.MeshData();
 
         ProceduralSphere.V3[] NO = new ProceduralSphere.V3[(LODW + 1) * (LODW + 1)];
         float[] heightmap = new float[NO.Length];
+        int[] triangles = new int[NO.Length * 6];
 
         switch (side)
         {
@@ -259,8 +260,24 @@ public class LOD : MonoBehaviour
             default:
                 break;
         }
+        int ti = 0;
+        for (int x = 0; x < LODW; x++)
+        {
+            for (int y = 0; y < LODW; y++)
+            {
+                CreateTriangle(LODW, ref ti, ref triangles, x, y);
+            }
+        }
+
         data.v3 = NO;
         data.heightmap = heightmap;
+        data.triangles = triangles;
+        if (FirstTime)
+        {
+            Callback(data);
+            return null;
+        }
+
         return data;
     }
 
@@ -273,46 +290,53 @@ public class LOD : MonoBehaviour
             arr[i] = new Vector3(data.v3[i].x, data.v3[i].y, data.v3[i].z);
         }
         norm = arr;
+        vert = arr;
 
         for (int ve = 0; ve < arr.Length; ve++)
         {
             vert[ve] = norm[ve] * (Radius + MaxHeight * data.heightmap[ve]);
         }
+        tri = data.triangles;
         CallbackDone = true;
     }
 
     private IEnumerator GenerateMesh(bool forceCollider = false)
     {
+        //Reset
         CallbackDone = false;
-        int LODW = ChunkWidth / _LODLevel;
 
+        //Define variables
+        int LODW = ChunkWidth / _LODLevel;
         vert = new Vector3[(LODW + 1) * (LODW + 1)];
         norm = new Vector3[vert.Length];
-        uv = new Vector2[vert.Length];
         tri = new int[vert.Length * 6];
         ve = 0;
 
-        ProceduralSphere.ProcCallback t = new ProceduralSphere.ProcCallback();
-        t.Function = () => { return AddVertices(); };
-        t.callback = Callback;
+        //Add to queue on side-thread
+        if (!FirstTime)
+        {
+            //Set up data needed for thread
+            ProceduralSphere.ProcCallback t = new ProceduralSphere.ProcCallback();
+            t.Function = () => { return AddVertices(LODW); };
+            t.callback = Callback;
+            t.LODW = LODW;
 
-        AddToThread(t);
-
+            AddToThread(t);
+        }
+        else
+        {
+            AddVertices(LODW);
+        }
         while (!CallbackDone)
         {
             yield return null;
         }
 
-        int ti = 0;
-        for (int x = 0; x < LODW; x++)
-        {
-            for (int y = 0; y < LODW; y++)
-            {
-                CreateTriangle(ref ti, x, y);
-            }
-        }
+        //Calculate UVs
+        uv = new Vector2[vert.Length];
         AddUV(LODW);
 
+        //Reset mesh and set values
         mesh.Clear();
         mesh.vertices = vert;
         mesh.normals = norm;
@@ -321,6 +345,8 @@ public class LOD : MonoBehaviour
 
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
+
+        //First time setup
         if (!FirstTime)
         {
             FirstTime = true;
@@ -330,8 +356,10 @@ public class LOD : MonoBehaviour
             {
                 yield return null;
             }
-            SetTargetLOD(4);
+            PS.queue.Enqueue(gameObject);
         }
+
+        //If player nears a collider before it is generated force its generation
         if (forceCollider && !mc0.convex)
         {
             forceCollider = false;
@@ -341,9 +369,15 @@ public class LOD : MonoBehaviour
 
     private void AddUV(int LODW)
     {
+        if (LODW != Mathf.Sqrt(uv.Length) - 1)
+        {
+            LODW = (int)Mathf.Sqrt(uv.Length) - 1;
+        }
+
         int i = 0;
         Vector2 start = new Vector2((LODW * Chunk.x), (LODW * Chunk.y));
         int UVSize = LODW * 16;
+
         switch (side)
         {
             case 0:

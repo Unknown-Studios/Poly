@@ -39,7 +39,7 @@ public class Listener : MonoBehaviour
     /// <summary>
     /// A reference to the AudioSource.
     /// </summary>
-    private new AudioSource audio;
+    private AudioSource Audio;
 
     private AdvancedAI main;
 
@@ -48,7 +48,7 @@ public class Listener : MonoBehaviour
     /// </summary>
     private void AlertObjects()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, audioValue * audio.maxDistance);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, audioValue * Audio.maxDistance);
         foreach (Collider col in colliders)
         {
             if (GetComponent<Flocking>() && GetComponent<Flocking>().IsFlockMember(col.gameObject))
@@ -69,10 +69,10 @@ public class Listener : MonoBehaviour
     private float AnalyzeSound()
     {
         float max = 0.0f;
-        if (audio.clip != null)
+        if (Audio.clip != null)
         {
             float[] samples = new float[128];
-            audio.GetOutputData(samples, 0);
+            Audio.GetOutputData(samples, 0);
             foreach (float f in samples)
             {
                 if (f > max)
@@ -99,8 +99,8 @@ public class Listener : MonoBehaviour
                 TillNoise = (Time.realtimeSinceStartup - ran) - LastNoise; //Countdown to make a noise.
                 if (TillNoise <= 0) //Time to make a noise again.
                 {
-                    audio.clip = AlertSound; //The sound to play when alerting the other objects.
-                    audio.Play(); //Play the audio.
+                    Audio.clip = AlertSound; //The sound to play when alerting the other objects.
+                    Audio.Play(); //Play the audio.
                     LastNoise = Time.realtimeSinceStartup; //Reset the LastNoise variable
                     ran = Random.Range(0.0f, 600.0f); //Create a new TillNoise.
                 }
@@ -111,9 +111,9 @@ public class Listener : MonoBehaviour
 
     private void Start()
     {
-        audio = GetComponent<AudioSource>();
-        audio.maxDistance = NoiseDistance;
-        audio.minDistance = 0.1f;
+        Audio = GetComponent<AudioSource>();
+        Audio.maxDistance = NoiseDistance;
+        Audio.minDistance = 0.1f;
 
         main = GetComponent<AdvancedAI>();
 

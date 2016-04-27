@@ -29,11 +29,9 @@ public class ProceduralSphere : MonoBehaviour
 
     public AnimationCurve curve;
     public float scale;
+    public Queue<GameObject> queue;
     private int ve;
     private GameObject[] sides;
-
-    private Queue<GameObject> queue;
-
     private int numSides = 0;
 
     private ThreadedJob thread;
@@ -130,11 +128,11 @@ public class ProceduralSphere : MonoBehaviour
                     lod.curve = curve;
                     lod.scale = scale;
                     lod.thread = thread;
+                    lod.PS = this;
 
                     lod.Radius = Radius;
                     lod.MaxHeight = MaxHeight;
                     lod.Octaves = Octaves;
-                    queue.Enqueue(gm);
                     if (y % 2 == 0)
                     {
                         yield return null;
@@ -163,6 +161,9 @@ public class ProceduralSphere : MonoBehaviour
 
     private IEnumerator AddColliders()
     {
+        Debug.Log("AddColliders: Start");
+        System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+        watch.Start();
         while (queue.Count > 0)
         {
             GameObject current = queue.Dequeue();
@@ -170,14 +171,18 @@ public class ProceduralSphere : MonoBehaviour
             if (mc.convex != true)
             {
                 LOD lod = current.GetComponent<LOD>();
-                lod.SetTargetLOD(0);
-                yield return null;
                 mc.convex = true;
-                yield return null;
                 lod.SetTargetLOD(4);
             }
+            yield return null;
         }
-        Debug.Log(GetHeight(Random.onUnitSphere));
+        watch.Stop();
+        Debug.Log("Time: " + watch.ElapsedMilliseconds / 1000.0f);
+        if (SceneManager.GetActiveScene().name == "Test")
+        {
+            Game.Notice("Time: " + watch.ElapsedMilliseconds / 1000.0f);
+        }
+        Debug.Log("AddColliders: End");
     }
 
     private IEnumerator GenerateTerrain()
@@ -195,7 +200,6 @@ public class ProceduralSphere : MonoBehaviour
             StartCoroutine(AddSide(i));
             yield return null;
         }
-        StartCoroutine(thread.Start(Seed));
         while (!done)
         {
             yield return null;
@@ -253,10 +257,13 @@ public class ProceduralSphere : MonoBehaviour
     {
         public float[] heightmap;
         public V3[] v3;
+        public int[] triangles;
+        public int LODW;
     }
 
     public class ProcCallback
     {
+        public int LODW;
         public Action<MeshData> callback;
         public Func<MeshData> Function;
     }

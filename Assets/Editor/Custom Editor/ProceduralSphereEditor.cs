@@ -40,9 +40,10 @@ public class PCEditor : Editor
 
         GUILayout.Space(10f);
         EditorGUILayout.LabelField("Region: ", EditorStyles.boldLabel);
-        if (PC.Regions == null)
+        if (PC.Regions == null || PC.Regions.Length == 0)
         {
             PC.Regions = new ProceduralSphere.Region[1];
+            PC.Regions[0] = new ProceduralSphere.Region();
         }
         if (Selected == null)
         {
@@ -77,8 +78,8 @@ public class PCEditor : Editor
         GUILayout.Space(10f);
         GUI.backgroundColor = Color.gray;
         EditorGUILayout.LabelField("Terrain Settings: ", EditorStyles.boldLabel);
-		PC.Seed = EditorGUILayout.IntField ("Seed: ", PC.Seed);
-        PC.TerrainMaterial = (Material)EditorGUILayout.ObjectField(PC.TerrainMaterial, typeof(Material), true);
+        PC.Seed = EditorGUILayout.IntField("Seed: ", PC.Seed);
+        PC.TerrainMaterial = (Material)EditorGUILayout.ObjectField("Material: ", PC.TerrainMaterial, typeof(Material), true);
         PC.scale = EditorGUILayout.FloatField("Scale: ", PC.scale);
         PC.Radius = EditorGUILayout.IntField("Radius: ", PC.Radius);
         PC.MaxHeight = EditorGUILayout.IntField("TerrainHeight: ", PC.MaxHeight);

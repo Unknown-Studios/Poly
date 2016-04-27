@@ -7,6 +7,8 @@ public class ThreadedJob
     public Queue<ProceduralSphere.ProcCallback> queue;
     public int Seed;
 
+    public bool Started;
+    public int Test;
     private Thread _thread;
     private ProceduralSphere.ProcCallback current;
 
@@ -30,14 +32,19 @@ public class ThreadedJob
         bool done = false;
 
         ProceduralSphere.MeshData data = new ProceduralSphere.MeshData();
-
-        while (queue.Count > 0)
+        int i = 0;
+        while (queue.Count > 0 || current != null)
         {
+            Started = queue.Count > 0;
             if (done)
             {
                 current.callback(data);
                 current = null;
-                data = new ProceduralSphere.MeshData();
+                data = null;
+                if (queue.Count == 0)
+                {
+                    break;
+                }
             }
             done = false;
             if (current == null)
@@ -46,12 +53,22 @@ public class ThreadedJob
                 ThreadStart threadStart = delegate
                 {
                     data = current.Function();
+                    data.LODW = current.LODW;
                     done = true;
                 };
                 _thread = new Thread(threadStart);
                 _thread.Start();
             }
-            yield return null;
+            if (!_thread.IsAlive)
+            {
+                current = null;
+            }
+            i++;
+            if (i % 10 == 0)
+            {
+                yield return null;
+            }
         }
+        current = null;
     }
 }
