@@ -62,7 +62,14 @@ public class PCEditor : Editor
                     float height = (float)y / tex.height;
                     if (height <= PC.Regions[i].height)
                     {
-                        col = PC.Regions[i].color;
+                        if (PC.Regions[i].Biome)
+                        {
+                            col = Random.ColorHSV();
+                        }
+                        else
+                        {
+                            col = PC.Regions[i].color;
+                        }
                         break;
                     }
                 }

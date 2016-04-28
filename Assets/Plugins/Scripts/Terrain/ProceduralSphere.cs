@@ -38,6 +38,10 @@ public class ProceduralSphere : MonoBehaviour
 
     private ThreadedJob thread;
 
+    private int colCount;
+
+    private bool Spawned;
+
     // Use this for initialization
     public void OnBeforeSpawn(Vector3 SpawnPos)
     {
@@ -50,9 +54,15 @@ public class ProceduralSphere : MonoBehaviour
         {
             done = false;
         }
+        progress = colCount / (float)((Width / 16) * (Width / 16) * 6);
         if (Done.Count == (Width / 16) * (Width / 16) * 6)
         {
             isDone = true;
+        }
+        if (isDone && !Spawned)
+        {
+            Spawned = true;
+            Game.player.transform.position = GetHeight(Random.onUnitSphere);
         }
     }
 
@@ -116,10 +126,11 @@ public class ProceduralSphere : MonoBehaviour
             tex.filterMode = FilterMode.Point;
             Material SideMaterial = new Material(TerrainMaterial);
             SideMaterial.mainTexture = tex;
-            float localProgress = 0.0f;
-            for (int x = 0; x < Width / 16; x++)
+            int x = 0, y = 0;
+
+            for (x = 0; x < Width / 16; x++)
             {
-                for (int y = 0; y < Width / 16; y++)
+                for (y = 0; y < Width / 16; y++)
                 {
                     GameObject gm = new GameObject();
                     gm.transform.parent = s0.transform;
@@ -140,28 +151,10 @@ public class ProceduralSphere : MonoBehaviour
                     lod.Radius = Radius;
                     lod.MaxHeight = MaxHeight;
                     lod.Octaves = Octaves;
-                    if (y % 2 == 0)
-                    {
-                        yield return null;
-                    }
                 }
-                localProgress = (x + 1) / (Width / 16f);
-
-                progress = Mathf.Clamp01(localProgress / (6 - side));
             }
-
-            while (progress != 1.0f)
-            {
-                yield return null;
-            }
+            yield return null;
             numSides++;
-        }
-        else
-        {
-            progress = 1.0f;
-        }
-        if (progress == 1.0f)
-        {
             done = true;
         }
     }
@@ -169,8 +162,6 @@ public class ProceduralSphere : MonoBehaviour
     private IEnumerator AddColliders()
     {
         Debug.Log("AddColliders: Start");
-        System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-        watch.Start();
         while (queue.Count > 0)
         {
             GameObject current = queue.Dequeue();
@@ -182,14 +173,10 @@ public class ProceduralSphere : MonoBehaviour
                 lod.SetTargetLOD(4);
                 Done.Add(current);
             }
+            colCount++;
             yield return null;
         }
-        watch.Stop();
-        Debug.Log("Time: " + watch.ElapsedMilliseconds / 1000.0f);
-        if (SceneManager.GetActiveScene().name == "Test")
-        {
-            Game.Notice("Time: " + watch.ElapsedMilliseconds / 1000.0f);
-        }
+
         Debug.Log("AddColliders: End");
     }
 
@@ -266,6 +253,13 @@ public class ProceduralSphere : MonoBehaviour
             Name = "Test";
             color = Color.white;
             height = 1.0f;
+        }
+
+        public Region(float Height)
+        {
+            Name = "Test";
+            color = Color.white;
+            height = Height;
         }
     }
 
