@@ -32,6 +32,8 @@ public class ProceduralSphere : MonoBehaviour
     public Queue<GameObject> queue;
     public List<GameObject> Done;
     public bool isDone;
+    public VoronoiPoint[] points;
+    public Biome[] biomes;
     private int ve;
     private GameObject[] sides;
     private int numSides = 0;
@@ -59,7 +61,7 @@ public class ProceduralSphere : MonoBehaviour
         {
             isDone = true;
         }
-        if (isDone && !Spawned)
+        if (isDone && !Spawned && Game.player != null)
         {
             Spawned = true;
             Game.player.transform.position = GetHeight(Random.onUnitSphere);
@@ -138,6 +140,7 @@ public class ProceduralSphere : MonoBehaviour
                     gm.layer = LayerMask.NameToLayer("LOD");
 
                     LOD lod = gm.AddComponent<LOD>();
+                    lod.points = points;
                     lod.side = side;
                     lod.Chunk = new Vector2(x, y);
                     lod.Width = Width;
@@ -161,7 +164,6 @@ public class ProceduralSphere : MonoBehaviour
 
     private IEnumerator AddColliders()
     {
-        Debug.Log("AddColliders: Start");
         while (queue.Count > 0)
         {
             GameObject current = queue.Dequeue();
@@ -176,8 +178,6 @@ public class ProceduralSphere : MonoBehaviour
             colCount++;
             yield return null;
         }
-
-        Debug.Log("AddColliders: End");
     }
 
     private IEnumerator GenerateTerrain()
@@ -188,6 +188,15 @@ public class ProceduralSphere : MonoBehaviour
         if (!PlayerPrefs.HasKey("Seed"))
         {
             PlayerPrefs.SetInt("Seed", Random.Range(0, 999999));
+        }
+
+        points = new VoronoiPoint[26];
+
+        for (int i = 0; i < points.Length; i++)
+        {
+            points[i] = new VoronoiPoint(Random.onUnitSphere * Radius);
+            points[i].biome = biomes[Random.Range(0, biomes.Length)];
+            yield return null;
         }
 
         for (int i = 0; i < 6; i++)
@@ -276,5 +285,27 @@ public class ProceduralSphere : MonoBehaviour
         public int LODW;
         public Action<MeshData> callback;
         public Func<MeshData> Function;
+    }
+
+    [Serializable]
+    public class Biome
+    {
+        public string Name;
+        public Color biomeColor = Color.white;
+    }
+
+    public class VoronoiPoint
+    {
+        public Vector3 point;
+        public Biome biome;
+
+        public VoronoiPoint()
+        {
+        }
+
+        public VoronoiPoint(Vector3 position)
+        {
+            point = position;
+        }
     }
 }

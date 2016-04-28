@@ -272,6 +272,10 @@ Material:
         second: 0
       data:
         first:
+          name: _CullDistance
+        second: 2500
+      data:
+        first:
           name: _SkyExponent1
         second: 2
       data:
@@ -282,10 +286,6 @@ Material:
         first:
           name: _SunIntensity
         second: 10
-      data:
-        first:
-          name: _CullDistance
-        second: 2500
       data:
         first:
           name: _InvFade

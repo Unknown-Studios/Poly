@@ -179,10 +179,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 11483312, guid: e10732428db804948b81531343dd4960, type: 2}
-      propertyPath: curve.m_Curve.Array.size
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 451596, guid: e10732428db804948b81531343dd4960, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -213,26 +209,6 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 451596, guid: e10732428db804948b81531343dd4960, type: 2}
       propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11483312, guid: e10732428db804948b81531343dd4960, type: 2}
-      propertyPath: curve.m_Curve.Array.data[1].time
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11483312, guid: e10732428db804948b81531343dd4960, type: 2}
-      propertyPath: curve.m_Curve.Array.data[1].value
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11483312, guid: e10732428db804948b81531343dd4960, type: 2}
-      propertyPath: curve.m_Curve.Array.data[1].inSlope
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 11483312, guid: e10732428db804948b81531343dd4960, type: 2}
-      propertyPath: curve.m_Curve.Array.data[1].outSlope
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 11483312, guid: e10732428db804948b81531343dd4960, type: 2}
-      propertyPath: curve.m_RotationOrder
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

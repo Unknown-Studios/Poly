@@ -31,6 +31,7 @@ public class LOD : MonoBehaviour
     public ThreadedJob thread;
     public bool isDone;
     public ProceduralSphere PS;
+    public ProceduralSphere.VoronoiPoint[] points;
     private Mesh mesh;
     private int _LODLevel;
     private int LODLevel;
@@ -171,6 +172,15 @@ public class LOD : MonoBehaviour
         mc0 = GetComponent<MeshCollider>();
         mr0.material = terrainMaterial;
 
+        StartCoroutine(WaitForPoints());
+    }
+
+    private IEnumerator WaitForPoints()
+    {
+        while (points == null)
+        {
+            yield return null;
+        }
         StartCoroutine(GenerateMesh());
     }
 
@@ -462,7 +472,24 @@ public class LOD : MonoBehaviour
                         {
                             if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
                             {
-                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                if (Regions[r].Biome)
+                                {
+                                    ProceduralSphere.VoronoiPoint closest = points[0];
+                                    for (int b = 0; b < points.Length; b++)
+                                    {
+                                        if (Vector3.Distance(points[b].point, vert[i]) < Vector3.Distance(points[b].point, closest.point))
+                                        {
+                                            ProceduralSphere.VoronoiPoint target = new ProceduralSphere.VoronoiPoint(vert[i]);
+                                            target.biome = points[b].biome;
+                                            closest = target;
+                                        }
+                                    }
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                }
+                                else
+                                {
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                }
                             }
                         }
                     }
@@ -478,7 +505,24 @@ public class LOD : MonoBehaviour
                         {
                             if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
                             {
-                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                if (Regions[r].Biome)
+                                {
+                                    ProceduralSphere.VoronoiPoint closest = points[0];
+                                    for (int b = 0; b < points.Length; b++)
+                                    {
+                                        if (Vector3.Distance(points[b].point, vert[i]) < Vector3.Distance(points[b].point, closest.point))
+                                        {
+                                            ProceduralSphere.VoronoiPoint target = new ProceduralSphere.VoronoiPoint(vert[i]);
+                                            target.biome = points[b].biome;
+                                            closest = target;
+                                        }
+                                    }
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                }
+                                else
+                                {
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                }
                             }
                         }
                     }
@@ -494,7 +538,24 @@ public class LOD : MonoBehaviour
                         {
                             if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
                             {
-                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                if (Regions[r].Biome)
+                                {
+                                    ProceduralSphere.VoronoiPoint closest = points[0];
+                                    for (int b = 0; b < points.Length; b++)
+                                    {
+                                        if (Vector3.Distance(points[b].point, vert[i]) < Vector3.Distance(points[b].point, closest.point))
+                                        {
+                                            ProceduralSphere.VoronoiPoint target = new ProceduralSphere.VoronoiPoint(vert[i]);
+                                            target.biome = points[b].biome;
+                                            closest = target;
+                                        }
+                                    }
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                }
+                                else
+                                {
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                }
                             }
                         }
                     }
@@ -510,7 +571,24 @@ public class LOD : MonoBehaviour
                         {
                             if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
                             {
-                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                if (Regions[r].Biome)
+                                {
+                                    ProceduralSphere.VoronoiPoint closest = points[0];
+                                    for (int b = 0; b < points.Length; b++)
+                                    {
+                                        if (Vector3.Distance(points[b].point, vert[i]) < Vector3.Distance(points[b].point, closest.point))
+                                        {
+                                            ProceduralSphere.VoronoiPoint target = new ProceduralSphere.VoronoiPoint(vert[i]);
+                                            target.biome = points[b].biome;
+                                            closest = target;
+                                        }
+                                    }
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                }
+                                else
+                                {
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                }
                             }
                         }
                     }
@@ -526,7 +604,24 @@ public class LOD : MonoBehaviour
                         {
                             if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
                             {
-                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                if (Regions[r].Biome)
+                                {
+                                    ProceduralSphere.VoronoiPoint closest = points[0];
+                                    for (int b = 0; b < points.Length; b++)
+                                    {
+                                        if (Vector3.Distance(points[b].point, vert[i]) < Vector3.Distance(points[b].point, closest.point))
+                                        {
+                                            ProceduralSphere.VoronoiPoint target = new ProceduralSphere.VoronoiPoint(vert[i]);
+                                            target.biome = points[b].biome;
+                                            closest = target;
+                                        }
+                                    }
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                }
+                                else
+                                {
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                }
                             }
                         }
                     }
@@ -542,7 +637,24 @@ public class LOD : MonoBehaviour
                         {
                             if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
                             {
-                                tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                if (Regions[r].Biome)
+                                {
+                                    ProceduralSphere.VoronoiPoint closest = points[0];
+                                    for (int b = 0; b < points.Length; b++)
+                                    {
+                                        if (Vector3.Distance(points[b].point, vert[i]) < Vector3.Distance(points[b].point, closest.point))
+                                        {
+                                            ProceduralSphere.VoronoiPoint target = new ProceduralSphere.VoronoiPoint(vert[i]);
+                                            target.biome = points[b].biome;
+                                            closest = target;
+                                        }
+                                    }
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                }
+                                else
+                                {
+                                    tex.SetPixel((int)start.y + y, (int)start.x + x, Regions[r].color);
+                                }
                             }
                         }
                     }

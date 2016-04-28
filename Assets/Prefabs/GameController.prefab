@@ -102,8 +102,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a58ef42f0b583a41b97c5600b230c83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WidthTick: 9
-  Width: 512
+  WidthTick: 8
+  Width: 256
   Radius: 1000
   MaxHeight: 350
   Seed: 0
@@ -114,22 +114,49 @@ MonoBehaviour:
   progress: 0
   Regions:
   - Name: Test
-    color: {r: 1, g: 1, b: 1, a: 1}
+    color: {r: 0, g: 0.50212955, b: 1, a: 1}
     Biome: 0
-    height: 1
+    height: 0.1
+  - Name: Test
+    color: {r: 1, g: 0.96592295, b: 0.8235294, a: 1}
+    Biome: 0
+    height: 0.19992925
+  - Name: Test
+    color: {r: 1, g: 1, b: 1, a: 1}
+    Biome: 1
+    height: 0.8565546
   - Name: Test
     color: {r: 1, g: 1, b: 1, a: 1}
     Biome: 0
-    height: 1
+    height: 0.99714285
   curve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   scale: 1
   Done: []
   isDone: 0
+  biomes:
+  - Name: Forrest
+    biomeColor: {r: 0.4044118, g: 0.28103748, b: 0.12489188, a: 1}
+  - Name: Grass
+    biomeColor: {r: 0.24441458, g: 0.83823526, b: 0.055471454, a: 1}
+  - Name: Plain
+    biomeColor: {r: 0.365917, g: 0.6911765, b: 0.101643614, a: 1}
+  - Name: Snow
+    biomeColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

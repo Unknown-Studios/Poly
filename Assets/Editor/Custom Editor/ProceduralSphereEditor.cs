@@ -34,6 +34,7 @@ public class PCEditor : Editor
 
         serializedObject.Update();
         EditorGUI.BeginChangeCheck();
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("biomes"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("curve"), new GUIContent("Height Curve: "));
         if (EditorGUI.EndChangeCheck())
             serializedObject.ApplyModifiedProperties();

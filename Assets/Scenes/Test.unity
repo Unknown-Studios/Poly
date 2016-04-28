@@ -154,15 +154,19 @@ MonoBehaviour:
   Regions:
   - Name: Water
     color: {r: 0.25886676, g: 0.47862723, b: 0.83823526, a: 1}
+    Biome: 0
     height: 0.1
   - Name: Sand
     color: {r: 0.9632353, g: 0.9095052, b: 0.6091047, a: 1}
+    Biome: 0
     height: 0.2
   - Name: Grass
     color: {r: 0.29065743, g: 0.61764705, b: 0.31997365, a: 1}
+    Biome: 0
     height: 0.85
   - Name: Snow
     color: {r: 1, g: 1, b: 1, a: 1}
+    Biome: 0
     height: 1
   curve:
     serializedVersion: 2
@@ -183,6 +187,11 @@ MonoBehaviour:
   scale: 1
   Done: []
   isDone: 0
+  biomes:
+  - Name: Forrest
+    biomeColor: {r: 0.28676468, g: 0.18049307, b: 0.021085642, a: 1}
+  - Name: Grass
+    biomeColor: {r: 0.16698119, g: 0.6985294, b: 0.06677117, a: 1}
 --- !u!1 &998950251
 GameObject:
   m_ObjectHideFlags: 0
