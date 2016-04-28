@@ -30,6 +30,8 @@ public class ProceduralSphere : MonoBehaviour
     public AnimationCurve curve;
     public float scale;
     public Queue<GameObject> queue;
+    public List<GameObject> Done;
+    public bool isDone;
     private int ve;
     private GameObject[] sides;
     private int numSides = 0;
@@ -48,6 +50,10 @@ public class ProceduralSphere : MonoBehaviour
         {
             done = false;
         }
+        if (Done.Count == (Width / 16) * (Width / 16) * 6)
+        {
+            isDone = true;
+        }
     }
 
     //Redirect to GetHeight(Vector3);
@@ -59,10 +65,11 @@ public class ProceduralSphere : MonoBehaviour
     //Get the height of the terrain in any point
     public Vector3 GetHeight(Vector3 v3)
     {
-        Vector3 startPos = new Vector3();
+        Vector3 startPos = v3.normalized * (Radius + MaxHeight);
         RaycastHit hit;
+        Debug.DrawLine(startPos, Vector3.zero, Color.red, 30.0f);
         //If height found
-        if (Physics.Raycast(startPos, Vector3.zero, out hit, (MaxHeight + Radius) * 2f))
+        if (Physics.Linecast(startPos, Vector3.zero, out hit))
         {
             //Add 0.5 to the height
             Vector3 normal = hit.point / (Radius + MaxHeight);
@@ -173,6 +180,7 @@ public class ProceduralSphere : MonoBehaviour
                 LOD lod = current.GetComponent<LOD>();
                 mc.convex = true;
                 lod.SetTargetLOD(4);
+                Done.Add(current);
             }
             yield return null;
         }
@@ -248,9 +256,17 @@ public class ProceduralSphere : MonoBehaviour
     [Serializable]
     public class Region
     {
-        public string Name;
-        public Color color = new Color(1, 1, 1, 1);
-        public float height;
+        public string Name = "";
+        public Color color = Color.white;
+        public bool Biome = false;
+        public float height = 1.0f;
+
+        public Region()
+        {
+            Name = "Test";
+            color = Color.white;
+            height = 1.0f;
+        }
     }
 
     public class MeshData

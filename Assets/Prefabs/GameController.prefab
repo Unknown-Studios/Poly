@@ -105,12 +105,31 @@ MonoBehaviour:
   WidthTick: 9
   Width: 512
   Radius: 1000
-  MaxHeight: 200
+  MaxHeight: 350
+  Seed: 0
   done: 0
   Octaves: 3
   TerrainMaterial: {fileID: 2100000, guid: 08aeff6d473330a4597b4ce7d53eed3e, type: 2}
   currentAction: 
   progress: 0
+  Regions:
+  - Name: Test
+    color: {r: 1, g: 1, b: 1, a: 1}
+    Biome: 0
+    height: 1
+  - Name: Test
+    color: {r: 1, g: 1, b: 1, a: 1}
+    Biome: 0
+    height: 1
+  curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  scale: 1
+  Done: []
+  isDone: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

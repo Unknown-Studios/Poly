@@ -42,8 +42,9 @@ public class PCEditor : Editor
         EditorGUILayout.LabelField("Region: ", EditorStyles.boldLabel);
         if (PC.Regions == null || PC.Regions.Length == 0)
         {
-            PC.Regions = new ProceduralSphere.Region[1];
+            PC.Regions = new ProceduralSphere.Region[2];
             PC.Regions[0] = new ProceduralSphere.Region();
+            PC.Regions[1] = new ProceduralSphere.Region();
         }
         if (Selected == null)
         {
@@ -88,6 +89,14 @@ public class PCEditor : Editor
         if (GUI.changed)
         {
             EditorUtility.SetDirty(target);
+        }
+    }
+
+    private void Callback(object obj)
+    {
+        for (int i = 0; i < PC.Regions.Length; i++)
+        {
+            PC.Regions[i].height = 1.0f;
         }
     }
 }
