@@ -1,22 +1,20 @@
 ﻿using UnityEngine;
 
-public class GravityAttractor : MonoBehaviour
+public class GravityAttracter : MonoBehaviour
 {
-    public float gravity = -9.81f;
+    public float gravity = 9.81f;
     public float Range = 1000.0f;
 
     public LayerMask LM;
 
     public void Attract(Transform t)
     {
-        Rigidbody body = t.GetComponent<Rigidbody>();
-        body.useGravity = false;
-        body.constraints = RigidbodyConstraints.FreezeRotation;
-
         Vector3 targetDir = (t.position - transform.position).normalized;
+        Vector3 bodyUp = t.up;
 
-        t.rotation = Quaternion.FromToRotation(t.up, targetDir) * t.rotation;
-        body.AddForce(targetDir * gravity);
+        t.rotation = Quaternion.FromToRotation(bodyUp, targetDir) * t.rotation;
+
+        t.GetComponent<Rigidbody>().AddForce(targetDir * -gravity);
     }
 
     private void FixedUpdate()
@@ -24,12 +22,15 @@ public class GravityAttractor : MonoBehaviour
         Collider[] col = Physics.OverlapSphere(transform.position, Range, LM);
         foreach (Collider c in col)
         {
-            if (c.tag == "AI")
+            if (c.tag == "Player")
             {
                 if (c.gameObject.GetComponent<Rigidbody>() != null)
                 {
-                    Attract(c.transform);
+                    Rigidbody body = c.GetComponent<Rigidbody>();
+                    body.useGravity = false;
+                    body.constraints = RigidbodyConstraints.FreezeRotation;
                 }
+                Attract(c.transform);
             }
         }
     }
