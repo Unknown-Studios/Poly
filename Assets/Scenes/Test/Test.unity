@@ -95,6 +95,8 @@ GameObject:
   - 4: {fileID: 17005513}
   - 114: {fileID: 17005512}
   - 114: {fileID: 17005514}
+  - 114: {fileID: 17005515}
+  - 23: {fileID: 17005516}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -137,7 +139,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 17005511}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a58ef42f0b583a41b97c5600b230c83, type: 3}
   m_Name: 
@@ -193,6 +195,43 @@ MonoBehaviour:
     biomeColor: {r: 0.28676468, g: 0.18049307, b: 0.021085642, a: 1}
   - Name: Grass
     biomeColor: {r: 0.16698119, g: 0.6985294, b: 0.06677117, a: 1}
+--- !u!114 &17005515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 17005511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36407899814f62d44bf7b5149920235d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!23 &17005516
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 17005511}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
 --- !u!1 &998950251
 GameObject:
   m_ObjectHideFlags: 0

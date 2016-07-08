@@ -32,6 +32,7 @@ Material:
       data:
         first:
           name: _SkyColor1
+<<<<<<< Updated upstream
 <<<<<<< HEAD
         second: {r: 0.16690095, g: 0.18120678, b: 0.46323532, a: 1}
       data:
@@ -45,6 +46,13 @@ Material:
           name: _SkyColor2
         second: {r: 0.16663289, g: 0.18091573, b: 0.46249133, a: 0.99839395}
 >>>>>>> origin/master
+=======
+        second: {r: 0.1669009, g: 0.18120673, b: 0.46323523, a: 0.9999998}
+      data:
+        first:
+          name: _SkyColor2
+        second: {r: 0.1669009, g: 0.18120673, b: 0.46323523, a: 0.9999998}
+>>>>>>> Stashed changes
       data:
         first:
           name: _MoonVector

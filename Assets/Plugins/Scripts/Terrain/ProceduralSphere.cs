@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -192,6 +192,8 @@ public class ProceduralSphere : MonoBehaviour
             if (!mc.convex)
             {
                 mc.convex = true;
+				yield return null;
+                lod.SetTargetLOD(4);
                 Done.Add(current);
             }
             colCount++;
