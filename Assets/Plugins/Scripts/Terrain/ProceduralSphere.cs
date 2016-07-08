@@ -57,14 +57,19 @@ public class ProceduralSphere : MonoBehaviour
             done = false;
         }
         progress = colCount / (float)((Width / 16) * (Width / 16) * 6);
-        if (Done.Count == (Width / 16) * (Width / 16) * 6)
+        if (progress == 1.0f)
         {
             isDone = true;
         }
         if (isDone && !Spawned && Game.player != null)
         {
             Spawned = true;
-            Game.player.transform.position = GetHeight(Random.onUnitSphere);
+            Vector3 pos = Vector3.one * (Radius + MaxHeight);
+            while (Mathf.Clamp01((Vector3.Distance(pos, Vector3.zero) - Radius) / MaxHeight) > Regions[0].height)
+            {
+                pos = GetHeight(Random.onUnitSphere);
+            }
+            Game.player.transform.position = pos;
         }
     }
 
@@ -106,6 +111,14 @@ public class ProceduralSphere : MonoBehaviour
     {
         PlayerPrefs.SetInt("Seed", Seed);
         PlayerPrefs.Save();
+
+        points = new VoronoiPoint[250];
+
+        for (int i = 0; i < points.Length; i++)
+        {
+            points[i] = new VoronoiPoint(Random.onUnitSphere * Radius);
+            points[i].biome = biomes[Random.Range(0, biomes.Length)];
+        }
     }
 
     //Add a side of the cube/cubesphere
@@ -137,6 +150,7 @@ public class ProceduralSphere : MonoBehaviour
                     GameObject gm = new GameObject();
                     gm.transform.parent = s0.transform;
                     gm.name = "Chunk (" + x + "," + y + ")";
+                    gm.tag = "Chunk";
                     gm.layer = LayerMask.NameToLayer("LOD");
 
                     LOD lod = gm.AddComponent<LOD>();
@@ -164,15 +178,20 @@ public class ProceduralSphere : MonoBehaviour
 
     private IEnumerator AddColliders()
     {
+        Debug.Log("Add colliders " + queue.Count);
+        //Wait for the queue to start filling
+        while (queue.Count <= 0)
+        {
+            yield return null;
+        }
+        //Start adding colliders when ready
         while (queue.Count > 0)
         {
             GameObject current = queue.Dequeue();
             MeshCollider mc = current.GetComponent<MeshCollider>();
-            if (mc.convex != true)
+            if (!mc.convex)
             {
-                LOD lod = current.GetComponent<LOD>();
                 mc.convex = true;
-                lod.SetTargetLOD(4);
                 Done.Add(current);
             }
             colCount++;
@@ -188,15 +207,6 @@ public class ProceduralSphere : MonoBehaviour
         if (!PlayerPrefs.HasKey("Seed"))
         {
             PlayerPrefs.SetInt("Seed", Random.Range(0, 999999));
-        }
-
-        points = new VoronoiPoint[26];
-
-        for (int i = 0; i < points.Length; i++)
-        {
-            points[i] = new VoronoiPoint(Random.onUnitSphere * Radius);
-            points[i].biome = biomes[Random.Range(0, biomes.Length)];
-            yield return null;
         }
 
         for (int i = 0; i < 6; i++)

@@ -8,8 +8,6 @@ TagManager:
   - Tree
   - AI
   - Hand
-  - Cave
-  - Stone
   - NetworkHand
   - TreeMaster
   layers:

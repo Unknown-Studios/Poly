@@ -304,7 +304,7 @@ public class LOD : MonoBehaviour
 
         for (int ve = 0; ve < arr.Length; ve++)
         {
-            vert[ve] = norm[ve] * (Radius + MaxHeight * data.heightmap[ve]);
+            vert[ve] = norm[ve] * (Radius + MaxHeight * curve.Evaluate(data.heightmap[ve]));
         }
         tri = data.triangles;
         CallbackDone = true;
@@ -360,13 +360,19 @@ public class LOD : MonoBehaviour
         if (!FirstTime)
         {
             FirstTime = true;
-            AddSplash(LODW);
+            StartCoroutine(AddSplash(LODW));
             mc0.sharedMesh = mesh;
             while (!SplashDone)
             {
                 yield return null;
             }
             PS.queue.Enqueue(gameObject);
+            while (!mc0.convex)
+            {
+                yield return null;
+            }
+            yield return new WaitForSeconds(2);
+            StartCoroutine(AddMountains());
         }
 
         //If player nears a collider before it is generated force its generation
@@ -375,6 +381,32 @@ public class LOD : MonoBehaviour
             forceCollider = false;
             mc0.convex = true;
         }
+    }
+
+    private IEnumerator AddMountains()
+    {
+        Texture2D tex = (Texture2D)mr0.sharedMaterial.mainTexture;
+        Vector2 start = new Vector2(ChunkWidth * Chunk.x, ChunkWidth * Chunk.y);
+        for (int x = 0; x < ChunkWidth; x++)
+        {
+            for (int y = 0; y < ChunkWidth; y++)
+            {
+                for (int i = 0; i < vert.Length; i++)
+                {
+                    RaycastHit hit;
+                    if (Physics.Raycast(vert[i], Vector3.zero, out hit))
+                    {
+                        Debug.Log("Hit");
+                        if (Vector3.Angle(hit.normal, transform.TransformDirection(norm[i])) > 5.0f)
+                        {
+                            tex.SetPixel((int)start.x + x, (int)start.y + y, Color.gray);
+                        }
+                    }
+                }
+            }
+        }
+        yield return null;
+        SetTargetLOD(4);
     }
 
     private void AddUV(int LODW)
@@ -455,12 +487,12 @@ public class LOD : MonoBehaviour
         }
     }
 
-    private void AddSplash(int LODW)
+    private IEnumerator AddSplash(int LODW)
     {
         Texture2D tex = (Texture2D)mr0.material.mainTexture;
         Vector2 start = new Vector2(ChunkWidth * Chunk.x, ChunkWidth * Chunk.y);
         int i = 0;
-
+        int q = 0;
         switch (side)
         {
             case 0:
@@ -468,9 +500,9 @@ public class LOD : MonoBehaviour
                 {
                     for (int x = 0; x <= LODW; x++, i++)
                     {
-                        for (int r = Regions.Length - 1; r > 0; r--)
+                        for (int r = Regions.Length - 1; r >= 0; r--)
                         {
-                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            if (Mathf.Clamp01((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
                             {
                                 if (Regions[r].Biome)
                                 {
@@ -485,6 +517,11 @@ public class LOD : MonoBehaviour
                                         }
                                     }
                                     tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                    q++;
+                                    if (q % 5 == 0)
+                                    {
+                                        yield return null;
+                                    }
                                 }
                                 else
                                 {
@@ -501,9 +538,9 @@ public class LOD : MonoBehaviour
                 {
                     for (int y = 0; y <= LODW; y++, i++)
                     {
-                        for (int r = Regions.Length - 1; r > 0; r--)
+                        for (int r = Regions.Length - 1; r >= 0; r--)
                         {
-                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            if (Mathf.Clamp01((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
                             {
                                 if (Regions[r].Biome)
                                 {
@@ -518,6 +555,11 @@ public class LOD : MonoBehaviour
                                         }
                                     }
                                     tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                    q++;
+                                    if (q % 5 == 0)
+                                    {
+                                        yield return null;
+                                    }
                                 }
                                 else
                                 {
@@ -534,9 +576,9 @@ public class LOD : MonoBehaviour
                 {
                     for (int x = LODW; x >= 0; x--, i++)
                     {
-                        for (int r = Regions.Length - 1; r > 0; r--)
+                        for (int r = Regions.Length - 1; r >= 0; r--)
                         {
-                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            if (Mathf.Clamp01((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
                             {
                                 if (Regions[r].Biome)
                                 {
@@ -551,6 +593,11 @@ public class LOD : MonoBehaviour
                                         }
                                     }
                                     tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                    q++;
+                                    if (q % 5 == 0)
+                                    {
+                                        yield return null;
+                                    }
                                 }
                                 else
                                 {
@@ -567,9 +614,9 @@ public class LOD : MonoBehaviour
                 {
                     for (int x = 0; x <= LODW; x++, i++)
                     {
-                        for (int r = Regions.Length - 1; r > 0; r--)
+                        for (int r = Regions.Length - 1; r >= 0; r--)
                         {
-                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            if (Mathf.Clamp01((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
                             {
                                 if (Regions[r].Biome)
                                 {
@@ -584,6 +631,11 @@ public class LOD : MonoBehaviour
                                         }
                                     }
                                     tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                    q++;
+                                    if (q % 5 == 0)
+                                    {
+                                        yield return null;
+                                    }
                                 }
                                 else
                                 {
@@ -600,9 +652,9 @@ public class LOD : MonoBehaviour
                 {
                     for (int x = 0; x <= LODW; x++, i++)
                     {
-                        for (int r = Regions.Length - 1; r > 0; r--)
+                        for (int r = Regions.Length - 1; r >= 0; r--)
                         {
-                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            if (Mathf.Clamp01((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
                             {
                                 if (Regions[r].Biome)
                                 {
@@ -617,6 +669,11 @@ public class LOD : MonoBehaviour
                                         }
                                     }
                                     tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                    q++;
+                                    if (q % 5 == 0)
+                                    {
+                                        yield return null;
+                                    }
                                 }
                                 else
                                 {
@@ -633,9 +690,9 @@ public class LOD : MonoBehaviour
                 {
                     for (int y = 0; y <= LODW; y++, i++)
                     {
-                        for (int r = Regions.Length - 1; r > 0; r--)
+                        for (int r = Regions.Length - 1; r >= 0; r--)
                         {
-                            if ((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight <= Regions[r].height)
+                            if (Mathf.Clamp01((Vector3.Distance(vert[i], Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
                             {
                                 if (Regions[r].Biome)
                                 {
@@ -650,6 +707,11 @@ public class LOD : MonoBehaviour
                                         }
                                     }
                                     tex.SetPixel((int)start.y + y, (int)start.x + x, closest.biome.biomeColor);
+                                    q++;
+                                    if (q % 5 == 0)
+                                    {
+                                        yield return null;
+                                    }
                                 }
                                 else
                                 {
@@ -666,6 +728,7 @@ public class LOD : MonoBehaviour
         }
         tex.Apply();
         mr0.material.mainTexture = tex;
+        yield return null;
         SplashDone = true;
     }
 }

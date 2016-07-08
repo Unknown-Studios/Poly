@@ -40,4 +40,4 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/SampleScenes/Scenes/RollerBall.unity
   - enabled: 0
-    path: Assets/Scenes/Test.unity
+    path: Assets/Scenes/Test/Test.unity
