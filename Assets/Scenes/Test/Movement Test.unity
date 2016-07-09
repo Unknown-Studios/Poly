@@ -299,6 +299,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationX: 0
   rotationY: 0
+  bobSpeed: 3
 --- !u!54 &694694659
 Rigidbody:
   m_ObjectHideFlags: 0
