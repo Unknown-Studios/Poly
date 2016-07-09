@@ -193,7 +193,7 @@ public class ProceduralSphere : MonoBehaviour
             {
                 mc.convex = true;
 				yield return null;
-                lod.SetTargetLOD(4);
+				current.GetComponent<LOD>().SetTargetLOD(4);
                 Done.Add(current);
             }
             colCount++;

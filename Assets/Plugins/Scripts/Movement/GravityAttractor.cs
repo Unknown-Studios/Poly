@@ -1,20 +1,24 @@
 ﻿using UnityEngine;
 
-public class GravityAttracter : MonoBehaviour
+public class GravityAttractor : MonoBehaviour
 {
-    public float gravity = 9.81f;
+    public float gravity = -9.81f;
     public float Range = 1000.0f;
 
     public LayerMask LM;
 
     public void Attract(Transform t)
     {
+		Rigidbody body = t.GetComponent<Rigidbody> ();
+		body.useGravity = false;
+		body.constraints = RigidbodyConstraints.FreezeRotation;
+
         Vector3 targetDir = (t.position - transform.position).normalized;
         Vector3 bodyUp = t.up;
 
         t.rotation = Quaternion.FromToRotation(bodyUp, targetDir) * t.rotation;
 
-        t.GetComponent<Rigidbody>().AddForce(targetDir * -gravity);
+		body.AddForce(targetDir * gravity);
     }
 
     private void FixedUpdate()
@@ -24,12 +28,6 @@ public class GravityAttracter : MonoBehaviour
         {
             if (c.tag == "Player")
             {
-                if (c.gameObject.GetComponent<Rigidbody>() != null)
-                {
-                    Rigidbody body = c.GetComponent<Rigidbody>();
-                    body.useGravity = false;
-                    body.constraints = RigidbodyConstraints.FreezeRotation;
-                }
                 Attract(c.transform);
             }
         }
