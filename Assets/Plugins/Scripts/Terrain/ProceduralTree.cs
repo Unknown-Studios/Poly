@@ -1,120 +1,121 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ProceduralTree : MonoBehaviour
 {
-    public int ringVertices = 8;
-    public int trunkHeight = 10;
-	public int leavesHeight = 5;
-	public float LeavesRadius = 2.5f;
-    public float Radius = 2.0f;
+	public int Type = -1;
 	public Material mat;
-
-    public GameObject tmPrefab;
-
-    private Vector3[] drawArray;
 
     // Use this for initialization
     private void Start()
     {
-		InvokeRepeating ("Showcase", 0.0f, 2.0f);
-		if (drawArray != null) {
-			int op = 0;
-			foreach (Vector3 pos in drawArray) {
-				GameObject gm = GameObject.Instantiate (tmPrefab, pos, Quaternion.identity) as GameObject;
-				TextMesh tm = gm.GetComponent<TextMesh> ();
-				if (tm != null) {
-					tm.name = "Mesh: " + op.ToString ();
-					tm.text = op.ToString ();
-					tm.transform.parent = transform;
-				}
-				op++;
-			}
-		}
+		tree = new GameObject();
+		tree.transform.position = Vector3.zero;
+		tree.AddComponent<MeshFilter>();
+		MeshRenderer mr = tree.AddComponent<MeshRenderer>();
+		tree.AddComponent<MeshCollider>();
+		mr.sharedMaterial = mat;
+		InvokeRepeating ("Showcase", 0.0f, 2.5f);
     }
 
-	private GameObject current;
+	private GameObject tree;
 
 	public void Showcase() {
-		if (current != null) {
-			Destroy (current);
+		Type = Random.Range (0, TreeTypes.Length);
+		tree.GetComponent<MeshFilter> ().sharedMesh = ProceduralTree.GenerateTree (TreeTypes[Type]);
+		MeshCollider col = tree.GetComponent<MeshCollider> ();
+		if (col.sharedMesh != null) {
+			col.sharedMesh.Clear ();
 		}
-		current = GenerateTree (Vector3.zero);
+		col.sharedMesh = tree.GetComponent<MeshFilter> ().sharedMesh;
 	}
-
-	private GameObject GenerateTree(Vector3 position)
+		
+	public static Mesh GenerateTree(TreeClass treeInfo)
     {
         //Initialization
-        GameObject tree = new GameObject();
-		tree.transform.position = position;
-        MeshFilter mft = tree.AddComponent<MeshFilter>();
-        MeshRenderer mr = tree.AddComponent<MeshRenderer>();
-        MeshCollider collider = tree.AddComponent<MeshCollider>();
-        Mesh treeMesh = mft.mesh = new Mesh();
-		mr.sharedMaterial = mat;
+        Mesh treeMesh = new Mesh();
 
-		trunkHeight = Random.Range (5, 11);
-		leavesHeight = Random.Range (4, 7);
+		int trunkHeight = Random.Range (treeInfo.minTrunk, treeInfo.maxTrunk);
+		int leavesHeight = Random.Range (treeInfo.minLeaves, treeInfo.maxLeaves);
+		int ringVertices = 8;
+		float LeavesRadius = 2f + Random.Range(-0.1f,0.1f);
+		float trunkRadius = 0.5f;
 
-		while (leavesHeight % 2 != 0) {
-			leavesHeight = Random.Range (4, 7);
+		while (leavesHeight % treeInfo.LeavesPattern.length != 0) {
+			leavesHeight = Random.Range (treeInfo.minLeaves, treeInfo.maxLeaves);
 		}
 
 		float xDegree = Random.Range (-0.1f, 0.1f);
 		float zDegree = Random.Range (-0.1f, 0.1f);
 
-		Vector3[] vertices = new Vector3[ringVertices * (trunkHeight+(leavesHeight* 2))];
-        int[] triangles = new int[vertices.Length * 6];
+		List<Vector3> vertices = new List<Vector3>();
 
         //Vertices
-		for (int h = 0; h < trunkHeight + (leavesHeight*2); h++)
+		int leaf = 0;
+		int ah = 0;
+		int extra = 0;
+		for (float h = 0.0f; ah < trunkHeight + leavesHeight + extra; ah++)
         {
-			if (h < trunkHeight) {
+			if (ah < trunkHeight) {
 				for (int v = 0; v < ringVertices; v++) {
-					int index = (h * ringVertices) + v;
 					float rad = (float)v / ringVertices * (2 * Mathf.PI);
-					//Trunk
-					vertices [index] = new Vector3 (Mathf.Cos (rad) * Radius, h, Mathf.Sin (rad) * Radius);
-					vertices [index].x += Mathf.Pow(1.0f+xDegree,h) - 1.0f;
-					vertices [index].z += Mathf.Pow(1.0f+zDegree,h)-1.0f;
-				}
-			} else {
-				for (int v = 0; v < ringVertices; v++) {
-					int index = (h * ringVertices) + v;
-					float rad = (float)v / ringVertices * (2 * Mathf.PI);
-					if (h % 2 == 0) {
-						vertices [index] = new Vector3 (Mathf.Cos (rad) * LeavesRadius, trunkHeight +(h-trunkHeight)/1.5f, Mathf.Sin (rad) * LeavesRadius);
-					} else {
-						vertices [index] = new Vector3 (Mathf.Cos (rad) * Radius, trunkHeight + ((h-trunkHeight)/1.5f) + 1f, Mathf.Sin (rad) * Radius);
-					}
 
-					//Randomness
-					if (h == trunkHeight + (2*leavesHeight) - 1) {
-						vertices [index].x = 0;
-						vertices [index].y += 2.0f;
-						vertices [index].z = 0;
-					} else if (v % 2 == 0) {
-						vertices [index].y += Random.Range (-0.5f, 0.6f);
-					}
-					vertices [index].x += Mathf.Pow(1.0f+xDegree,h)-1.0f;
-					vertices [index].z += Mathf.Pow(1.0f+zDegree,h)-1.0f;
+					float xRan = Random.Range (0.0f, 0.1f);
+					float zRan = Random.Range (0.0f, 0.1f);
+
+					//Trunk
+					vertices.Add(new Vector3 ((Mathf.Cos (rad) * trunkRadius) + (Mathf.Pow(1.0f+xDegree,h) - 1.0f) + xRan, h, (Mathf.Sin (rad) * trunkRadius) + (Mathf.Pow(1.0f+zDegree,h)-1.0f) + zRan));
 				}
+				h++;
+			} else {
+				float radiu = 0.0f;
+				float addH = 0.0f;
+				if (treeInfo.LeavesPattern.postWrapMode == WrapMode.Loop) {
+					radiu = treeInfo.LeavesPattern.keys [leaf % treeInfo.LeavesPattern.length].value;
+					leaf++;
+					addH = treeInfo.LeavesPattern.keys [leaf % treeInfo.LeavesPattern.length].time * 1.5f;
+				} else {
+					radiu = treeInfo.LeavesPattern.Evaluate ((1.0f*leaf) / leavesHeight);
+					addH = 1.0f;
+					leaf++;
+				}
+				float FinalRadius = (trunkRadius+radiu) * (LeavesRadius);
+				for (int v = 0; v < ringVertices; v++) {
+					float rad = (float)v / ringVertices * (2 * Mathf.PI);
+					vertices.Add(new Vector3 (Mathf.Cos (rad) * FinalRadius, h, Mathf.Sin (rad) * FinalRadius));
+
+					if (ah == trunkHeight + leavesHeight + extra - 1) {
+						Vector3 temp = vertices [vertices.Count-1];
+						temp.x = 0;
+						temp.z = 0;
+						vertices [vertices.Count - 1] = temp;
+					}
+					Vector3 tmp = vertices [vertices.Count-1];
+					tmp.x += Mathf.Pow (1.0f + xDegree, h) - 1.0f;
+					tmp.y += Random.Range (-0.5f, 0.0f);
+					tmp.z += Mathf.Pow (1.0f + zDegree, h) - 1.0f;
+					vertices [vertices.Count - 1] = tmp;
+				}
+				h += addH * 2.0f;
 			}
-        }
+		}
+
+		int[] triangles = new int[vertices.Count * 6];
 
         //Triangles
         int i = 0;
-		for (int h = 0; h < trunkHeight + (leavesHeight* 2)- 1; h++) {
+		for (int h = 0; h < trunkHeight + leavesHeight- 1; h++) {
 			for (int c = 0; c < ringVertices - 1; c++)
 	        {
-				int index = (h*ringVertices)+c; 
-				triangles[i++] = index + ringVertices;
-				triangles[i++] = index + 1;
-				triangles[i++] = index;
+				int inde = (h*ringVertices)+c; 
+				triangles[i++] = inde + ringVertices;
+				triangles[i++] = inde + 1;
+				triangles[i++] = inde;
 
-				triangles[i++] = index + ringVertices;	
-				triangles[i++] = index + ringVertices + 1;
-				triangles[i++] = index + 1; 
+				triangles[i++] = inde + ringVertices;	
+				triangles[i++] = inde + ringVertices + 1;
+				triangles[i++] = inde + 1; 
 	        }
 			int ind = (ringVertices * (1+h)) - 1;
 			triangles[i++] = ind + ringVertices;
@@ -127,30 +128,23 @@ public class ProceduralTree : MonoBehaviour
 		}
 
         //Finish up and return
-        treeMesh.vertices = vertices;
+		treeMesh.vertices = vertices.ToArray();
         treeMesh.triangles = triangles;
 
         treeMesh.RecalculateNormals();
         treeMesh.RecalculateBounds();
         treeMesh.Optimize();
-        mft.mesh = treeMesh;
-        if (collider.sharedMesh != null)
-        {
-            collider.sharedMesh.Clear();
-        }
-        collider.sharedMesh = treeMesh;
-
-        return tree;
+        return treeMesh;
     }
 
-    private void OnDrawGizmos()
-    {
-        if (drawArray != null)
-        {
-            for (int i = 0; i < drawArray.Length; i++)
-            {
-                Gizmos.DrawSphere(drawArray[i], 0.1f);
-            }
-        }
-    }
+	public TreeClass[] TreeTypes;
+
+	[System.Serializable]
+	public class TreeClass {
+		public int minTrunk = 5;
+		public int maxTrunk = 11;
+		public int minLeaves = 4;
+		public int maxLeaves = 7;
+		public AnimationCurve LeavesPattern;
+	}
 }

@@ -70,8 +70,31 @@ public class ProceduralSphere : MonoBehaviour
                 pos = GetHeight(Random.onUnitSphere);
             }
             Game.player.transform.position = pos;
+
+			SpawnTrees ();
         }
     }
+
+	private void SpawnTrees () {
+		Vector3 position = Random.onUnitSphere * Radius;
+		RaycastHit rayhit;
+		if (Physics.Raycast (position, -position.normalized, out rayhit)) {
+			if (rayhit.transform.GetComponent<Renderer>() != null) {
+				Texture2D tex = rayhit.transform.GetComponent<Renderer> ().material.mainTexture as Texture2D;
+				int x = Mathf.RoundToInt(rayhit.textureCoord.x * tex.width);
+				int y = Mathf.RoundToInt(rayhit.textureCoord.y * tex.height);
+
+				Color col = tex.GetPixel (x, y);
+
+				Biome curBiome;
+				for (int biome = 0; biome < biomes.Length; biome++) {
+					if (biomes [biome].biomeColor == col) {
+						curBiome = biomes [biome];
+					}
+				}
+			}
+		}
+	}
 
     //Redirect to GetHeight(Vector3);
     public Vector3 GetHeight(float x, float y, float z)

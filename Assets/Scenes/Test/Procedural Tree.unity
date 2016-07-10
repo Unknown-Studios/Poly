@@ -262,10 +262,89 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ringVertices: 6
-  height: 17
-  Radius: 0.5
+  trunkHeight: 10
+  leavesHeight: 5
+  Type: -1
+  LeavesRadius: 2.5
+  trunkRadius: 0.5
   mat: {fileID: 2100000, guid: 577f998fe7c1eaf41a8d5a92e5f253d0, type: 2}
   tmPrefab: {fileID: 832546852}
+  TreeTypes:
+  - minTrunk: 3
+    maxTrunk: 6
+    minLeaves: 4
+    maxLeaves: 10
+    LeavesPattern:
+      serializedVersion: 2
+      m_Curve:
+      - time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+      - time: 0.3
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+      - time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 0
+  - minTrunk: 5
+    maxTrunk: 11
+    minLeaves: 12
+    maxLeaves: 16
+    LeavesPattern:
+      serializedVersion: 2
+      m_Curve:
+      - time: 0
+        value: 0
+        inSlope: 1774.2399
+        outSlope: 1774.2399
+        tangentMode: 10
+      - time: 0.00056487694
+        value: 1.0022272
+        inSlope: -0.98895687
+        outSlope: -0.98895687
+        tangentMode: 0
+      - time: 1
+        value: 0.003412962
+        inSlope: -1.067772
+        outSlope: -1.067772
+        tangentMode: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 1
+      m_RotationOrder: 0
+  - minTrunk: 7
+    maxTrunk: 13
+    minLeaves: 4
+    maxLeaves: 8
+    LeavesPattern:
+      serializedVersion: 2
+      m_Curve:
+      - time: 0
+        value: 1
+        inSlope: -0.72619164
+        outSlope: -0.72619164
+        tangentMode: 0
+      - time: 0.8208333
+        value: 0.60006464
+        inSlope: -1.0345762
+        outSlope: -1.0345762
+        tangentMode: 0
+      - time: 1
+        value: -0.0062499996
+        inSlope: -8.791656
+        outSlope: -8.791656
+        tangentMode: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 0
 --- !u!4 &363149509
 Transform:
   m_ObjectHideFlags: 0
