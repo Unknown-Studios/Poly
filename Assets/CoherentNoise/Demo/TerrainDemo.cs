@@ -1,19 +1,17 @@
-using System;
 using CoherentNoise;
 using CoherentNoise.Generation;
-using CoherentNoise.Generation.Displacement;
 using CoherentNoise.Generation.Fractal;
 using CoherentNoise.Generation.Modification;
-using CoherentNoise.Generation.Patterns;
-using CoherentNoise.Texturing;
-using UnityEngine;
+using System;
 using System.Collections;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class TerrainDemo : MonoBehaviour
 {
     // terrains that we would fly over. Terrain1 is currently showing, Terrain2 is farther away and being generated
     public Terrain Terrain1;
+
     public Terrain Terrain2;
 
     public float Speed = 50; // flight speed
@@ -24,7 +22,7 @@ public class TerrainDemo : MonoBehaviour
     private bool m_Move; // are we flying yet?
     private bool m_CameraChangingHeight; // is camera height changing?
 
-    void Start()
+    private void Start()
     {
         if (!Terrain1 || !Terrain2)
         {
@@ -35,22 +33,22 @@ public class TerrainDemo : MonoBehaviour
         // desert dune-like ridges are created using RidgeNoise. it is scaled down a bit, and Gain applied to make ridges more pronounced
         var desert = new Gain(
             new RidgeNoise(23478568)
-                {
-                    OctaveCount = 8
-                } * 0.6f, 0.4f);
-        // hills use a simple pink noise. 
+            {
+                OctaveCount = 8
+            } * 0.6f, 0.4f);
+        // hills use a simple pink noise.
         var hills = new PinkNoise(3465478)
-                        {
-                            OctaveCount = 5, // smooth hills (no higher frequencies)
-                            Persistence = 0.56f // but steep (changes rapidly in the frequencies we do have)
-                        };
+        {
+            OctaveCount = 5, // smooth hills (no higher frequencies)
+            Persistence = 0.56f // but steep (changes rapidly in the frequencies we do have)
+        };
         // weight decides, whether a given point is hills or desert
         // cached, as we'd need it to decide texture at every point
         m_Weight = new Cache(new PinkNoise(346546)
-                                    {
-                                        Frequency = 0.5f,
-                                        OctaveCount = 3
-                                    }.ScaleShift(0.5f, 0.5f));
+        {
+            Frequency = 0.5f,
+            OctaveCount = 3
+        }.ScaleShift(0.5f, 0.5f));
         // overall heightmap blends hills and deserts
         m_Generator = desert.Blend(hills, m_Weight).ScaleShift(0.5f, 0.5f);
         // as changes to terrains made in playmode get saved in the editor, we need to re-generate terrains
@@ -64,7 +62,7 @@ public class TerrainDemo : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (m_Move)
         {
@@ -88,8 +86,8 @@ public class TerrainDemo : MonoBehaviour
                 else
                 {
                     // make vertical speed higher if we're too low. Descending is always constant (low) speed.
-                    var speedCoeff = targetheight < nextPoint.y + 5 ? 0.25f : (targetheight - nextPoint.y - 5)*0.2f;
-                    // we're not too low, so fly towards target height 
+                    var speedCoeff = targetheight < nextPoint.y + 5 ? 0.25f : (targetheight - nextPoint.y - 5) * 0.2f;
+                    // we're not too low, so fly towards target height
                     var delta = Math.Min(Mathf.Abs(targetheight - nextPoint.y), Speed * speedCoeff * Time.deltaTime);
                     nextPoint.y += delta * Mathf.Sign(targetheight - nextPoint.y);
                 }
@@ -132,7 +130,7 @@ public class TerrainDemo : MonoBehaviour
         // fixing resultions in code, as there's no place in editor to do that
         td.alphamapResolution = td.heightmapResolution;
         td.SetDetailResolution(td.heightmapWidth, 16);
-        
+
         // arrays for various maps used in terrain
         var hm = new float[td.heightmapWidth, td.heightmapHeight]; // height
         var am = new float[td.heightmapWidth, td.heightmapHeight, 2]; // alpha (textures)
@@ -144,7 +142,7 @@ public class TerrainDemo : MonoBehaviour
             {
                 // check our running time. We want to yield every now and then, so that FPS don't stall
                 var timeInMs = (float)(DateTime.UtcNow.Ticks - start) / TimeSpan.TicksPerMillisecond;
-                if (timeInMs > 1000f / 25) // shoot for 25 FPS 
+                if (timeInMs > 1000f / 25) // shoot for 25 FPS
                 {
                     start = DateTime.UtcNow.Ticks;
                     yield return null;
@@ -165,7 +163,7 @@ public class TerrainDemo : MonoBehaviour
                 am[ii, jj, 1] = w;      // w==1 means hills
 
                 // details count
-                var details = w > 0.5f ? (w - 0.5) * 40 : 0; // w<0.5 means desert, so no grass there. 
+                var details = w > 0.5f ? (w - 0.5) * 40 : 0; // w<0.5 means desert, so no grass there.
                 // Unity does not allow to set detail map resultion at will, so we have to map heightmap coords to detailmap
                 // (although in this case terrains are square, and resolutions match exactly)
                 int dx = ii * td.detailResolution / td.heightmapWidth;

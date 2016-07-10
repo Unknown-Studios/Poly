@@ -205,7 +205,7 @@ namespace SimpleJSON
             return new JSONData(s);
         }
 
-        public static implicit operator string (JSONNode d)
+        public static implicit operator string(JSONNode d)
         {
             return (d == null) ? null : d.Value;
         }

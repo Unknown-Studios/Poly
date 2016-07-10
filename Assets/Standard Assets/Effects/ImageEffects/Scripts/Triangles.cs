@@ -1,15 +1,14 @@
-using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace UnityStandardAssets.ImageEffects
 {
-    class Triangles
+    internal class Triangles
     {
         private static Mesh[] meshes;
         private static int currentTris = 0;
 
-        static bool HasMeshes()
+        private static bool HasMeshes()
         {
             if (meshes == null)
                 return false;
@@ -20,7 +19,7 @@ namespace UnityStandardAssets.ImageEffects
             return true;
         }
 
-        static void Cleanup()
+        private static void Cleanup()
         {
             if (meshes == null)
                 return;
@@ -36,7 +35,7 @@ namespace UnityStandardAssets.ImageEffects
             meshes = null;
         }
 
-        static Mesh[] GetMeshes(int totalWidth, int totalHeight)
+        private static Mesh[] GetMeshes(int totalWidth, int totalHeight)
         {
             if (HasMeshes() && (currentTris == (totalWidth * totalHeight)))
             {
@@ -64,7 +63,7 @@ namespace UnityStandardAssets.ImageEffects
             return meshes;
         }
 
-        static Mesh GetMesh(int triCount, int triOffset, int totalWidth, int totalHeight)
+        private static Mesh GetMesh(int triCount, int triOffset, int totalWidth, int totalHeight)
         {
             var mesh = new Mesh();
             mesh.hideFlags = HideFlags.DontSave;

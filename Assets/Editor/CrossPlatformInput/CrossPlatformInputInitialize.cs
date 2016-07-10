@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEditor;
 
@@ -13,6 +12,26 @@ namespace UnityStandardAssets.CrossPlatformInput.Inspector
         // EDITOR_MOBILE_INPUT : denotes that mobile input should be used in editor, if a mobile build target is selected. (i.e. using Unity Remote app).
         // MOBILE_INPUT : denotes that mobile input should be used right now!
 
+        private static BuildTargetGroup[] buildTargetGroups = new BuildTargetGroup[]
+            {
+                BuildTargetGroup.Standalone,
+                BuildTargetGroup.WebPlayer,
+                BuildTargetGroup.Android,
+                BuildTargetGroup.iOS,
+                BuildTargetGroup.WP8
+            };
+
+        private static BuildTargetGroup[] mobileBuildTargetGroups = new BuildTargetGroup[]
+            {
+                BuildTargetGroup.Android,
+                BuildTargetGroup.iOS,
+                BuildTargetGroup.WP8,
+                BuildTargetGroup.PSM,
+                BuildTargetGroup.SamsungTV,
+                BuildTargetGroup.Tizen,
+                BuildTargetGroup.WSA
+            };
+
         static CrossPlatformInitialize()
         {
             var defines = GetDefinesList(buildTargetGroups[0]);
@@ -23,7 +42,6 @@ namespace UnityStandardAssets.CrossPlatformInput.Inspector
             }
         }
 
-
         [MenuItem("Mobile Input/Enable")]
         private static void Enable()
         {
@@ -33,7 +51,7 @@ namespace UnityStandardAssets.CrossPlatformInput.Inspector
                 case BuildTarget.Android:
                 case BuildTarget.iOS:
                 case BuildTarget.WP8Player:
-                case BuildTarget.PSM: 
+                case BuildTarget.PSM:
                 case BuildTarget.WSAPlayer:
                     EditorUtility.DisplayDialog("Mobile Input",
                                                 "You have enabled Mobile Input. You'll need to use the Unity Remote app on a connected device to control your game in the Editor.",
@@ -48,14 +66,12 @@ namespace UnityStandardAssets.CrossPlatformInput.Inspector
             }
         }
 
-
         [MenuItem("Mobile Input/Enable", true)]
         private static bool EnableValidate()
         {
             var defines = GetDefinesList(mobileBuildTargetGroups[0]);
             return !defines.Contains("MOBILE_INPUT");
         }
-
 
         [MenuItem("Mobile Input/Disable")]
         private static void Disable()
@@ -73,35 +89,12 @@ namespace UnityStandardAssets.CrossPlatformInput.Inspector
             }
         }
 
-
         [MenuItem("Mobile Input/Disable", true)]
         private static bool DisableValidate()
         {
             var defines = GetDefinesList(mobileBuildTargetGroups[0]);
             return defines.Contains("MOBILE_INPUT");
         }
-
-
-        private static BuildTargetGroup[] buildTargetGroups = new BuildTargetGroup[]
-            {
-                BuildTargetGroup.Standalone,
-                BuildTargetGroup.WebPlayer,
-                BuildTargetGroup.Android,
-                BuildTargetGroup.iOS,
-                BuildTargetGroup.WP8
-            };
-
-        private static BuildTargetGroup[] mobileBuildTargetGroups = new BuildTargetGroup[]
-            {
-                BuildTargetGroup.Android,
-                BuildTargetGroup.iOS,
-                BuildTargetGroup.WP8,
-                BuildTargetGroup.PSM, 
-                BuildTargetGroup.SamsungTV,
-                BuildTargetGroup.Tizen,
-                BuildTargetGroup.WSA 
-            };
-
 
         private static void SetEnabled(string defineName, bool enable, bool mobile)
         {
@@ -132,7 +125,6 @@ namespace UnityStandardAssets.CrossPlatformInput.Inspector
                 PlayerSettings.SetScriptingDefineSymbolsForGroup(group, definesString);
             }
         }
-
 
         private static List<string> GetDefinesList(BuildTargetGroup group)
         {

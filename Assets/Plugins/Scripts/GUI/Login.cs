@@ -75,7 +75,8 @@ public class Login : MonoBehaviour
                         {
                             error = "Password is missing!";
                         }
-                        else {
+                        else
+                        {
                             StartCoroutine(login(Username, Md5Sum(Password), false));
                         }
                     }
@@ -92,12 +93,14 @@ public class Login : MonoBehaviour
                         GUI.Label(new Rect((Screen.width / 2) - (ErrorSize.x) / 2, 0, ErrorSize.x, 25), "Error: " + error);
                     }
                 }
-                else {
+                else
+                {
                     LoggingIn = true;
                     StartCoroutine(login(PlayerPrefs.GetString("Username"), PlayerPrefs.GetString("Password"), true));
                 }
             }
-            else {
+            else
+            {
                 GUI.Label(new Rect((Screen.width / 2) - (300 / 2), (Screen.height / 2) - (50 / 2), 300, 50), LoadText);
             }
         }
@@ -167,7 +170,8 @@ public class Login : MonoBehaviour
             PlayerPrefs.Save();
             Game.LoadLevel("Project");
         }
-        else {
+        else
+        {
             error = "Wrong Username/Password";
             LoggingIn = false;
             yield break;
@@ -185,7 +189,8 @@ public class Login : MonoBehaviour
         {
             Debug.LogError(dataW.error);
         }
-        else {
+        else
+        {
             jsonData = dataW.text;
         }
     }

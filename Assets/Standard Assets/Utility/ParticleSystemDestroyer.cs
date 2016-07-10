@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -17,6 +16,11 @@ namespace UnityStandardAssets.Utility
         private float m_MaxLifetime;
         private bool m_EarlyStop;
 
+        public void Stop()
+        {
+            // stops the particle system early
+            m_EarlyStop = true;
+        }
 
         private IEnumerator Start()
         {
@@ -50,13 +54,6 @@ namespace UnityStandardAssets.Utility
             yield return new WaitForSeconds(m_MaxLifetime);
 
             Destroy(gameObject);
-        }
-
-
-        public void Stop()
-        {
-            // stops the particle system early
-            m_EarlyStop = true;
         }
     }
 }

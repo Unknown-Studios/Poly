@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,22 +12,10 @@ namespace UnityStandardAssets.Utility
 
         private Rigidbody Rigidbody;
 
-        // Use this for initialization
-        private void Start()
-        {
-            originalStructure = new List<Transform>(GetComponentsInChildren<Transform>());
-            originalPosition = transform.position;
-            originalRotation = transform.rotation;
-
-            Rigidbody = GetComponent<Rigidbody>();
-        }
-
-
         public void DelayedReset(float delay)
         {
             StartCoroutine(ResetCoroutine(delay));
         }
-
 
         public IEnumerator ResetCoroutine(float delay)
         {
@@ -52,6 +39,16 @@ namespace UnityStandardAssets.Utility
             }
 
             SendMessage("Reset");
+        }
+
+        // Use this for initialization
+        private void Start()
+        {
+            originalStructure = new List<Transform>(GetComponentsInChildren<Transform>());
+            originalPosition = transform.position;
+            originalRotation = transform.rotation;
+
+            Rigidbody = GetComponent<Rigidbody>();
         }
     }
 }

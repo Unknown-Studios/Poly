@@ -1,4 +1,3 @@
-using System;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 using UnityEngine;
@@ -6,35 +5,23 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
     [CustomEditor(typeof(CreaseShading))]
-    class CreaseShadingEditor : Editor {
-        SerializedObject serObj;
+    internal class CreaseShadingEditor : Editor
+    {
+        private SerializedObject serObj;
 
-        SerializedProperty m_intensity;
-        SerializedProperty m_softness;
-        SerializedProperty m_spread;
+        private SerializedProperty m_intensity;
+        private SerializedProperty m_softness;
+        private SerializedProperty m_spread;
 
-        AnimBool m_showSoftnessWarning = new AnimBool();
-        AnimBool m_showSpreadWarning = new AnimBool();
+        private AnimBool m_showSoftnessWarning = new AnimBool();
+        private AnimBool m_showSpreadWarning = new AnimBool();
 
         private bool softnessWarningValue { get { return m_softness.intValue > 4; } }
         private bool spreadWarningValue { get { return m_spread.floatValue > 4; } }
 
-        void OnEnable () {
-            serObj = new SerializedObject (target);
-
-            m_intensity = serObj.FindProperty("intensity");
-            m_softness = serObj.FindProperty("softness");
-            m_spread = serObj.FindProperty("spread");
-
-            m_showSoftnessWarning.valueChanged.AddListener(Repaint);
-            m_showSpreadWarning.valueChanged.AddListener(Repaint);
-
-            m_showSoftnessWarning.value = softnessWarningValue;
-            m_showSpreadWarning.value = spreadWarningValue;
-        }
-
-        public override void OnInspectorGUI () {
-            serObj.Update ();
+        public override void OnInspectorGUI()
+        {
+            serObj.Update();
 
             EditorGUILayout.Slider(m_intensity, -5.0f, 5.0f, new GUIContent("Intensity"));
 
@@ -54,7 +41,22 @@ namespace UnityStandardAssets.ImageEffects
             }
             EditorGUILayout.EndFadeGroup();
 
-            serObj.ApplyModifiedProperties ();
+            serObj.ApplyModifiedProperties();
+        }
+
+        private void OnEnable()
+        {
+            serObj = new SerializedObject(target);
+
+            m_intensity = serObj.FindProperty("intensity");
+            m_softness = serObj.FindProperty("softness");
+            m_spread = serObj.FindProperty("spread");
+
+            m_showSoftnessWarning.valueChanged.AddListener(Repaint);
+            m_showSpreadWarning.valueChanged.AddListener(Repaint);
+
+            m_showSoftnessWarning.value = softnessWarningValue;
+            m_showSpreadWarning.value = spreadWarningValue;
         }
     }
 }

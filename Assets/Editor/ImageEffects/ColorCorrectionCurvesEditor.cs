@@ -1,124 +1,130 @@
-using System;
 using UnityEditor;
 using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-    [CustomEditor (typeof(ColorCorrectionCurves))]
-    class ColorCorrectionCurvesEditor : Editor {
-        SerializedObject serObj;
+    [CustomEditor(typeof(ColorCorrectionCurves))]
+    internal class ColorCorrectionCurvesEditor : Editor
+    {
+        private SerializedObject serObj;
 
-        SerializedProperty mode;
+        private SerializedProperty mode;
 
-        SerializedProperty redChannel;
-        SerializedProperty greenChannel;
-        SerializedProperty blueChannel;
+        private SerializedProperty redChannel;
+        private SerializedProperty greenChannel;
+        private SerializedProperty blueChannel;
 
-        SerializedProperty useDepthCorrection;
+        private SerializedProperty useDepthCorrection;
 
-        SerializedProperty depthRedChannel;
-        SerializedProperty depthGreenChannel;
-        SerializedProperty depthBlueChannel;
+        private SerializedProperty depthRedChannel;
+        private SerializedProperty depthGreenChannel;
+        private SerializedProperty depthBlueChannel;
 
-        SerializedProperty zCurveChannel;
+        private SerializedProperty zCurveChannel;
 
-        SerializedProperty saturation;
+        private SerializedProperty saturation;
 
-        SerializedProperty selectiveCc;
-        SerializedProperty selectiveFromColor;
-        SerializedProperty selectiveToColor;
+        private SerializedProperty selectiveCc;
+        private SerializedProperty selectiveFromColor;
+        private SerializedProperty selectiveToColor;
 
-        private bool  applyCurveChanges = false;
+        private bool applyCurveChanges = false;
 
-        void OnEnable () {
-            serObj = new SerializedObject (target);
+        public override void OnInspectorGUI()
+        {
+            serObj.Update();
 
-            mode = serObj.FindProperty ("mode");
+            GUILayout.Label("Use curves to tweak RGB channel colors", EditorStyles.miniBoldLabel);
 
-            saturation = serObj.FindProperty ("saturation");
+            saturation.floatValue = EditorGUILayout.Slider("Saturation", saturation.floatValue, 0.0f, 5.0f);
 
-            redChannel = serObj.FindProperty ("redChannel");
-            greenChannel = serObj.FindProperty ("greenChannel");
-            blueChannel = serObj.FindProperty ("blueChannel");
+            EditorGUILayout.PropertyField(mode, new GUIContent("Mode"));
+            EditorGUILayout.Separator();
 
-            useDepthCorrection = serObj.FindProperty ("useDepthCorrection");
+            BeginCurves();
 
-            zCurveChannel = serObj.FindProperty ("zCurve");
+            CurveGui(" Red", redChannel, Color.red);
+            CurveGui(" Green", greenChannel, Color.green);
+            CurveGui(" Blue", blueChannel, Color.blue);
 
-            depthRedChannel = serObj.FindProperty ("depthRedChannel");
-            depthGreenChannel = serObj.FindProperty ("depthGreenChannel");
-            depthBlueChannel = serObj.FindProperty ("depthBlueChannel");
-
-            serObj.ApplyModifiedProperties ();
-
-            selectiveCc = serObj.FindProperty ("selectiveCc");
-            selectiveFromColor = serObj.FindProperty ("selectiveFromColor");
-            selectiveToColor = serObj.FindProperty ("selectiveToColor");
-        }
-
-        void CurveGui ( string name, SerializedProperty animationCurve, Color color) {
-            // @NOTE: EditorGUILayout.CurveField is buggy and flickers, using PropertyField for now
-            //animationCurve.animationCurveValue = EditorGUILayout.CurveField (GUIContent (name), animationCurve.animationCurveValue, color, Rect (0.0f,0.0f,1.0f,1.0f));
-            EditorGUILayout.PropertyField (animationCurve, new GUIContent (name));
-            if (GUI.changed)
-                applyCurveChanges = true;
-        }
-
-        void BeginCurves () {
-            applyCurveChanges = false;
-        }
-
-        void ApplyCurves () {
-            if (applyCurveChanges) {
-                serObj.ApplyModifiedProperties ();
-                (serObj.targetObject as ColorCorrectionCurves).gameObject.SendMessage ("UpdateTextures");
-            }
-        }
-
-
-        public override void OnInspectorGUI () {
-            serObj.Update ();
-
-            GUILayout.Label ("Use curves to tweak RGB channel colors", EditorStyles.miniBoldLabel);
-
-            saturation.floatValue = EditorGUILayout.Slider( "Saturation", saturation.floatValue, 0.0f, 5.0f);
-
-            EditorGUILayout.PropertyField (mode, new GUIContent ("Mode"));
-            EditorGUILayout.Separator ();
-
-            BeginCurves ();
-
-            CurveGui (" Red", redChannel, Color.red);
-            CurveGui (" Green", greenChannel, Color.green);
-            CurveGui (" Blue", blueChannel, Color.blue);
-
-            EditorGUILayout.Separator ();
+            EditorGUILayout.Separator();
 
             if (mode.intValue > 0)
                 useDepthCorrection.boolValue = true;
             else
                 useDepthCorrection.boolValue = false;
 
-            if (useDepthCorrection.boolValue) {
-                CurveGui (" Red (depth)", depthRedChannel, Color.red);
-                CurveGui (" Green (depth)", depthGreenChannel, Color.green);
-                CurveGui (" Blue (depth)", depthBlueChannel, Color.blue);
-                EditorGUILayout.Separator ();
-                CurveGui (" Blend Curve", zCurveChannel, Color.grey);
+            if (useDepthCorrection.boolValue)
+            {
+                CurveGui(" Red (depth)", depthRedChannel, Color.red);
+                CurveGui(" Green (depth)", depthGreenChannel, Color.green);
+                CurveGui(" Blue (depth)", depthBlueChannel, Color.blue);
+                EditorGUILayout.Separator();
+                CurveGui(" Blend Curve", zCurveChannel, Color.grey);
             }
 
-            EditorGUILayout.Separator ();
-            EditorGUILayout.PropertyField (selectiveCc, new GUIContent ("Selective"));
-            if (selectiveCc.boolValue) {
-                EditorGUILayout.PropertyField (selectiveFromColor, new GUIContent (" Key"));
-                EditorGUILayout.PropertyField (selectiveToColor, new GUIContent (" Target"));
+            EditorGUILayout.Separator();
+            EditorGUILayout.PropertyField(selectiveCc, new GUIContent("Selective"));
+            if (selectiveCc.boolValue)
+            {
+                EditorGUILayout.PropertyField(selectiveFromColor, new GUIContent(" Key"));
+                EditorGUILayout.PropertyField(selectiveToColor, new GUIContent(" Target"));
             }
 
-
-            ApplyCurves ();
+            ApplyCurves();
 
             if (!applyCurveChanges)
-                serObj.ApplyModifiedProperties ();
+                serObj.ApplyModifiedProperties();
+        }
+
+        private void OnEnable()
+        {
+            serObj = new SerializedObject(target);
+
+            mode = serObj.FindProperty("mode");
+
+            saturation = serObj.FindProperty("saturation");
+
+            redChannel = serObj.FindProperty("redChannel");
+            greenChannel = serObj.FindProperty("greenChannel");
+            blueChannel = serObj.FindProperty("blueChannel");
+
+            useDepthCorrection = serObj.FindProperty("useDepthCorrection");
+
+            zCurveChannel = serObj.FindProperty("zCurve");
+
+            depthRedChannel = serObj.FindProperty("depthRedChannel");
+            depthGreenChannel = serObj.FindProperty("depthGreenChannel");
+            depthBlueChannel = serObj.FindProperty("depthBlueChannel");
+
+            serObj.ApplyModifiedProperties();
+
+            selectiveCc = serObj.FindProperty("selectiveCc");
+            selectiveFromColor = serObj.FindProperty("selectiveFromColor");
+            selectiveToColor = serObj.FindProperty("selectiveToColor");
+        }
+
+        private void CurveGui(string name, SerializedProperty animationCurve, Color color)
+        {
+            // @NOTE: EditorGUILayout.CurveField is buggy and flickers, using PropertyField for now
+            //animationCurve.animationCurveValue = EditorGUILayout.CurveField (GUIContent (name), animationCurve.animationCurveValue, color, Rect (0.0f,0.0f,1.0f,1.0f));
+            EditorGUILayout.PropertyField(animationCurve, new GUIContent(name));
+            if (GUI.changed)
+                applyCurveChanges = true;
+        }
+
+        private void BeginCurves()
+        {
+            applyCurveChanges = false;
+        }
+
+        private void ApplyCurves()
+        {
+            if (applyCurveChanges)
+            {
+                serObj.ApplyModifiedProperties();
+                (serObj.targetObject as ColorCorrectionCurves).gameObject.SendMessage("UpdateTextures");
+            }
         }
     }
 }

@@ -1,7 +1,9 @@
-using System;
 using UnityEngine;
+
 #if UNITY_EDITOR
+
 using UnityEditor;
+
 #endif
 
 namespace UnityStandardAssets.Utility
@@ -18,10 +20,17 @@ namespace UnityStandardAssets.Utility
             Mobile
         }
 
-        [SerializeField] private BuildTargetGroup m_BuildTargetGroup;
-        [SerializeField] private GameObject[] m_Content = new GameObject[0];
-        [SerializeField] private MonoBehaviour[] m_MonoBehaviours = new MonoBehaviour[0];
-        [SerializeField] private bool m_ChildrenOfThisObject;
+        [SerializeField]
+        private BuildTargetGroup m_BuildTargetGroup;
+
+        [SerializeField]
+        private GameObject[] m_Content = new GameObject[0];
+
+        [SerializeField]
+        private MonoBehaviour[] m_MonoBehaviours = new MonoBehaviour[0];
+
+        [SerializeField]
+        private bool m_ChildrenOfThisObject;
 
 #if !UNITY_EDITOR
 	void OnEnable()
@@ -38,20 +47,18 @@ namespace UnityStandardAssets.Utility
             EditorApplication.update += Update;
         }
 
-
         private void OnDisable()
         {
             EditorUserBuildSettings.activeBuildTargetChanged -= Update;
             EditorApplication.update -= Update;
         }
 
-
         private void Update()
         {
             CheckEnableContent();
         }
-#endif
 
+#endif
 
         private void CheckEnableContent()
         {
@@ -75,7 +82,6 @@ namespace UnityStandardAssets.Utility
             }
 #endif
         }
-
 
         private void EnableContent(bool enabled)
         {

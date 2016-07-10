@@ -19,7 +19,7 @@
 
 #include "UnityCG.cginc"
 
-	struct appdata
+		struct appdata
 	{
 		float4 position : POSITION;
 		float3 texcoord : TEXCOORD0;

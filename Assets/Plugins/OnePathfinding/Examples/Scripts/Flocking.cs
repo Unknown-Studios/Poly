@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 [RequireComponent(typeof(AdvancedAI))]
 public class Flocking : MonoBehaviour
@@ -43,57 +42,6 @@ public class Flocking : MonoBehaviour
 
     [HideInInspector]
     public AdvancedAI main;
-
-    void Awake()
-    {
-        FlockID = Mathf.RoundToInt(Random.Range(0, 99999999));
-        main = GetComponent<AdvancedAI>();
-    }
-
-    void Start()
-    {
-        if (master == null)
-        {
-            SpawnFlockMember();
-        }
-    }
-
-    void Update()
-    {
-        if (master == null && !IsMaster)
-        {
-            IsMaster = true;
-        }
-    }
-
-    /// <summary>
-    /// Spawn new member in this flock.
-    /// </summary>
-    private void SpawnFlockMember()
-    {
-        int FlockSize = Random.Range(minFlockSize, maxFlockSize);
-
-        int o = 0;
-        while (o < FlockSize)
-        {
-            Vector3 r = new Vector3(Random.Range(-10f, 10f), 0, Random.Range(-10f, 10f));
-            GameObject bo = null;
-            if (FlockMember != null)
-            {
-                bo = (GameObject)Instantiate(FlockMember, transform.position + r, Quaternion.identity);
-            }
-            else
-            {
-                bo = (GameObject)Instantiate(gameObject, transform.position + r, Quaternion.identity);
-            }
-            bo.GetComponent<Flocking>().master = gameObject;
-            bo.GetComponent<Flocking>().FlockID = FlockID;
-            bo.name = bo.name.Replace("(Clone)", "");
-
-            bo.transform.SetParent(transform.parent);
-            o++;
-        }
-    }
 
     /// <summary>
     /// Used to determine how far away the master is.
@@ -146,6 +94,57 @@ public class Flocking : MonoBehaviour
                     ai.master = f;
                 }
             }
+        }
+    }
+
+    private void Awake()
+    {
+        FlockID = Mathf.RoundToInt(Random.Range(0, 99999999));
+        main = GetComponent<AdvancedAI>();
+    }
+
+    private void Start()
+    {
+        if (master == null)
+        {
+            SpawnFlockMember();
+        }
+    }
+
+    private void Update()
+    {
+        if (master == null && !IsMaster)
+        {
+            IsMaster = true;
+        }
+    }
+
+    /// <summary>
+    /// Spawn new member in this flock.
+    /// </summary>
+    private void SpawnFlockMember()
+    {
+        int FlockSize = Random.Range(minFlockSize, maxFlockSize);
+
+        int o = 0;
+        while (o < FlockSize)
+        {
+            Vector3 r = new Vector3(Random.Range(-10f, 10f), 0, Random.Range(-10f, 10f));
+            GameObject bo = null;
+            if (FlockMember != null)
+            {
+                bo = (GameObject)Instantiate(FlockMember, transform.position + r, Quaternion.identity);
+            }
+            else
+            {
+                bo = (GameObject)Instantiate(gameObject, transform.position + r, Quaternion.identity);
+            }
+            bo.GetComponent<Flocking>().master = gameObject;
+            bo.GetComponent<Flocking>().FlockID = FlockID;
+            bo.name = bo.name.Replace("(Clone)", "");
+
+            bo.transform.SetParent(transform.parent);
+            o++;
         }
     }
 }

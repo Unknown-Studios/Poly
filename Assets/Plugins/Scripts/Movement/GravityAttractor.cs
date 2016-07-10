@@ -9,16 +9,16 @@ public class GravityAttractor : MonoBehaviour
 
     public void Attract(Transform t)
     {
-		Rigidbody body = t.GetComponent<Rigidbody> ();
-		body.useGravity = false;
-		body.constraints = RigidbodyConstraints.FreezeRotation;
+        Rigidbody body = t.GetComponent<Rigidbody>();
+        body.useGravity = false;
+        body.constraints = RigidbodyConstraints.FreezeRotation;
 
         Vector3 targetDir = (t.position - transform.position).normalized;
         Vector3 bodyUp = t.up;
 
         t.rotation = Quaternion.FromToRotation(bodyUp, targetDir) * t.rotation;
 
-		body.AddForce(targetDir * gravity);
+        body.AddForce(targetDir * gravity);
     }
 
     private void FixedUpdate()

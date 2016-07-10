@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
-[Serializable]
+[Serializable, RequireComponent(typeof(ProceduralTree))]
 public class ProceduralSphere : MonoBehaviour
 {
     public int WidthTick;
@@ -34,6 +34,8 @@ public class ProceduralSphere : MonoBehaviour
     public bool isDone;
     public VoronoiPoint[] points;
     public Biome[] biomes;
+    public ProceduralTree.TreeClass[] trees;
+    public Material treeMaterial;
     private int ve;
     private GameObject[] sides;
     private int numSides = 0;
@@ -43,6 +45,8 @@ public class ProceduralSphere : MonoBehaviour
     private int colCount;
 
     private bool Spawned;
+
+    private ProceduralTree.TreeMesh[,] treeMesh;
 
     // Use this for initialization
     public void OnBeforeSpawn(Vector3 SpawnPos)
@@ -71,30 +75,9 @@ public class ProceduralSphere : MonoBehaviour
             }
             Game.player.transform.position = pos;
 
-			SpawnTrees ();
+            SpawnTree();
         }
     }
-
-	private void SpawnTrees () {
-		Vector3 position = Random.onUnitSphere * Radius;
-		RaycastHit rayhit;
-		if (Physics.Raycast (position, -position.normalized, out rayhit)) {
-			if (rayhit.transform.GetComponent<Renderer>() != null) {
-				Texture2D tex = rayhit.transform.GetComponent<Renderer> ().material.mainTexture as Texture2D;
-				int x = Mathf.RoundToInt(rayhit.textureCoord.x * tex.width);
-				int y = Mathf.RoundToInt(rayhit.textureCoord.y * tex.height);
-
-				Color col = tex.GetPixel (x, y);
-
-				Biome curBiome;
-				for (int biome = 0; biome < biomes.Length; biome++) {
-					if (biomes [biome].biomeColor == col) {
-						curBiome = biomes [biome];
-					}
-				}
-			}
-		}
-	}
 
     //Redirect to GetHeight(Vector3);
     public Vector3 GetHeight(float x, float y, float z)
@@ -120,6 +103,71 @@ public class ProceduralSphere : MonoBehaviour
         else
         {
             return Vector3.zero * Mathf.Infinity;
+        }
+    }
+
+    private void SpawnTree()
+    {
+        treeMesh = new ProceduralTree.TreeMesh[trees.Length, 5];
+
+        for (int tree = 0; tree < trees.Length; tree++)
+        {
+            for (int i = 0; i < treeMesh.GetLength(1); i++)
+            {
+                treeMesh[tree, i] = ProceduralTree.GenerateTree(trees[tree]);
+            }
+        }
+
+        Vector3 position = Random.onUnitSphere * Radius;
+        RaycastHit rayhit;
+        if (Physics.Raycast(position, -position.normalized, out rayhit))
+        {
+            if (rayhit.transform.GetComponent<Renderer>() != null)
+            {
+                Vector3 SpawnPos = rayhit.point;
+                Quaternion SpawnRot = Quaternion.Euler(SpawnPos.normalized);
+
+                Texture2D tex = rayhit.transform.GetComponent<Renderer>().material.mainTexture as Texture2D;
+                int x = Mathf.RoundToInt(rayhit.textureCoord.x * tex.width);
+                int y = Mathf.RoundToInt(rayhit.textureCoord.y * tex.height);
+
+                Color col = tex.GetPixel(x, y);
+
+                Biome curBiome;
+                int TreeType = 0;
+                for (int biome = 0; biome < biomes.Length; biome++)
+                {
+                    if (biomes[biome].biomeColor == col)
+                    {
+                        curBiome = biomes[biome];
+                        //Don't spawn tree if no treetypes were found.
+                        if (curBiome.treeTypes.Length == 0)
+                        {
+                            return;
+                        }
+                        TreeType = curBiome.treeTypes[Random.Range(0, curBiome.treeTypes.Length)];
+                        break;
+                    }
+                }
+
+                ProceduralTree.TreeMesh tm = treeMesh[TreeType, Random.Range(0, treeMesh.GetLength(1))];
+
+                GameObject finalTree = new GameObject("Tree: " + TreeType);
+                finalTree.transform.position = SpawnPos;
+                finalTree.transform.rotation = SpawnRot;
+
+                MeshFilter treeFilter = finalTree.AddComponent<MeshFilter>();
+                MeshRenderer treeRender = finalTree.AddComponent<MeshRenderer>();
+                MeshCollider treeCol = finalTree.AddComponent<MeshCollider>();
+                treeFilter.sharedMesh = tm.mesh;
+                treeRender.material = treeMaterial;
+                treeRender.material.mainTexture = tm.uvTex;
+                if (treeCol.sharedMesh != null)
+                {
+                    treeCol.sharedMesh.Clear();
+                }
+                treeCol.sharedMesh = tm.mesh;
+            }
         }
     }
 
@@ -215,8 +263,8 @@ public class ProceduralSphere : MonoBehaviour
             if (!mc.convex)
             {
                 mc.convex = true;
-				yield return null;
-				current.GetComponent<LOD>().SetTargetLOD(4);
+                yield return null;
+                current.GetComponent<LOD>().SetTargetLOD(4);
                 Done.Add(current);
             }
             colCount++;
@@ -327,6 +375,7 @@ public class ProceduralSphere : MonoBehaviour
     {
         public string Name;
         public Color biomeColor = Color.white;
+        public int[] treeTypes;
     }
 
     public class VoronoiPoint

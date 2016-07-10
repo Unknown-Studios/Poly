@@ -1,9 +1,8 @@
-using System;
 using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-    [RequireComponent(typeof (Camera))]
+    [RequireComponent(typeof(Camera))]
     [AddComponentMenu("")]
     public class ImageEffectBase : MonoBehaviour
     {
@@ -13,6 +12,18 @@ namespace UnityStandardAssets.ImageEffects
 
         private Material m_Material;
 
+        protected Material material
+        {
+            get
+            {
+                if (m_Material == null)
+                {
+                    m_Material = new Material(shader);
+                    m_Material.hideFlags = HideFlags.HideAndDontSave;
+                }
+                return m_Material;
+            }
+        }
 
         protected virtual void Start()
         {
@@ -28,21 +39,6 @@ namespace UnityStandardAssets.ImageEffects
             if (!shader || !shader.isSupported)
                 enabled = false;
         }
-
-
-        protected Material material
-        {
-            get
-            {
-                if (m_Material == null)
-                {
-                    m_Material = new Material(shader);
-                    m_Material.hideFlags = HideFlags.HideAndDontSave;
-                }
-                return m_Material;
-            }
-        }
-
 
         protected virtual void OnDisable()
         {

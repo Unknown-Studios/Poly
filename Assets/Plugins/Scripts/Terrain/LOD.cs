@@ -77,14 +77,14 @@ public class LOD : MonoBehaviour
             }
         }
 
-		SetTargetLOD (TargetLOD);
+        SetTargetLOD(TargetLOD);
     }
 
     public void SetTargetLOD(int TargetLOD)
     {
         LODLevel = TargetLOD;
         _LODLevel = (int)Mathf.Pow(2f, LODLevel);
-		StartCoroutine(GenerateMesh(LODLevel == 0));
+        StartCoroutine(GenerateMesh(LODLevel == 0));
     }
 
     private void CreateTriangle(int LODW, ref int index, ref int[] triangles, int x, int y)
@@ -371,7 +371,7 @@ public class LOD : MonoBehaviour
         }
 
         //If player nears a collider before it is generated force its generation
-		if (forceCollider && !mc0.convex)
+        if (forceCollider && !mc0.convex)
         {
             mc0.convex = true;
         }

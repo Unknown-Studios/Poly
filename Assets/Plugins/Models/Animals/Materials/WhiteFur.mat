@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: WhiteFur
-  m_Shader: {fileID: 4800000, guid: 07ef7d4c0168146e5a9a766020146901, type: 3}
+  m_Shader: {fileID: 4800000, guid: 083b959cb8c737a46932465d33d09d88, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 3000

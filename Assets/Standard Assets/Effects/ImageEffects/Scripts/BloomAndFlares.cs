@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
@@ -38,14 +37,11 @@ namespace UnityStandardAssets.ImageEffects
         public BloomScreenBlendMode screenBlendMode = BloomScreenBlendMode.Add;
 
         public HDRBloomMode hdr = HDRBloomMode.Auto;
-        private bool doHdr = false;
         public float sepBlurSpread = 1.5f;
         public float useSrcAlphaAsMask = 0.5f;
-
         public float bloomIntensity = 1.0f;
         public float bloomThreshold = 0.5f;
         public int bloomBlurIterations = 2;
-
         public bool lensflares = false;
         public int hollywoodFlareBlurIterations = 2;
         public LensflareStyle34 lensflareMode = (LensflareStyle34)1;
@@ -57,28 +53,21 @@ namespace UnityStandardAssets.ImageEffects
         public Color flareColorC = new Color(0.8f, 0.4f, 0.8f, 0.75f);
         public Color flareColorD = new Color(0.8f, 0.4f, 0.0f, 0.75f);
         public Texture2D lensFlareVignetteMask;
-
         public Shader lensFlareShader;
-        private Material lensFlareMaterial;
-
         public Shader vignetteShader;
-        private Material vignetteMaterial;
-
         public Shader separableBlurShader;
-        private Material separableBlurMaterial;
-
         public Shader addBrightStuffOneOneShader;
-        private Material addBrightStuffBlendOneOneMaterial;
-
         public Shader screenBlendShader;
-        private Material screenBlend;
-
         public Shader hollywoodFlaresShader;
-        private Material hollywoodFlaresMaterial;
-
         public Shader brightPassFilterShader;
+        private bool doHdr = false;
+        private Material lensFlareMaterial;
+        private Material vignetteMaterial;
+        private Material separableBlurMaterial;
+        private Material addBrightStuffBlendOneOneMaterial;
+        private Material screenBlend;
+        private Material hollywoodFlaresMaterial;
         private Material brightPassFilterMaterial;
-
 
         public override bool CheckResources()
         {
@@ -97,7 +86,7 @@ namespace UnityStandardAssets.ImageEffects
             return isSupported;
         }
 
-        void OnRenderImage(RenderTexture source, RenderTexture destination)
+        private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
             if (CheckResources() == false)
             {
@@ -164,10 +153,8 @@ namespace UnityStandardAssets.ImageEffects
 
             if (lensflares)
             {
-
                 if (lensflareMode == 0)
                 {
-
                     BrightFilter(lensflareThreshold, 0.0f, quarterRezColor, thirdQuarterRezColor);
                     quarterRezColor.DiscardContents();
 
@@ -188,10 +175,8 @@ namespace UnityStandardAssets.ImageEffects
                 }
 
                 // (b) hollywood/anamorphic flares?
-
                 else
                 {
-
                     // thirdQuarter has the brightcut unblurred colors
                     // quarterRezColor is the blurred, brightcut buffer that will end up as bloom
 
@@ -234,7 +219,6 @@ namespace UnityStandardAssets.ImageEffects
                     }
                     else
                     {
-
                         // (c) combined
 
                         for (int ix = 0; ix < hollywoodFlareBlurIterations; ix++)
@@ -309,6 +293,5 @@ namespace UnityStandardAssets.ImageEffects
                 Graphics.Blit(from, to, vignetteMaterial);
             }
         }
-
     }
 }

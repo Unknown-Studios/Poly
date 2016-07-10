@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TestScript : MonoBehaviour
 {
     public string txt;
     public int hej;
-    private float hej1;
     public float x;
+    private float hej1;
 
     private int ReturnInt()
     {

@@ -1,40 +1,38 @@
-﻿Shader "Unknown Studios/Low Poly" 
+﻿Shader "Unknown Studios/Low Poly"
 {
-	Properties 
+	Properties
 	{
 		_Color("Color", Color) = (1,0,0,1)
 	}
-	SubShader 
+		SubShader
 	{
-	
-	    Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+		Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
 
-    	Pass 
-    	{
-
+		Pass
+		{
 			CGPROGRAM
 			#include "UnityCG.cginc"
 			#pragma vertex vert
 			#pragma geometry geom
 			#pragma fragment frag
-			
+
 			uniform float4 _LightColor0;
 
 			uniform float4 _Color;
 
-			struct v2g 
+			struct v2g
 			{
-    			float4  pos : SV_POSITION;
+				float4  pos : SV_POSITION;
 				float3	norm : NORMAL;
-     			float2  uv : TEXCOORD0;
+				float2  uv : TEXCOORD0;
 			};
-			
-			struct g2f 
+
+			struct g2f
 			{
-    			float4  pos : SV_POSITION;
+				float4  pos : SV_POSITION;
 				float3  norm : NORMAL;
-    			float2  uv : TEXCOORD0;            
+				float2  uv : TEXCOORD0;
 				float3 diffuseColor : TEXCOORD1;
 			};
 
@@ -44,13 +42,13 @@
 
 				v.vertex.xyz = mul((float3x3)_World2Object, v0);
 
-    			v2g OUT;
+				v2g OUT;
 				OUT.pos = v.vertex;
 				OUT.norm = v.normal;
-    			OUT.uv = v.texcoord;
-    			return OUT;
+				OUT.uv = v.texcoord;
+				return OUT;
 			}
-			
+
 			[maxvertexcount(3)]
 			void geom(triangle v2g IN[3], inout TriangleStream<g2f> triStream)
 			{
@@ -61,7 +59,7 @@
 				float3 centerPos = (v0 + v1 + v2) / 3.0;
 
 				float3 vn = normalize(cross(v1 - v0, v2 - v0));
-				
+
 				float4x4 modelMatrix = _Object2World;
 				float4x4 modelMatrixInverse = _World2Object;
 
@@ -97,16 +95,15 @@
 				OUT.uv = IN[2].uv;
 				OUT.diffuseColor = ambientLighting + diffuseReflection;
 				triStream.Append(OUT);
-				
 			}
-			
+
 			half4 frag(g2f IN) : COLOR
 			{
 				return float4(IN.diffuseColor, 1.0);
 			}
-			
-			ENDCG
 
-    	}
+			ENDCG
+		}
 	}
+		FallBack "Diffuse"
 }

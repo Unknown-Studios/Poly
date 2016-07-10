@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -6,6 +5,18 @@ namespace UnityStandardAssets.Utility
 {
     public class ActivateTrigger : MonoBehaviour
     {
+        public Mode action = Mode.Activate;
+
+        // The action to accomplish
+        public Object target;
+
+        // The game object to affect. If none, the trigger work on this game object
+        public GameObject source;
+
+        public int triggerCount = 1;
+
+        public bool repeatTrigger = false;
+
         // A multi-purpose script which causes an action to occur when
         // a trigger collider is entered.
         public enum Mode
@@ -17,13 +28,6 @@ namespace UnityStandardAssets.Utility
             Animate = 4,    // Start animation on target
             Deactivate = 5  // Decativate target GameObject
         }
-
-        public Mode action = Mode.Activate;         // The action to accomplish
-        public Object target;                       // The game object to affect. If none, the trigger work on this game object
-        public GameObject source;
-        public int triggerCount = 1;
-        public bool repeatTrigger = false;
-
 
         private void DoActivateTrigger()
         {
@@ -47,6 +51,7 @@ namespace UnityStandardAssets.Utility
                             targetGameObject.BroadcastMessage("DoActivateTrigger");
                         }
                         break;
+
                     case Mode.Replace:
                         if (source != null)
                         {
@@ -58,24 +63,28 @@ namespace UnityStandardAssets.Utility
                             }
                         }
                         break;
+
                     case Mode.Activate:
                         if (targetGameObject != null)
                         {
                             targetGameObject.SetActive(true);
                         }
                         break;
+
                     case Mode.Enable:
                         if (targetBehaviour != null)
                         {
                             targetBehaviour.enabled = true;
                         }
                         break;
+
                     case Mode.Animate:
                         if (targetGameObject != null)
                         {
                             targetGameObject.GetComponent<Animation>().Play();
                         }
                         break;
+
                     case Mode.Deactivate:
                         if (targetGameObject != null)
                         {
@@ -85,7 +94,6 @@ namespace UnityStandardAssets.Utility
                 }
             }
         }
-
 
         private void OnTriggerEnter(Collider other)
         {

@@ -37,7 +37,7 @@ Shader "FX/SimpleWater4" {
 #include "UnityCG.cginc"
 #include "WaterInclude.cginc"
 
-		struct appdata
+			struct appdata
 		{
 			float4 vertex : POSITION;
 			float3 normal : NORMAL;
@@ -137,7 +137,7 @@ Shader "FX/SimpleWater4" {
 				_GSpeed,													// speed
 				_GDirectionAB,												// direction # 1, 2
 				_GDirectionCD												// direction # 3, 4
-				);
+			);
 
 			v.vertex.xyz += offsets;
 
@@ -235,7 +235,7 @@ Shader "FX/SimpleWater4" {
 				_GSpeed,													// speed
 				_GDirectionAB,												// direction # 1, 2
 				_GDirectionCD												// direction # 3, 4
-				);
+			);
 
 			v.vertex.xyz += offsets;
 
