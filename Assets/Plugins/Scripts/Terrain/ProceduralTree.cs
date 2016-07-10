@@ -23,7 +23,10 @@ public class ProceduralTree : MonoBehaviour
 
 	public void Showcase() {
 		Type = Random.Range (0, TreeTypes.Length);
-		tree.GetComponent<MeshFilter> ().sharedMesh = ProceduralTree.GenerateTree (TreeTypes[Type]);
+		Texture2D uvTex;
+
+		tree.GetComponent<MeshFilter> ().sharedMesh = ProceduralTree.GenerateTree (TreeTypes[Type], out uvTex);
+		tree.GetComponent<MeshRenderer> ().sharedMaterial.mainTexture = uvTex;
 		MeshCollider col = tree.GetComponent<MeshCollider> ();
 		if (col.sharedMesh != null) {
 			col.sharedMesh.Clear ();
@@ -31,10 +34,16 @@ public class ProceduralTree : MonoBehaviour
 		col.sharedMesh = tree.GetComponent<MeshFilter> ().sharedMesh;
 	}
 		
-	public static Mesh GenerateTree(TreeClass treeInfo)
+	public static Mesh GenerateTree(TreeClass treeInfo, out Texture2D uvTex)
     {
         //Initialization
         Mesh treeMesh = new Mesh();
+	 	uvTex = new Texture2D (1,2);
+		uvTex.wrapMode = TextureWrapMode.Clamp;
+		Color col = new Color (83.0f / 255.0f, 53.0f / 255.0f, 10.0f / 255.0f);
+		uvTex.SetPixel (0, 0, col);
+		uvTex.SetPixel (0, 1, treeInfo.LeavesColor);
+		uvTex.Apply ();
 
 		int trunkHeight = Random.Range (treeInfo.minTrunk, treeInfo.maxTrunk);
 		int leavesHeight = Random.Range (treeInfo.minLeaves, treeInfo.maxLeaves);
@@ -54,8 +63,7 @@ public class ProceduralTree : MonoBehaviour
         //Vertices
 		int leaf = 0;
 		int ah = 0;
-		int extra = 0;
-		for (float h = 0.0f; ah < trunkHeight + leavesHeight + extra; ah++)
+		for (float h = 0.0f; ah < trunkHeight + leavesHeight; ah++)
         {
 			if (ah < trunkHeight) {
 				for (int v = 0; v < ringVertices; v++) {
@@ -80,20 +88,19 @@ public class ProceduralTree : MonoBehaviour
 					addH = 1.0f;
 					leaf++;
 				}
-				float FinalRadius = (trunkRadius+radiu) * (LeavesRadius);
+				float FinalRadius = (trunkRadius+radiu) * (LeavesRadius + Random.Range(0.0f,0.5f));
 				for (int v = 0; v < ringVertices; v++) {
 					float rad = (float)v / ringVertices * (2 * Mathf.PI);
 					vertices.Add(new Vector3 (Mathf.Cos (rad) * FinalRadius, h, Mathf.Sin (rad) * FinalRadius));
 
-					if (ah == trunkHeight + leavesHeight + extra - 1) {
-						Vector3 temp = vertices [vertices.Count-1];
-						temp.x = 0;
-						temp.z = 0;
-						vertices [vertices.Count - 1] = temp;
-					}
 					Vector3 tmp = vertices [vertices.Count-1];
+					if (ah == trunkHeight + leavesHeight - 1) {
+						tmp.x = 0;
+						tmp.z = 0;
+					} else {
+						tmp.y += Random.Range (-0.5f, 0.0f);
+					}
 					tmp.x += Mathf.Pow (1.0f + xDegree, h) - 1.0f;
-					tmp.y += Random.Range (-0.5f, 0.0f);
 					tmp.z += Mathf.Pow (1.0f + zDegree, h) - 1.0f;
 					vertices [vertices.Count - 1] = tmp;
 				}
@@ -127,9 +134,23 @@ public class ProceduralTree : MonoBehaviour
 			triangles[i++] = ind + 1 - ringVertices;
 		}
 
+		Vector2[] uvs = new Vector2[vertices.Count];
+
+		for (int ph = 0; ph < trunkHeight + leavesHeight; ph++) {
+			for (int pv = 0; pv < ringVertices; pv++) {
+				int ide = (ph * ringVertices) + pv;
+				if (ph < trunkHeight) {
+					uvs [ide] = new Vector2 (1, 0);
+				} else {
+					uvs [ide] = new Vector2 (1, 1);
+				}
+			}
+		}
+
         //Finish up and return
 		treeMesh.vertices = vertices.ToArray();
         treeMesh.triangles = triangles;
+		treeMesh.uv = uvs;
 
         treeMesh.RecalculateNormals();
         treeMesh.RecalculateBounds();
@@ -146,5 +167,6 @@ public class ProceduralTree : MonoBehaviour
 		public int minLeaves = 4;
 		public int maxLeaves = 7;
 		public AnimationCurve LeavesPattern;
+		public Color LeavesColor;
 	}
 }
