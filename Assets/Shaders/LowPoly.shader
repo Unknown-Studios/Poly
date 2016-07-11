@@ -6,19 +6,23 @@
 	}
 		SubShader
 	{
-		Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
 		Blend SrcAlpha OneMinusSrcAlpha
 
 		Pass
 		{
 			CGPROGRAM
-			#include "UnityCG.cginc"
-			#pragma vertex vert
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_fwdbase
+
+            #include "UnityCG.cginc"
+            #include "AutoLight.cginc"
 			#pragma geometry geom
-			#pragma fragment frag
 
 			uniform float4 _LightColor0;
 
+        	uniform sampler2D _MainTex;
 			uniform float4 _Color;
 
 			struct v2g
@@ -26,6 +30,7 @@
 				float4  pos : SV_POSITION;
 				float3	norm : NORMAL;
 				float2  uv : TEXCOORD0;
+				LIGHTING_COORDS(1,2)
 			};
 
 			struct g2f
@@ -36,17 +41,20 @@
 				float3 diffuseColor : TEXCOORD1;
 			};
 
+			float4 _MainTex_ST;
+
 			v2g vert(appdata_full v)
 			{
 				float3 v0 = mul(_Object2World, v.vertex).xyz;
 
 				v.vertex.xyz = mul((float3x3)_World2Object, v0);
 
-				v2g OUT;
-				OUT.pos = v.vertex;
-				OUT.norm = v.normal;
-				OUT.uv = v.texcoord;
-				return OUT;
+				v2g o;
+				o.pos = v.vertex;
+				o.norm = v.normal;
+				o.uv = TRANSFORM_TEX (v.texcoord, _MainTex);
+				TRANSFER_VERTEX_TO_FRAGMENT(o);
+				return o;
 			}
 
 			[maxvertexcount(3)]
@@ -97,9 +105,11 @@
 				triStream.Append(OUT);
 			}
 
-			half4 frag(g2f IN) : COLOR
+			fixed4 frag(g2f IN) : COLOR
 			{
-				return float4(IN.diffuseColor, 1.0);
+				fixed4 texcol = tex2D (_MainTex, IN.uv);
+				float attenuation = LIGHT_ATTENUATION(i);
+				return fixed4(texcol * IN.diffuseColor, attenuation);
 			}
 
 			ENDCG

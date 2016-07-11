@@ -186,11 +186,11 @@ public class Sky : MonoBehaviour
         {
             if (TOD - CTOD.Start < 1)
             {
-                Exponent = Mathf.Clamp01(TOD - CTOD.Start);
+				Exponent = Mathf.Clamp(2 - (TOD - CTOD.Start), 1, 2);
             }
             else if (CTOD.End - TOD < 1)
             {
-                Exponent = Mathf.Clamp01(CTOD.End - TOD);
+				Exponent = Mathf.Clamp(2 - (CTOD.End - TOD),1,2);
             }
             else
             {

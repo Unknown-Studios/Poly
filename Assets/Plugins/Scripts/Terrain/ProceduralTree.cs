@@ -16,7 +16,7 @@ public class ProceduralTree : MonoBehaviour
         Mesh treeMesh = new Mesh();
         Texture2D uvTex = new Texture2D(1, 2);
         uvTex.wrapMode = TextureWrapMode.Clamp;
-        Color col = new Color(83.0f / 255.0f, 53.0f / 255.0f, 10.0f / 255.0f);
+        Color col = new Color(54.0f / 255.0f, 31.0f / 255.0f, 10.0f / 255.0f);
         uvTex.SetPixel(0, 0, col);
         uvTex.SetPixel(0, 1, treeInfo.LeavesColor);
         uvTex.Apply();

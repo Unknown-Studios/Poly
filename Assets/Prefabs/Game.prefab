@@ -29,6 +29,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -194,7 +195,7 @@ MonoBehaviour:
   - Name: Winter
     weatherChance: 280000000a0000000a0000001e0000000a000000
   ShowSkybox: 1
-  SkyboxMaterial: {fileID: 2100000, guid: e122829f5d3fbe8499651078de128361, type: 2}
+  SkyboxMaterial: {fileID: 2100000, guid: 89c400ab41ce949a397fd1ed708d4c4b, type: 2}
   SnowMaterials:
   - {fileID: 2100000, guid: dbe8c4395f7cb1a4d9ddad561d2164c6, type: 2}
   - {fileID: 2100000, guid: af8e1d3ff291a514e841d315361a8b97, type: 2}
