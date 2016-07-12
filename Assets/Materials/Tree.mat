@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: SpruceTrunk
-  m_Shader: {fileID: 4800000, guid: 326371df4246e504da9c60b775f84f07, type: 3}
+  m_Name: Tree
+  m_Shader: {fileID: 4800000, guid: 07ef7d4c0168146e5a9a766020146901, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 3000
@@ -102,7 +102,7 @@ Material:
       data:
         first:
           name: _Glossiness
-        second: 0
+        second: 0.5
       data:
         first:
           name: _BumpScale
@@ -127,64 +127,12 @@ Material:
         first:
           name: _Metallic
         second: 0
-      data:
-        first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
-          name: _CullDistance
-        second: 1000
-      data:
-        first:
-          name: _Exponent
-        second: 0.5
-      data:
-        first:
-          name: _Weather
-        second: 0
-      data:
-        first:
-          name: _BaseLight
-        second: 1
-      data:
-        first:
-          name: _AO
-        second: 0.25
-      data:
-        first:
-          name: _SquashAmount
-        second: 1
     m_Colors:
       data:
         first:
           name: _EmissionColor
-        second: {r: 0, g: 0, b: 0, a: 0}
-      data:
-        first:
-          name: _Color
-        second: {r: 0.2647059, g: 0.16843003, b: 0.029195499, a: 1}
-      data:
-        first:
-          name: _Wind
-        second: {r: 0, g: 0, b: 0, a: 0}
-      data:
-        first:
-          name: _EmissionColorUI
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: White
         second: {r: 0, g: 0, b: 0, a: 1}
       data:
         first:
-          name: Wind
-        second: {r: 0, g: 0, b: 0, a: 0}
-      data:
-        first:
-          name: _TreeInstanceColor
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _TreeInstanceScale
+          name: _Color
         second: {r: 1, g: 1, b: 1, a: 1}

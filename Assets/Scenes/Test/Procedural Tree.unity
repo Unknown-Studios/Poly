@@ -199,87 +199,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36407899814f62d44bf7b5149920235d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Type: -1
-  mat: {fileID: 2100000, guid: 577f998fe7c1eaf41a8d5a92e5f253d0, type: 2}
-  TreeTypes:
-  - minTrunk: 3
-    maxTrunk: 6
-    minLeaves: 4
-    maxLeaves: 10
-    LeavesPattern:
-      serializedVersion: 2
-      m_Curve:
-      - time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-      - time: 0.3
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-      - time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 0
-    LeavesColor: {r: 0.19648957, g: 0.30147055, b: 0.01108347, a: 1}
-  - minTrunk: 5
-    maxTrunk: 11
-    minLeaves: 12
-    maxLeaves: 16
-    LeavesPattern:
-      serializedVersion: 2
-      m_Curve:
-      - time: 0
-        value: 0
-        inSlope: 1774.2399
-        outSlope: 1774.2399
-        tangentMode: 10
-      - time: 0.00056487694
-        value: 1.0022272
-        inSlope: -0.98895687
-        outSlope: -0.98895687
-        tangentMode: 0
-      - time: 1
-        value: 0.003412962
-        inSlope: -1.067772
-        outSlope: -1.067772
-        tangentMode: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 1
-      m_RotationOrder: 0
-    LeavesColor: {r: 0.049449537, g: 0.20495959, b: 0, a: 1}
-  - minTrunk: 7
-    maxTrunk: 13
-    minLeaves: 4
-    maxLeaves: 8
-    LeavesPattern:
-      serializedVersion: 2
-      m_Curve:
-      - time: 0
-        value: 1
-        inSlope: -0.72619164
-        outSlope: -0.72619164
-        tangentMode: 0
-      - time: 0.8208333
-        value: 0.60006464
-        inSlope: -1.0345762
-        outSlope: -1.0345762
-        tangentMode: 0
-      - time: 1
-        value: -0.0062499996
-        inSlope: -8.791656
-        outSlope: -8.791656
-        tangentMode: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 0
-    LeavesColor: {r: 0.19648957, g: 0.30147055, b: 0.01108347, a: 1}
 --- !u!4 &363149509
 Transform:
   m_ObjectHideFlags: 0
@@ -305,6 +224,7 @@ GameObject:
   - 64: {fileID: 551451222}
   - 23: {fileID: 551451221}
   - 114: {fileID: 551451225}
+  - 114: {fileID: 551451226}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -382,3 +302,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameAObject: {fileID: 100000, guid: 49c77a60e95de4d43bae8f9176456206, type: 2}
+--- !u!114 &551451226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 551451220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4da02c432fab430598ce7ce4e7e6e97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tree:
+    minTrunk: 5
+    maxTrunk: 11
+    minLeaves: 6
+    maxLeaves: 18
+    LeavesPattern:
+      serializedVersion: 2
+      m_Curve:
+      - time: 0
+        value: 0
+        inSlope: 999.99994
+        outSlope: 999.99994
+        tangentMode: 0
+      - time: 0.001
+        value: 1
+        inSlope: -1.0057832
+        outSlope: -1.0057832
+        tangentMode: 0
+      - time: 1
+        value: 0
+        inSlope: -1.0029367
+        outSlope: -1.0029367
+        tangentMode: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 1
+      m_RotationOrder: 0
+    LeavesColor: {r: 0.03233625, g: 0.25308493, b: 0.048238292, a: 1}
+  material: {fileID: 2100000, guid: 14517172b2e3a4d48ad6b01ea3a245d2, type: 2}

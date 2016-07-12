@@ -6,8 +6,6 @@ public class LODController : MonoBehaviour
 {
     public int[] lodLevels;
 
-    public LayerMask layerMask;
-
     private List<Collider> lastColliders;
 
     public IEnumerator StartUpdater()

@@ -3,12 +3,6 @@ using UnityEngine;
 
 public class ProceduralTree : MonoBehaviour
 {
-    public int Type = -1;
-    public Material mat;
-
-    public TreeClass[] TreeTypes;
-
-    private GameObject tree;
 
     public static TreeMesh GenerateTree(TreeClass treeInfo)
     {
@@ -154,32 +148,6 @@ public class ProceduralTree : MonoBehaviour
         tm.mesh = treeMesh;
         tm.uvTex = uvTex;
         return tm;
-    }
-
-    public void Showcase()
-    {
-        Type = Random.Range(0, TreeTypes.Length);
-        TreeMesh tm = GenerateTree(TreeTypes[Type]);
-        tree.GetComponent<MeshFilter>().sharedMesh = tm.mesh;
-        tree.GetComponent<MeshRenderer>().sharedMaterial.mainTexture = tm.uvTex;
-        MeshCollider col = tree.GetComponent<MeshCollider>();
-        if (col.sharedMesh != null)
-        {
-            col.sharedMesh.Clear();
-        }
-        col.sharedMesh = tree.GetComponent<MeshFilter>().sharedMesh;
-    }
-
-    // Use this for initialization
-    private void Start()
-    {
-        tree = new GameObject();
-        tree.transform.position = Vector3.zero;
-        tree.AddComponent<MeshFilter>();
-        MeshRenderer mr = tree.AddComponent<MeshRenderer>();
-        tree.AddComponent<MeshCollider>();
-        mr.sharedMaterial = mat;
-        InvokeRepeating("Showcase", 0.0f, 2.5f);
     }
 
     [System.Serializable]

@@ -93,6 +93,10 @@ public class PCEditor : Editor
         PC.MaxHeight = EditorGUILayout.IntField("TerrainHeight: ", PC.MaxHeight);
         PC.Octaves = EditorGUILayout.IntField("Octaves: ", PC.Octaves);
 
+		GUILayout.Space (10f);
+		EditorGUILayout.LabelField("Trees/Stones: ", EditorStyles.boldLabel);
+		PC.treeMaterial = (Material)EditorGUILayout.ObjectField("Tree Material: ", PC.treeMaterial, typeof(Material), true);
+
         if (GUI.changed)
         {
             EditorUtility.SetDirty(target);

@@ -48,9 +48,9 @@ Light:
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 1
+    m_Type: 2
     m_Resolution: -1
-    m_Strength: 1
+    m_Strength: 0.95
     m_Bias: 0.25
     m_NormalBias: 0.4
     m_NearPlane: 0.2
@@ -179,10 +179,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CullMaterials:
   - CullDistance: 1000
-    CullMaterial: {fileID: 2100000, guid: dbe8c4395f7cb1a4d9ddad561d2164c6, type: 2}
-  - CullDistance: 1000
-    CullMaterial: {fileID: 2100000, guid: af8e1d3ff291a514e841d315361a8b97, type: 2}
-  - CullDistance: 2500
     CullMaterial: {fileID: 2100000, guid: 52b7d70b1de7c4ce09662b77c14d9fda, type: 2}
   CurWeather: 
   Seaso:
@@ -196,27 +192,25 @@ MonoBehaviour:
     weatherChance: 280000000a0000000a0000001e0000000a000000
   ShowSkybox: 1
   SkyboxMaterial: {fileID: 2100000, guid: 89c400ab41ce949a397fd1ed708d4c4b, type: 2}
-  SnowMaterials:
-  - {fileID: 2100000, guid: dbe8c4395f7cb1a4d9ddad561d2164c6, type: 2}
-  - {fileID: 2100000, guid: af8e1d3ff291a514e841d315361a8b97, type: 2}
+  SnowMaterials: []
   starTexture: {fileID: 0}
   SunColor: {r: 0.960793, g: 0.9632353, b: 0.78617, a: 1}
   TID:
-  - Color: {r: 0.6764706, g: 0.43771625, b: 0.07958477, a: 1}
+  - Color: {r: 0.832154, g: 0.53390974, b: 0.16954958, a: 1}
     End: 8
     name: Morning
     Start: 6
-    TopColor: {r: 0.37889272, g: 0.3811478, b: 0.7058823, a: 1}
-  - Color: {r: 0.37889272, g: 0.3811478, b: 0.7058823, a: 1}
+    TopColor: {r: 0.46881732, g: 0.47376952, b: 0.8728117, a: 1}
+  - Color: {r: 0.46881732, g: 0.47376952, b: 0.8728117, a: 1}
     End: 18
     name: Noon
     Start: 8
-    TopColor: {r: 0.37889272, g: 0.3811478, b: 0.7058823, a: 1}
-  - Color: {r: 0.6764706, g: 0.43771625, b: 0.07958477, a: 1}
+    TopColor: {r: 0.46881732, g: 0.47376952, b: 0.8728117, a: 1}
+  - Color: {r: 0.832154, g: 0.53390974, b: 0.16954958, a: 1}
     End: 20
     name: Afternoon
     Start: 18
-    TopColor: {r: 0.37889272, g: 0.3811478, b: 0.7058823, a: 1}
+    TopColor: {r: 0.16690095, g: 0.18120678, b: 0.46323532, a: 1}
   - Color: {r: 0.16690095, g: 0.18120678, b: 0.46323532, a: 1}
     End: 6
     name: Night
@@ -241,8 +235,6 @@ MonoBehaviour:
     SkyIntensity: 0.5
   WindMaterials:
   - {fileID: 2100000, guid: 5e227a7237bcc70449bddb9ddb572238, type: 2}
-  - {fileID: 2100000, guid: af8e1d3ff291a514e841d315361a8b97, type: 2}
-  - {fileID: 2100000, guid: dbe8c4395f7cb1a4d9ddad561d2164c6, type: 2}
   - {fileID: 2100000, guid: 52b7d70b1de7c4ce09662b77c14d9fda, type: 2}
   Blend: 0
 --- !u!1001 &100100000

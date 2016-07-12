@@ -35,6 +35,9 @@ public class RegionEditor : EditorWindow
                 PS.Regions[0] = new ProceduralSphere.Region();
                 PS.Regions[1] = new ProceduralSphere.Region();
             }
+			for (int i = 0; i < PS.Regions.Length-1; i++) {
+				PS.Regions [i].height = Mathf.Clamp01 (PS.Regions [i].height);
+			}
             if (PS.Regions[PS.Regions.Length - 1].height != 1.0f)
             {
                 PS.Regions[PS.Regions.Length - 1].height = 1.0f;
@@ -63,7 +66,7 @@ public class RegionEditor : EditorWindow
                 float height = i != 0 ? PS.Regions[i].height - PS.Regions[i - 1].height : PS.Regions[i].height;
                 if (height > 0.0f)
                 {
-                    Texture2D tex = new Texture2D(100, (int)(300 * height));
+					Texture2D tex = new Texture2D(100, (int)(300 * height),TextureFormat.ARGB32, false, true);
                     for (int y = 0; y < tex.height; y++)
                     {
                         for (int x = 0; x < tex.width; x++)
@@ -78,7 +81,7 @@ public class RegionEditor : EditorWindow
                             }
                         }
                     }
-                    tex.Apply();
+					tex.Apply();
                     GUIStyle myStyle = new GUIStyle(GUI.skin.label);
 
                     RectOffset Rect0 = new RectOffset(0, 0, 0, 0);

@@ -12,15 +12,14 @@ public class ProceduralSphere : MonoBehaviour
 
     public int Width;
 
-    public int Radius;
-    public int MaxHeight;
+    public int Radius = 1000;
+    public int MaxHeight = 300;
 
     public int Seed;
 
-    [HideInInspector]
     public bool done;
 
-    public int Octaves;
+    public int Octaves = 2;
     public Material TerrainMaterial;
     public string currentAction;
     public float progress;
@@ -28,7 +27,7 @@ public class ProceduralSphere : MonoBehaviour
     public Region[] Regions;
 
     public AnimationCurve curve;
-    public float scale;
+    public float scale = 1.0f;
     public Queue<GameObject> queue;
     public List<GameObject> Done;
     public bool isDone;
@@ -174,8 +173,9 @@ public class ProceduralSphere : MonoBehaviour
     //Called on script load.
     private void Start()
     {
-        if (SceneManager.GetActiveScene().name != "Game")
-            OnBeforeSpawn(Vector3.zero);
+		if (SceneManager.GetActiveScene ().name != "Game") {
+			OnBeforeSpawn (Vector3.zero);
+		}
     }
 
     private void Awake()
@@ -183,7 +183,7 @@ public class ProceduralSphere : MonoBehaviour
         PlayerPrefs.SetInt("Seed", Seed);
         PlayerPrefs.Save();
 
-        points = new VoronoiPoint[250];
+        points = new VoronoiPoint[25];
 
         for (int i = 0; i < points.Length; i++)
         {
@@ -207,7 +207,7 @@ public class ProceduralSphere : MonoBehaviour
             s0.name = "Side #" + side;
             s0.transform.parent = transform;
 
-            Texture2D tex = new Texture2D(Width, Width);
+            tex = new Texture2D(Width, Width);
             tex.wrapMode = TextureWrapMode.Clamp;
             tex.filterMode = FilterMode.Point;
             Material SideMaterial = new Material(TerrainMaterial);
@@ -249,7 +249,6 @@ public class ProceduralSphere : MonoBehaviour
 
     private IEnumerator AddColliders()
     {
-        Debug.Log("Add colliders " + queue.Count);
         //Wait for the queue to start filling
         while (queue.Count <= 0)
         {
@@ -269,8 +268,274 @@ public class ProceduralSphere : MonoBehaviour
             }
             colCount++;
             yield return null;
+			if (queue.Count == 0 && maxCheck <= 10) {
+				yield return new WaitForSeconds(1.0f);
+				maxCheck++;
+				StartCoroutine (AddColliders());
+			}
         }
     }
+
+	private Texture2D tex;
+
+	private IEnumerator AddSplashmap(int side) {
+		while (!isDone) {
+			yield return null;
+		}
+
+		int q = 0;
+		switch (side)
+        {
+            case 0:
+				for (int y = 0; y < Width; y++)
+				{
+					for (int x = 0; x < Width; x++)
+					{
+						RaycastHit Rayhit0;
+						Vector3 vertexPos = new Vector3(x,y,0);
+					if (Physics.Linecast(vertexPos.normalized * (Radius + MaxHeight),Vector3.zero, out Rayhit0)) {
+							for (int r = Regions.Length - 1; r >= 0; r--) {
+								if (q == 25) {
+									Debug.Log ((Vector3.Distance(Rayhit0.point, Vector3.zero)));
+									Debug.DrawLine (Rayhit0.point, Vector3.zero, Color.red, 20.0f);									
+								}
+							if (Mathf.Clamp01((Vector3.Distance(Rayhit0.point, Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
+								{
+									if (Regions[r].Biome)
+									{
+										ProceduralSphere.VoronoiPoint closest = points[0];
+										for (int b = 1; b < points.Length; b++)
+										{
+											if (Vector3.Distance(points[b].point, vertexPos) < Vector3.Distance(points[b].point, closest.point))
+											{
+												closest = points[b];
+											}
+										}
+										tex.SetPixel((int)Rayhit0.textureCoord.x, (int)Rayhit0.textureCoord.y, closest.biome.biomeColor);
+									}
+									else
+									{
+										tex.SetPixel((int)Rayhit0.textureCoord.x, (int)Rayhit0.textureCoord.y, Regions[r].color);
+									}
+							}
+							q++;
+							if (q % 5 == 0)
+							{
+								yield return null;
+							}
+							}
+						}
+                    }
+                }
+                break;
+
+            case 1:
+			for (int y = 0; y < Width; y++)
+			{
+				for (int z = 0; z < Width; z++)
+				{
+                        for (int r = Regions.Length - 1; r >= 0; r--)
+                        {
+						RaycastHit Rayhit1;
+						Vector3 vertexPos = new Vector3(Width,y,z);
+						if (Physics.Raycast(vertexPos.normalized * Radius,-vertexPos.normalized, out Rayhit1)) {
+							if (Mathf.Clamp01((Vector3.Distance(Rayhit1.point, Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
+							{
+								if (Regions[r].Biome)
+								{
+									ProceduralSphere.VoronoiPoint closest = points[0];
+									for (int b = 1; b < points.Length; b++)
+									{
+										if (Vector3.Distance(points[b].point, vertexPos) < Vector3.Distance(points[b].point, closest.point))
+										{
+											closest = points[b];
+										}
+									}
+									tex.SetPixel((int)Rayhit1.textureCoord.x, (int)Rayhit1.textureCoord.y, closest.biome.biomeColor);
+									q++;
+									if (q % 5 == 0)
+									{
+										yield return null;
+									}
+								}
+								else
+								{
+									tex.SetPixel((int)Rayhit1.textureCoord.x, (int)Rayhit1.textureCoord.y, Regions[r].color);
+								}
+							}
+						}
+                        }
+                    }
+                }
+                break;
+
+            case 2:
+			for (int y = 0; y < Width; y++)
+			{
+				for (int x = Width; x >= 0; x--)
+				{
+                        for (int r = Regions.Length - 1; r >= 0; r--)
+                        {
+						RaycastHit Rayhit2;
+						Vector3 vertexPos = new Vector3(x,y,Width);
+						if (Physics.Raycast(vertexPos.normalized * Radius,-vertexPos.normalized, out Rayhit2)) {
+							if (Mathf.Clamp01((Vector3.Distance(Rayhit2.point, Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
+							{
+								if (Regions[r].Biome)
+								{
+									ProceduralSphere.VoronoiPoint closest = points[0];
+									for (int b = 1; b < points.Length; b++)
+									{
+										if (Vector3.Distance(points[b].point, vertexPos) < Vector3.Distance(points[b].point, closest.point))
+										{
+											closest = points[b];
+										}
+									}
+									tex.SetPixel((int)Rayhit2.textureCoord.x, (int)Rayhit2.textureCoord.y, closest.biome.biomeColor);
+									q++;
+									if (q % 5 == 0)
+									{
+										yield return null;
+									}
+								}
+								else
+								{
+									tex.SetPixel((int)Rayhit2.textureCoord.x, (int)Rayhit2.textureCoord.y, Regions[r].color);
+								}
+							}
+						}
+						}
+                    }
+                }
+                break;
+
+            case 3:
+			for (int y = 0; y < Width; y++)
+			{
+				for (int z = 0; z < Width; z++)
+				{
+                        for (int r = Regions.Length - 1; r >= 0; r--)
+                        {
+						RaycastHit Rayhit3;
+						Vector3 vertexPos = new Vector3(0,y,z);
+						if (Physics.Raycast(vertexPos.normalized * Radius,-vertexPos.normalized, out Rayhit3)) {
+							if (Mathf.Clamp01((Vector3.Distance(Rayhit3.point, Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
+							{
+								if (Regions[r].Biome)
+								{
+									ProceduralSphere.VoronoiPoint closest = points[0];
+									for (int b = 1; b < points.Length; b++)
+									{
+										if (Vector3.Distance(points[b].point, vertexPos) < Vector3.Distance(points[b].point, closest.point))
+										{
+											closest = points[b];
+										}
+									}
+									tex.SetPixel((int)Rayhit3.textureCoord.x, (int)Rayhit3.textureCoord.y, closest.biome.biomeColor);
+									q++;
+									if (q % 5 == 0)
+									{
+										yield return null;
+									}
+								}
+								else
+								{
+									tex.SetPixel((int)Rayhit3.textureCoord.x, (int)Rayhit3.textureCoord.y, Regions[r].color);
+								}
+							}
+						}
+                        }
+                    }
+                }
+                break;
+
+            case 4:
+			for (int z = 0; z < Width; z++)
+			{
+				for (int x = 0; x < Width; x++)
+				{
+                        for (int r = Regions.Length - 1; r >= 0; r--)
+                        {
+						RaycastHit Rayhit4;
+						Vector3 vertexPos = new Vector3(x,Width,z);
+						if (Physics.Raycast(vertexPos.normalized * Radius,-vertexPos.normalized, out Rayhit4)) {
+							if (Mathf.Clamp01((Vector3.Distance(Rayhit4.point, Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
+							{
+								if (Regions[r].Biome)
+								{
+									ProceduralSphere.VoronoiPoint closest = points[0];
+									for (int b = 1; b < points.Length; b++)
+									{
+										if (Vector3.Distance(points[b].point, vertexPos) < Vector3.Distance(points[b].point, closest.point))
+										{
+											closest = points[b];
+										}
+									}
+									tex.SetPixel((int)Rayhit4.textureCoord.x, (int)Rayhit4.textureCoord.y, closest.biome.biomeColor);
+									q++;
+									if (q % 5 == 0)
+									{
+										yield return null;
+									}
+								}
+								else
+								{
+									tex.SetPixel((int)Rayhit4.textureCoord.x, (int)Rayhit4.textureCoord.y, Regions[r].color);
+								}
+							}
+						}
+                        }
+                    }
+                }
+                break;
+
+            case 5:
+			for (int x = 0; x < Width; x++)
+			{
+				for (int z = 0; z < Width; z++)
+				{
+                        for (int r = Regions.Length - 1; r >= 0; r--)
+                        {
+							RaycastHit Rayhit5;
+						Vector3 vertexPos = new Vector3(x,0,z);
+							if (Physics.Raycast(vertexPos.normalized * Radius,-vertexPos.normalized, out Rayhit5)) {
+								if (Mathf.Clamp01((Vector3.Distance(Rayhit5.point, Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
+								{
+									if (Regions[r].Biome)
+									{
+										ProceduralSphere.VoronoiPoint closest = points[0];
+										for (int b = 1; b < points.Length; b++)
+										{
+											if (Vector3.Distance(points[b].point, vertexPos) < Vector3.Distance(points[b].point, closest.point))
+											{
+												closest = points[b];
+											}
+										}
+									tex.SetPixel((int)Rayhit5.textureCoord.x, (int)Rayhit5.textureCoord.y, closest.biome.biomeColor);
+										q++;
+										if (q % 5 == 0)
+										{
+											yield return null;
+										}
+									}
+									else
+									{
+									tex.SetPixel((int)Rayhit5.textureCoord.x, (int)Rayhit5.textureCoord.y, Regions[r].color);
+									}
+								}
+							}
+                        }
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }
+		tex.Apply ();
+	}
+
+	private int maxCheck = 0;
 
     private IEnumerator GenerateTerrain()
     {
@@ -293,6 +558,9 @@ public class ProceduralSphere : MonoBehaviour
         }
         StartCoroutine(AddColliders());
         yield return null;
+		for (int i = 0; i < 6; i++) {
+			StartCoroutine (AddSplashmap (i));
+		}
     }
 
     public struct V3

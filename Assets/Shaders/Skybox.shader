@@ -55,7 +55,7 @@
 		float3 v = normalize(i.texcoord);
 
 		float p = v.y;
-		float p1 = 1 - pow(min(1, 1 - p), _SkyExponent1);
+		float p1 = 1 - pow(min(1, 1 - p), pow(0.5, v.x*v.z));
 		float p2 = 1 - p1;
 
 		half3 c_sky = _SkyColor1 * p1 + _SkyColor2 * p2;

@@ -3,6 +3,7 @@
 	Properties
 	{
 		_Color("Color", Color) = (1,0,0,1)
+		_MainTex("Main Texture", 2D) = "white" {}
 	}
 		SubShader
 	{
@@ -18,9 +19,8 @@
 
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
+            #include "Lighting.cginc"
 			#pragma geometry geom
-
-			uniform float4 _LightColor0;
 
         	uniform sampler2D _MainTex;
 			uniform float4 _Color;
@@ -30,7 +30,9 @@
 				float4  pos : SV_POSITION;
 				float3	norm : NORMAL;
 				float2  uv : TEXCOORD0;
+				fixed3 diff : COLOR0;
 				LIGHTING_COORDS(1,2)
+				SHADOW_COORDS(3)
 			};
 
 			struct g2f
@@ -39,6 +41,7 @@
 				float3  norm : NORMAL;
 				float2  uv : TEXCOORD0;
 				float3 diffuseColor : TEXCOORD1;
+				float3 ambientColor : TEXCOORD2;
 			};
 
 			float4 _MainTex_ST;
@@ -46,15 +49,18 @@
 			v2g vert(appdata_full v)
 			{
 				float3 v0 = mul(_Object2World, v.vertex).xyz;
-
 				v.vertex.xyz = mul((float3x3)_World2Object, v0);
 
-				v2g o;
-				o.pos = v.vertex;
-				o.norm = v.normal;
-				o.uv = TRANSFORM_TEX (v.texcoord, _MainTex);
-				TRANSFER_VERTEX_TO_FRAGMENT(o);
-				return o;
+				v2g OUT;
+				OUT.pos = v.vertex;
+				OUT.norm = v.normal;
+				OUT.uv = TRANSFORM_TEX (v.texcoord, _MainTex);
+				half3 worldNormal = UnityObjectToWorldNormal(v.normal);
+                half nl = max(0, dot(worldNormal, _WorldSpaceLightPos0.xyz));
+                OUT.diff = nl * _LightColor0.rgb;
+				TRANSFER_VERTEX_TO_FRAGMENT(OUT);
+                TRANSFER_SHADOW(o)
+				return OUT;
 			}
 
 			[maxvertexcount(3)]
@@ -89,31 +95,36 @@
 				OUT.pos = mul(UNITY_MATRIX_MVP, IN[0].pos);
 				OUT.norm = vn;
 				OUT.uv = IN[0].uv;
-				OUT.diffuseColor = ambientLighting + diffuseReflection;
+				OUT.diffuseColor = diffuseReflection;
+				OUT.ambientColor = ambientLighting;
 				triStream.Append(OUT);
 
 				OUT.pos = mul(UNITY_MATRIX_MVP, IN[1].pos);
 				OUT.norm = vn;
 				OUT.uv = IN[1].uv;
-				OUT.diffuseColor = ambientLighting + diffuseReflection;
+				OUT.diffuseColor = diffuseReflection;
+				OUT.ambientColor = ambientLighting;
 				triStream.Append(OUT);
 
 				OUT.pos = mul(UNITY_MATRIX_MVP, IN[2].pos);
 				OUT.norm = vn;
 				OUT.uv = IN[2].uv;
-				OUT.diffuseColor = ambientLighting + diffuseReflection;
+				OUT.diffuseColor = diffuseReflection;
+				OUT.ambientColor = ambientLighting;
 				triStream.Append(OUT);
 			}
 
 			fixed4 frag(g2f IN) : COLOR
 			{
 				fixed4 texcol = tex2D (_MainTex, IN.uv);
+				fixed shadow = SHADOW_ATTENUATION(i);
 				float attenuation = LIGHT_ATTENUATION(i);
-				return fixed4(texcol * IN.diffuseColor, attenuation);
+				return fixed4(texcol * (IN.diffuseColor * shadow + IN.ambientColor), 1.0);
 			}
 
 			ENDCG
 		}
+		UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
 	}
-		FallBack "Diffuse"
+	FallBack "LowPolyBackup"
 }
