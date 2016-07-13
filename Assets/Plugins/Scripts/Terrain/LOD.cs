@@ -362,7 +362,7 @@ public class LOD : MonoBehaviour
                 yield return null;
             }
             yield return new WaitForSeconds(2);
-            StartCoroutine(AddMountains());
+            //StartCoroutine(AddMountains());
         }
 
         //If player nears a collider before it is generated force its generation
