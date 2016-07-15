@@ -310,34 +310,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 551451220}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4da02c432fab430598ce7ce4e7e6e97, type: 3}
+  m_Script: {fileID: 11500000, guid: 966f6377216f16540ad590d02459352c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   tree:
     minTrunk: 5
     maxTrunk: 11
-    minLeaves: 6
-    maxLeaves: 18
+    minLeaves: 4
+    maxLeaves: 7
     LeavesPattern:
       serializedVersion: 2
       m_Curve:
       - time: 0
         value: 0
-        inSlope: 999.99994
-        outSlope: 999.99994
-        tangentMode: 0
-      - time: 0.001
-        value: 1
-        inSlope: -1.0057832
-        outSlope: -1.0057832
+        inSlope: 0
+        outSlope: 0
         tangentMode: 0
       - time: 1
-        value: 0
-        inSlope: -1.0029367
-        outSlope: -1.0029367
+        value: 1
+        inSlope: 0
+        outSlope: 0
         tangentMode: 0
       m_PreInfinity: 2
-      m_PostInfinity: 1
+      m_PostInfinity: 2
       m_RotationOrder: 0
-    LeavesColor: {r: 0.03233625, g: 0.25308493, b: 0.048238292, a: 1}
-  material: {fileID: 2100000, guid: 14517172b2e3a4d48ad6b01ea3a245d2, type: 2}
+    LeavesColor: {r: 0.08823527, g: 0.44117647, b: 0, a: 0}
+  material: {fileID: 2100000, guid: fd97d6294910dfa49bbc4c28ba780df6, type: 2}

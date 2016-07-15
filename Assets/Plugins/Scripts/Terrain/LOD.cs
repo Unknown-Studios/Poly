@@ -32,6 +32,7 @@ public class LOD : MonoBehaviour
     public bool isDone;
     public ProceduralSphere PS;
     public ProceduralSphere.VoronoiPoint[] points;
+    private const int ChunkWidth = 16;
     private Mesh mesh;
     private int _LODLevel;
     private int LODLevel;
@@ -41,8 +42,6 @@ public class LOD : MonoBehaviour
     private PinkNoise pink;
     private MeshRenderer mr0;
     private MeshCollider mc0;
-    private const int ChunkWidth = 16;
-
     private Vector3[] vert;
     private Vector3[] norm;
     private int[] tri;
@@ -122,19 +121,19 @@ public class LOD : MonoBehaviour
         s.y = v.y * Mathf.Sqrt(1f - x2 / 2f - z2 / 2f + x2 * z2 / 3f);
         s.z = v.z * Mathf.Sqrt(1f - x2 / 2f - y2 / 2f + x2 * y2 / 3f);
 
-		float plain = (pink.GetValue(x / 1.5f, y / 1.5f, z / 1.5f) + 1.0f) / 4.0f;
+        float plain = (pink.GetValue(x / 1.5f, y / 1.5f, z / 1.5f) + 1.0f) / 4.0f;
 
-		float val = noise.GetValue(x - 549, y + 2585, z+ 54);
-		float n = val < 0 ? 0 : val;
-		val = (n - 0.5f) / 2.5f;
-		float mountains = val < 0 ? 0 : val;
+        float val = noise.GetValue(x - 549, y + 2585, z + 54);
+        float n = val < 0 ? 0 : val;
+        val = (n - 0.5f) / 2.5f;
+        float mountains = val < 0 ? 0 : val;
 
-		val = hills.GetValue(x + 549, y - 2585,z - 544);
-		float hill = val < 0 ? 0 : val;
-		val = (hill - 0.25f) / 7.5f;
-		hill = val < 0 ? 0 : val;
+        val = hills.GetValue(x + 549, y - 2585, z - 544);
+        float hill = val < 0 ? 0 : val;
+        val = (hill - 0.25f) / 7.5f;
+        hill = val < 0 ? 0 : val;
 
-		H[ve] = plain + mountains + hill;
+        H[ve] = plain + mountains + hill;
 
         N[ve] = s;
 
@@ -158,9 +157,9 @@ public class LOD : MonoBehaviour
         noise.Gain = 1f;
         noise.Exponent = 2f;
 
-		hills.OctaveCount = 2;
-		hills.Lacunarity = 0.5f;
-		hills.Frequency = 0.01f;
+        hills.OctaveCount = 2;
+        hills.Lacunarity = 0.5f;
+        hills.Frequency = 0.01f;
 
         mesh = GetComponent<MeshFilter>().mesh;
         mr0 = GetComponent<MeshRenderer>();
@@ -296,13 +295,14 @@ public class LOD : MonoBehaviour
         }
         norm = arr;
 
-		for (int ve = 0; ve < norm.Length; ve++)
+        for (int ve = 0; ve < norm.Length; ve++)
         {
-			vert[ve] = norm[ve].normalized * (Radius + (MaxHeight*data.heightmap[ve]));
+            vert[ve] = norm[ve].normalized * (Radius + (MaxHeight * data.heightmap[ve]));
         }
-		for (int x = 0; x < vert.Length; x++) {
-			vert [x] = vert [x].normalized * (Radius + (MaxHeight * data.heightmap [x]));
-		}
+        for (int x = 0; x < vert.Length; x++)
+        {
+            vert[x] = vert[x].normalized * (Radius + (MaxHeight * data.heightmap[x]));
+        }
         tri = data.triangles;
         CallbackDone = true;
     }
@@ -357,7 +357,7 @@ public class LOD : MonoBehaviour
         if (!FirstTime)
         {
             FirstTime = true;
-			yield return null;
+            yield return null;
             mc0.sharedMesh = mesh;
             PS.queue.Enqueue(gameObject);
             while (!mc0.convex)
@@ -385,11 +385,11 @@ public class LOD : MonoBehaviour
                 for (int i = 0; i < vert.Length; i++)
                 {
                     RaycastHit hit;
-					if (Physics.Raycast(vert[i] + (vert[i].normalized*25), -vert[i].normalized, out hit))
+                    if (Physics.Raycast(vert[i] + (vert[i].normalized * 25), -vert[i].normalized, out hit))
                     {
                         if (Vector3.Angle(hit.normal, transform.TransformDirection(norm[i])) > 5.0f)
                         {
-							tex.SetPixel((int)hit.textureCoord.x, (int)hit.textureCoord.y, Color.gray);
+                            tex.SetPixel((int)hit.textureCoord.x, (int)hit.textureCoord.y, Color.gray);
                         }
                     }
                 }
@@ -407,10 +407,21 @@ public class LOD : MonoBehaviour
         }
 
         int i = 0;
-        Vector2 start = new Vector2((LODW * Chunk.x), (LODW * Chunk.y));
-        int UVSize = LODW * 16;
+        Vector2 start = new Vector2((ChunkWidth * Chunk.x), (ChunkWidth * Chunk.y));
 
-        switch (side)
+        for (int y = 0; y <= ChunkWidth; y += _LODLevel)
+        {
+            for (int x = 0; x <= ChunkWidth; x += _LODLevel)
+            {
+                uv[i] = new Vector2(start.x + x, start.y + y) / Width;
+                if (name == "Chunk (4,4)")
+                {
+                    Debug.Log(uv[i]);
+                }
+            }
+        }
+
+        /*switch (side)
         {
             case 0:
                 for (int y = 0; y <= LODW; y++)
@@ -461,9 +472,9 @@ public class LOD : MonoBehaviour
                     }
                 }
                 break;
-
+            //Bottom
             case 5:
-                for (int x = 0; x <= LODW; x++)
+                for (int x = LODW; x <= 0; x--)
                 {
                     for (int y = 0; y <= LODW; y++, i++)
                     {
@@ -474,6 +485,6 @@ public class LOD : MonoBehaviour
 
             default:
                 break;
-        }
+        }*/
     }
 }

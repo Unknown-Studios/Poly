@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Skybox
+  m_Name: SkyBox
   m_Shader: {fileID: 4800000, guid: ecbc7d0dbe1b3dc41abae89aa29d3f24, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
@@ -93,6 +93,18 @@ Material:
         second: 0.5
       data:
         first:
+          name: _SkyExponent1
+        second: 1.0830102
+      data:
+        first:
+          name: _SkyIntensity
+        second: 1
+      data:
+        first:
+          name: _SunIntensity
+        second: 10
+      data:
+        first:
           name: _Parallax
         second: 0.02
       data:
@@ -127,18 +139,6 @@ Material:
         first:
           name: _Metallic
         second: 0
-      data:
-        first:
-          name: _SkyExponent1
-        second: 1.037035
-      data:
-        first:
-          name: _SkyIntensity
-        second: 1
-      data:
-        first:
-          name: _SunIntensity
-        second: 10
     m_Colors:
       data:
         first:
@@ -151,11 +151,11 @@ Material:
       data:
         first:
           name: _SkyColor1
-        second: {r: 0.41788942, g: 0.4223037, b: 0.7779977, a: 0.8913696}
+        second: {r: 0.46881714, g: 0.47376934, b: 0.8728113, a: 0.99999964}
       data:
         first:
           name: _SkyColor2
-        second: {r: 0.7417568, g: 0.47591087, b: 0.15113133, a: 0.8913696}
+        second: {r: 0.8321536, g: 0.5339094, b: 0.1695495, a: 0.99999964}
       data:
         first:
           name: _MoonVector

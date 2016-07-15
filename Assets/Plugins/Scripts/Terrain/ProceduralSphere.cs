@@ -47,6 +47,21 @@ public class ProceduralSphere : MonoBehaviour
 
     private ProceduralTree.TreeMesh[,] treeMesh;
 
+    private int maxCheck = 0;
+
+    public static Vector3 GetSpherePoint(Vector3 vertexPos, int Width)
+    {
+        Vector3 v = vertexPos * 2f / Width - Vector3.one;
+        float x2 = v.x * v.x;
+        float y2 = v.y * v.y;
+        float z2 = v.z * v.z;
+        Vector3 s = Vector3.zero;
+        s.x = v.x * Mathf.Sqrt(1f - y2 / 2f - z2 / 2f + y2 * z2 / 3f);
+        s.y = v.y * Mathf.Sqrt(1f - x2 / 2f - z2 / 2f + x2 * z2 / 3f);
+        s.z = v.z * Mathf.Sqrt(1f - x2 / 2f - y2 / 2f + x2 * y2 / 3f);
+        return s;
+    }
+
     // Use this for initialization
     public void OnBeforeSpawn(Vector3 SpawnPos)
     {
@@ -173,9 +188,10 @@ public class ProceduralSphere : MonoBehaviour
     //Called on script load.
     private void Start()
     {
-		if (SceneManager.GetActiveScene ().name != "Game") {
-			OnBeforeSpawn (Vector3.zero);
-		}
+        if (SceneManager.GetActiveScene().name != "Game")
+        {
+            OnBeforeSpawn(Vector3.zero);
+        }
     }
 
     private void Awake()
@@ -207,13 +223,14 @@ public class ProceduralSphere : MonoBehaviour
             s0.name = "Side #" + side;
             s0.transform.parent = transform;
 
-			Texture2D tex = new Texture2D(Width, Width);
+            Texture2D tex = new Texture2D(Width, Width);
 
             tex.wrapMode = TextureWrapMode.Clamp;
             tex.filterMode = FilterMode.Point;
-			Material SideMaterial = new Material(TerrainMaterial);
-			SideMaterial.mainTexture = tex;
-			SideMaterial.name = s0.name;
+            Material SideMaterial = new Material(TerrainMaterial);
+            SideMaterial.mainTexture = tex;
+            SideMaterial.name = s0.name;
+            yield return null;
             int x = 0, y = 0;
 
             for (x = 0; x < Width / 16; x++)
@@ -270,195 +287,200 @@ public class ProceduralSphere : MonoBehaviour
             }
             colCount++;
             yield return null;
-			if (queue.Count == 0 && maxCheck <= 10) {
-				yield return new WaitForSeconds(1.0f);
-				maxCheck++;
-				StartCoroutine (AddColliders());
-			}
+            if (queue.Count == 0 && maxCheck <= 10)
+            {
+                yield return new WaitForSeconds(1.0f);
+                maxCheck++;
+                StartCoroutine(AddColliders());
+            }
         }
     }
 
-	private IEnumerator AddSplashmap(int side) {
-		while (!isDone) {
-			yield return null;
-		}
-
-		int q = 0;
-		bool SplashDone = false;
-		Texture2D texture = null;
-
-		switch (side)
+    private IEnumerator AddSplashmap(int side)
+    {
+        while (!isDone)
         {
-		case 0:
-			for (int y = 0; y < Width; y++)
-			{
-				for (int x = 0; x < Width; x++)
-				{
-					RaycastHit Rayhit;
-
-					Vector3 vertexPos = new Vector3(x,y,0);
-					Vector3 startPos = ProceduralSphere.GetSpherePoint (vertexPos, Width);
-					if (texture == null) {
-						GameObject gm = GameObject.Find ("Side #" + side);
-						texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer> ().material.mainTexture;
-					}
-					texture.SetPixel (x, y, GetRegionColor (startPos));
-
-					if (x == Width - 1 && y == Width - 1) {
-						SplashDone = true;
-					}
-                }
-            }
-            break;
-
-        case 1:
-		for (int y = 0; y < Width; y++)
-		{
-			for (int z = 0; z < Width; z++)
-			{
-					RaycastHit Rayhit;
-					Vector3 vertexPos = new Vector3(Width,y,z);
-					Vector3 startPos = ProceduralSphere.GetSpherePoint (vertexPos, Width);
-					if (texture == null) {
-						GameObject gm = GameObject.Find ("Side #" + side);
-						texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer> ().material.mainTexture;
-					}
-					texture.SetPixel (y, z, GetRegionColor (startPos));
-
-					if (y == Width - 1 && z == Width - 1) {
-						SplashDone = true;
-					}
-                }
-            }
-            break;
-
-        case 2:
-		for (int y = 0; y < Width; y++)
-		{
-			for (int x = Width; x >= 0; x--)
-			{
-					RaycastHit Rayhit;
-					Vector3 vertexPos = new Vector3(x,y,Width);
-					Vector3 startPos = ProceduralSphere.GetSpherePoint (vertexPos, Width);
-					if (texture == null) {
-						GameObject gm = GameObject.Find ("Side #" + side);
-						texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer> ().material.mainTexture;
-					}
-					texture.SetPixel (x, y, GetRegionColor (startPos));
-
-					if (x == Width - 1 && y == Width - 1) {
-						SplashDone = true;
-					}
-                }
-            }
-            break;
-
-        case 3:
-		for (int y = 0; y < Width; y++)
-		{
-			for (int z = 0; z < Width; z++)
-			{
-					RaycastHit Rayhit;
-					Vector3 vertexPos = new Vector3(0,y,z);
-					Vector3 startPos = ProceduralSphere.GetSpherePoint (vertexPos, Width);
-					if (texture == null) {
-						GameObject gm = GameObject.Find ("Side #" + side);
-						texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer> ().material.mainTexture;
-					}
-					texture.SetPixel (y, z, GetRegionColor (startPos));
-
-					if (y == Width - 1 && z == Width - 1) {
-						SplashDone = true;
-					}
-                }
-            }
-            break;
-
-		case 4:
-			for (int z = 0; z < Width; z++) {
-				for (int x = 0; x < Width; x++) {
-					RaycastHit Rayhit;
-					Vector3 vertexPos = new Vector3 (x, Width, z);
-					Vector3 startPos = ProceduralSphere.GetSpherePoint (vertexPos, Width);
-					if (texture == null) {
-						GameObject gm = GameObject.Find ("Side #" + side);
-						texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer> ().material.mainTexture;
-					}
-					texture.SetPixel (x, z, GetRegionColor (startPos));
-
-					if (x == Width - 1 && z == Width - 1) {
-						SplashDone = true;
-					}
-				}
-			}
-            break;
-
-		case 5:
-			for (int x = 0; x < Width; x++) {
-				for (int z = 0; z < Width; z++) {
-					RaycastHit Rayhit;
-					Vector3 vertexPos = new Vector3 (x, 0, z);
-					Vector3 startPos = ProceduralSphere.GetSpherePoint (vertexPos, Width);
-					if (texture == null) {
-						GameObject gm = GameObject.Find ("Side #" + side);
-						texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer> ().material.mainTexture;
-					}
-					texture.SetPixel (x, z, GetRegionColor (startPos));
-
-					if (x == Width - 1 && z == Width - 1) {
-						SplashDone = true;
-					}
-				}
-
-			}
-            break;
-
-        default:
-            break;
+            yield return null;
         }
-		while (!SplashDone) {
-			yield return null;
-		}
-		Debug.Log ("Splash Done (" + side + ")");
-		texture.Apply ();
-	}
 
-	public static Vector3 GetSpherePoint(Vector3 vertexPos, int Width) {
-		Vector3 v = vertexPos * 2f / Width - Vector3.one;
-		float x2 = v.x * v.x;
-		float y2 = v.y * v.y;
-		float z2 = v.z * v.z;
-		Vector3 s = Vector3.zero;
-		s.x = v.x * Mathf.Sqrt(1f - y2 / 2f - z2 / 2f + y2 * z2 / 3f);
-		s.y = v.y * Mathf.Sqrt(1f - x2 / 2f - z2 / 2f + x2 * z2 / 3f);
-		s.z = v.z * Mathf.Sqrt(1f - x2 / 2f - y2 / 2f + x2 * y2 / 3f);
-		return s;
-	}
+        bool SplashDone = false;
+        Texture2D texture = null;
 
-	Color GetRegionColor(Vector3 s) {
-		RaycastHit Rayhit;
-		Color col = Color.black;
-		if (Physics.Linecast (s * (Radius + MaxHeight), Vector3.zero, out Rayhit)) {
-			for (int r = Regions.Length - 1; r >= 0; r--) {
-				if (Mathf.Clamp01 ((Vector3.Distance (Rayhit.point, Vector3.zero) - Radius) / MaxHeight) <= Regions [r].height) {
-					if (Regions [r].Biome) {
-						ProceduralSphere.VoronoiPoint closest = points [0];
-						for (int b = 1; b < points.Length; b++) {
-							if (Vector3.Distance (points [b].point, s) < Vector3.Distance (points [b].point, closest.point)) {
-								closest = points [b];
-							}
-						}
-						col = closest.biome.biomeColor;
-					} else {
-						col =  Regions [r].color;
-					}
-				}
-			}
-		}
-		return col;
-	}
+        switch (side)
+        {
+            case 0:
+                for (int y = 0; y < Width; y++)
+                {
+                    for (int x = 0; x < Width; x++)
+                    {
+                        Vector3 vertexPos = new Vector3(x, y, 0);
+                        Vector3 startPos = GetSpherePoint(vertexPos, Width);
+                        if (texture == null)
+                        {
+                            GameObject gm = GameObject.Find("Side #" + side);
+                            texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
+                        }
+                        texture.SetPixel(x, y, GetRegionColor(startPos));
 
-	private int maxCheck = 0;
+                        if (x == Width - 1 && y == Width - 1)
+                        {
+                            SplashDone = true;
+                        }
+                    }
+                }
+                break;
+
+            case 1:
+                for (int y = 0; y < Width; y++)
+                {
+                    for (int z = 0; z < Width; z++)
+                    {
+                        Vector3 vertexPos = new Vector3(Width, y, z);
+                        Vector3 startPos = GetSpherePoint(vertexPos, Width);
+                        if (texture == null)
+                        {
+                            GameObject gm = GameObject.Find("Side #" + side);
+                            texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
+                        }
+                        texture.SetPixel(y, z, GetRegionColor(startPos));
+
+                        if (y == Width - 1 && z == Width - 1)
+                        {
+                            SplashDone = true;
+                        }
+                    }
+                }
+                break;
+
+            case 2:
+                for (int y = 0; y < Width; y++)
+                {
+                    for (int x = Width; x >= 0; x--)
+                    {
+                        Vector3 vertexPos = new Vector3(x, y, Width);
+                        Vector3 startPos = GetSpherePoint(vertexPos, Width);
+                        if (texture == null)
+                        {
+                            GameObject gm = GameObject.Find("Side #" + side);
+                            texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
+                        }
+                        texture.SetPixel(x, y, GetRegionColor(startPos));
+
+                        if (x == Width - 1 && y == Width - 1)
+                        {
+                            SplashDone = true;
+                        }
+                    }
+                }
+                break;
+
+            case 3:
+                for (int y = 0; y < Width; y++)
+                {
+                    for (int z = 0; z < Width; z++)
+                    {
+                        Vector3 vertexPos = new Vector3(0, y, z);
+                        Vector3 startPos = GetSpherePoint(vertexPos, Width);
+                        if (texture == null)
+                        {
+                            GameObject gm = GameObject.Find("Side #" + side);
+                            texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
+                        }
+                        texture.SetPixel(y, z, GetRegionColor(startPos));
+
+                        if (y == Width - 1 && z == Width - 1)
+                        {
+                            SplashDone = true;
+                        }
+                    }
+                }
+                break;
+
+            case 4:
+                for (int z = 0; z < Width; z++)
+                {
+                    for (int x = 0; x < Width; x++)
+                    {
+                        Vector3 vertexPos = new Vector3(x, Width, z);
+                        Vector3 startPos = GetSpherePoint(vertexPos, Width);
+                        if (texture == null)
+                        {
+                            GameObject gm = GameObject.Find("Side #" + side);
+                            texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
+                        }
+                        texture.SetPixel(x, z, GetRegionColor(startPos));
+
+                        if (x == Width - 1 && z == Width - 1)
+                        {
+                            SplashDone = true;
+                        }
+                    }
+                }
+                break;
+
+            case 5:
+                for (int x = 0; x < Width; x++)
+                {
+                    for (int z = 0; z < Width; z++)
+                    {
+                        Vector3 vertexPos = new Vector3(x, 0, z);
+                        Vector3 startPos = GetSpherePoint(vertexPos, Width);
+                        if (texture == null)
+                        {
+                            GameObject gm = GameObject.Find("Side #" + side);
+                            texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
+                        }
+                        texture.SetPixel(x, z, GetRegionColor(startPos));
+
+                        if (x == Width - 1 && z == Width - 1)
+                        {
+                            SplashDone = true;
+                        }
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }
+        while (!SplashDone)
+        {
+            yield return null;
+        }
+        texture.Apply();
+    }
+
+    private Color GetRegionColor(Vector3 s)
+    {
+        RaycastHit Rayhit;
+        Color col = Color.black;
+        if (Physics.Linecast(s * (Radius + MaxHeight), Vector3.zero, out Rayhit))
+        {
+            for (int r = Regions.Length - 1; r >= 0; r--)
+            {
+                if (Mathf.Clamp01((Vector3.Distance(Rayhit.point, Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
+                {
+                    if (Regions[r].Biome)
+                    {
+                        ProceduralSphere.VoronoiPoint closest = points[0];
+                        for (int b = 1; b < points.Length; b++)
+                        {
+                            if (Vector3.Distance(points[b].point, s) < Vector3.Distance(points[b].point, closest.point))
+                            {
+                                closest = points[b];
+                            }
+                        }
+                        col = closest.biome.biomeColor;
+                    }
+                    else
+                    {
+                        col = Regions[r].color;
+                    }
+                }
+            }
+        }
+        return col;
+    }
 
     private IEnumerator GenerateTerrain()
     {
@@ -481,9 +503,10 @@ public class ProceduralSphere : MonoBehaviour
         }
         StartCoroutine(AddColliders());
         yield return null;
-		for (int i = 0; i < 6; i++) {
-			StartCoroutine (AddSplashmap (i));
-		}
+        for (int i = 0; i < 6; i++)
+        {
+            StartCoroutine(AddSplashmap(i));
+        }
     }
 
     public struct V3

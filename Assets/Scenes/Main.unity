@@ -162,7 +162,6 @@ GameObject:
   - 114: {fileID: 580943512}
   - 114: {fileID: 580943511}
   - 114: {fileID: 580943510}
-  - 114: {fileID: 580943518}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
@@ -286,17 +285,6 @@ Transform:
   - {fileID: 1390317050}
   m_Father: {fileID: 0}
   m_RootOrder: 2
---- !u!114 &580943518
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 580943509}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 920e7faf63f59485b8a6785a6165334f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1390317049
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,14 +411,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1588451289}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 612cc6f1ff0daee4aa1d34414e2f05f8, type: 3}
+  m_Script: {fileID: 11500000, guid: 23414084bdea3f543834191d94909c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   gravity: -9.81
-  Range: 1250
+  Range: 1000
   LM:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 0
 --- !u!114 &1588451295
 MonoBehaviour:
   m_ObjectHideFlags: 0
