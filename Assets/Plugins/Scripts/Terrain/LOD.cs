@@ -77,9 +77,10 @@ public class LOD : MonoBehaviour
 
     public void SetTargetLOD(int TargetLOD)
     {
-		if (LODLevel == TargetLOD) {
-			return;
-		}
+        if (LODLevel == TargetLOD)
+        {
+            return;
+        }
         LODLevel = TargetLOD;
         _LODLevel = (int)Mathf.Pow(2f, LODLevel);
         StartCoroutine(GenerateMesh(LODLevel == 0));
@@ -365,7 +366,7 @@ public class LOD : MonoBehaviour
                 yield return null;
             }
             yield return new WaitForSeconds(2);
-            //StartCoroutine(AddMountains());
+            SetTargetLOD(4);
         }
 
         //If player nears a collider before it is generated force its generation
@@ -373,30 +374,6 @@ public class LOD : MonoBehaviour
         {
             mc0.convex = true;
         }
-    }
-
-    private IEnumerator AddMountains()
-    {
-        Texture2D tex = (Texture2D)mr0.sharedMaterial.mainTexture;
-        for (int x = 0; x < ChunkWidth; x++)
-        {
-            for (int y = 0; y < ChunkWidth; y++)
-            {
-                for (int i = 0; i < vert.Length; i++)
-                {
-                    RaycastHit hit;
-                    if (Physics.Raycast(vert[i] + (vert[i].normalized * 25), -vert[i].normalized, out hit))
-                    {
-                        if (Vector3.Angle(hit.normal, transform.TransformDirection(norm[i])) > 5.0f)
-                        {
-                            tex.SetPixel((int)hit.textureCoord.x, (int)hit.textureCoord.y, Color.gray);
-                        }
-                    }
-                }
-            }
-        }
-        yield return null;
-        SetTargetLOD(4);
     }
 
     private void AddUV(int LODW)
@@ -407,17 +384,13 @@ public class LOD : MonoBehaviour
         }
 
         int i = 0;
-        Vector2 start = new Vector2((ChunkWidth * Chunk.x), (ChunkWidth * Chunk.y));
+        Vector2 start = new Vector2(ChunkWidth * Chunk.x, ChunkWidth * Chunk.y) / Width;
 
         for (int y = 0; y <= ChunkWidth; y += _LODLevel)
         {
-            for (int x = 0; x <= ChunkWidth; x += _LODLevel)
+            for (int x = 0; x <= ChunkWidth; x += _LODLevel, i++)
             {
-                uv[i] = new Vector2(start.x + x, start.y + y) / Width;
-                if (name == "Chunk (4,4)")
-                {
-                    Debug.Log(uv[i]);
-                }
+                uv[i] = start + (new Vector2(x, y) / (1.0f * Width));
             }
         }
 

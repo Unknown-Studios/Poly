@@ -224,9 +224,18 @@ public class ProceduralSphere : MonoBehaviour
             s0.transform.parent = transform;
 
             Texture2D tex = new Texture2D(Width, Width);
-
             tex.wrapMode = TextureWrapMode.Clamp;
             tex.filterMode = FilterMode.Point;
+
+            for (int x1 = 0; x1 < Width; x1++)
+            {
+                for (int y1 = 0; y1 < Width; y1++)
+                {
+                    tex.SetPixel(x1, y1, Color.black);
+                }
+            }
+            tex.Apply();
+
             Material SideMaterial = new Material(TerrainMaterial);
             SideMaterial.mainTexture = tex;
             SideMaterial.name = s0.name;
@@ -320,7 +329,8 @@ public class ProceduralSphere : MonoBehaviour
                             GameObject gm = GameObject.Find("Side #" + side);
                             texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
                         }
-                        texture.SetPixel(x, y, GetRegionColor(startPos));
+                        if (texture.GetPixel(x, y) == Color.black)
+                            texture.SetPixel(x, y, GetRegionColor(startPos));
 
                         if (x == Width - 1 && y == Width - 1)
                         {
@@ -342,7 +352,8 @@ public class ProceduralSphere : MonoBehaviour
                             GameObject gm = GameObject.Find("Side #" + side);
                             texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
                         }
-                        texture.SetPixel(y, z, GetRegionColor(startPos));
+                        if (texture.GetPixel(y, z) == Color.black)
+                            texture.SetPixel(y, z, GetRegionColor(startPos));
 
                         if (y == Width - 1 && z == Width - 1)
                         {
@@ -364,7 +375,8 @@ public class ProceduralSphere : MonoBehaviour
                             GameObject gm = GameObject.Find("Side #" + side);
                             texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
                         }
-                        texture.SetPixel(x, y, GetRegionColor(startPos));
+                        if (texture.GetPixel(x, y) == Color.black)
+                            texture.SetPixel(x, y, GetRegionColor(startPos));
 
                         if (x == Width - 1 && y == Width - 1)
                         {
@@ -386,7 +398,8 @@ public class ProceduralSphere : MonoBehaviour
                             GameObject gm = GameObject.Find("Side #" + side);
                             texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
                         }
-                        texture.SetPixel(y, z, GetRegionColor(startPos));
+                        if (texture.GetPixel(y, z) == Color.black)
+                            texture.SetPixel(y, z, GetRegionColor(startPos));
 
                         if (y == Width - 1 && z == Width - 1)
                         {
@@ -408,7 +421,8 @@ public class ProceduralSphere : MonoBehaviour
                             GameObject gm = GameObject.Find("Side #" + side);
                             texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
                         }
-                        texture.SetPixel(x, z, GetRegionColor(startPos));
+                        if (texture.GetPixel(x, z) == Color.black)
+                            texture.SetPixel(x, z, GetRegionColor(startPos));
 
                         if (x == Width - 1 && z == Width - 1)
                         {
@@ -430,7 +444,8 @@ public class ProceduralSphere : MonoBehaviour
                             GameObject gm = GameObject.Find("Side #" + side);
                             texture = (Texture2D)gm.GetComponentInChildren<MeshRenderer>().material.mainTexture;
                         }
-                        texture.SetPixel(x, z, GetRegionColor(startPos));
+                        if (texture.GetPixel(x, z) == Color.black)
+                            texture.SetPixel(x, z, GetRegionColor(startPos));
 
                         if (x == Width - 1 && z == Width - 1)
                         {
@@ -462,7 +477,7 @@ public class ProceduralSphere : MonoBehaviour
                 {
                     if (Regions[r].Biome)
                     {
-                        ProceduralSphere.VoronoiPoint closest = points[0];
+                        VoronoiPoint closest = points[0];
                         for (int b = 1; b < points.Length; b++)
                         {
                             if (Vector3.Distance(points[b].point, s) < Vector3.Distance(points[b].point, closest.point))
