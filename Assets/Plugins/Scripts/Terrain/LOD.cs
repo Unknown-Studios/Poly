@@ -78,6 +78,9 @@ public class LOD : MonoBehaviour
 
     public void SetTargetLOD(int TargetLOD)
     {
+		if (LODLevel == TargetLOD) {
+			return;
+		}
         LODLevel = TargetLOD;
         _LODLevel = (int)Mathf.Pow(2f, LODLevel);
         StartCoroutine(GenerateMesh(LODLevel == 0));
