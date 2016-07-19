@@ -1,4 +1,6 @@
-﻿Shader "Unknown Studios/LowPolyBackup"
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+Shader "Unknown Studios/LowPolyBackup"
 {
 	Properties
 	{
@@ -41,7 +43,7 @@
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.norm = v.normal;
 				o.uv = TRANSFORM_TEX (v.texcoord, _MainTex);
-				o.wPos = mul(_Object2World, v.vertex);
+				o.wPos = mul(unity_ObjectToWorld, v.vertex);
 				return o;
 			}
 

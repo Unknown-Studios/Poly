@@ -1,4 +1,7 @@
-﻿Shader "Unknown Studios/Low Poly"
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+
+Shader "Unknown Studios/Low Poly"
 {
 	Properties
 	{
@@ -48,8 +51,8 @@
 
 			v2g vert(appdata_full v)
 			{
-				float3 v0 = mul(_Object2World, v.vertex).xyz;
-				v.vertex.xyz = mul((float3x3)_World2Object, v0);
+				float3 v0 = mul(unity_ObjectToWorld, v.vertex).xyz;
+				v.vertex.xyz = mul((float3x3)unity_WorldToObject, v0);
 
 				v2g OUT;
 				OUT.pos = v.vertex;
@@ -74,8 +77,8 @@
 
 				float3 vn = normalize(cross(v1 - v0, v2 - v0));
 
-				float4x4 modelMatrix = _Object2World;
-				float4x4 modelMatrixInverse = _World2Object;
+				float4x4 modelMatrix = unity_ObjectToWorld;
+				float4x4 modelMatrixInverse = unity_WorldToObject;
 
 				float3 normalDirection = normalize(
 					mul(float4(vn, 0.0), modelMatrixInverse).xyz);

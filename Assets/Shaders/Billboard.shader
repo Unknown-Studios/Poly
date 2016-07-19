@@ -1,4 +1,6 @@
-﻿Shader "Unknown Studios/Billboard" {
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+Shader "Unknown Studios/Billboard" {
 	Properties
 	{
 		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
@@ -51,7 +53,7 @@
 
 					fixed4 frag(v2f i) : COLOR
 					{
-						float dist = distance(_WorldSpaceCameraPos, mul(_Object2World, i.texcoord));
+						float dist = distance(_WorldSpaceCameraPos, mul(unity_ObjectToWorld, i.texcoord));
 						clip(_CullDistance - dist);
 
 						return 2.0f * i.color * tex2D(_MainTex, i.texcoord);

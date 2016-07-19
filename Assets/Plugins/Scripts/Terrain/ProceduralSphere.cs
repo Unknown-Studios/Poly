@@ -40,14 +40,19 @@ public class ProceduralSphere : MonoBehaviour
     private int numSides = 0;
 
     private ThreadedJob thread;
-
     private int colCount;
-
     private bool Spawned;
-
     private ProceduralTree.TreeMesh[,] treeMesh;
 
     private int maxCheck = 0;
+
+    private CullingGroup group;
+
+    private GameObject[] TreeObjects;
+
+    private List<TreeObject> UnusedTrees;
+
+    private TreePosition[] cullingSpheres;
 
     public static Vector3 GetSpherePoint(Vector3 vertexPos, int Width)
     {
@@ -82,14 +87,59 @@ public class ProceduralSphere : MonoBehaviour
         if (isDone && !Spawned && Game.player != null)
         {
             Spawned = true;
+
+            treeMesh = new ProceduralTree.TreeMesh[trees.Length, 5];
+
+            for (int tree = 0; tree < trees.Length; tree++)
+            {
+                for (int i = 0; i < treeMesh.GetLength(1); i++)
+                {
+                    treeMesh[tree, i] = ProceduralTree.GenerateTree(trees[tree]);
+                }
+            }
+
+            group = new CullingGroup();
+            group.targetCamera = Camera.main;
+            group.onStateChanged = OnTreeStateChanged;
+
+            TreeObjects = new GameObject[250 * trees.Length];
+            UnusedTrees = new List<TreeObject>();
+
+            for (int t = 0; t < 250 * trees.Length; t++)
+            {
+                TreeObject tj = new TreeObject();
+                tj.type = Random.Range(0, treeMesh.GetLength(0));
+                tj.gameObject = new GameObject();
+
+                MeshFilter fil = tj.gameObject.AddComponent<MeshFilter>();
+                MeshRenderer ren = tj.gameObject.AddComponent<MeshRenderer>();
+                CapsuleCollider col = tj.gameObject.AddComponent<CapsuleCollider>();
+
+                ProceduralTree.TreeMesh tm = treeMesh[tj.type, Random.Range(0, 5)];
+                fil.mesh = tm.mesh;
+                ren.material.mainTexture = tm.uvTex;
+                col.height = tm.height;
+                col.radius = tm.tRadius;
+
+                UnusedTrees.Add(tj);
+            }
+            cullingSpheres = new TreePosition[1000];
+            BoundingSphere[] spheres = new BoundingSphere[1000];
+            for (int tree = 0; tree < 1000; tree++)
+            {
+                cullingSpheres[tree] = SpawnTree();
+                spheres[tree] = cullingSpheres[tree].sphere;
+            }
+
+            group.SetBoundingSpheres(spheres);
+            group.SetBoundingSphereCount(1000);
+
             Vector3 pos = Vector3.one * (Radius + MaxHeight);
             while (Mathf.Clamp01((Vector3.Distance(pos, Vector3.zero) - Radius) / MaxHeight) > Regions[0].height)
             {
                 pos = GetHeight(Random.onUnitSphere);
             }
             Game.player.transform.position = pos;
-
-            SpawnTree();
         }
     }
 
@@ -120,21 +170,11 @@ public class ProceduralSphere : MonoBehaviour
         }
     }
 
-    private void SpawnTree()
+    private TreePosition SpawnTree()
     {
-        treeMesh = new ProceduralTree.TreeMesh[trees.Length, 5];
-
-        for (int tree = 0; tree < trees.Length; tree++)
-        {
-            for (int i = 0; i < treeMesh.GetLength(1); i++)
-            {
-                treeMesh[tree, i] = ProceduralTree.GenerateTree(trees[tree]);
-            }
-        }
-
         Vector3 position = Random.onUnitSphere * Radius;
         RaycastHit rayhit;
-        if (Physics.Raycast(position, -position.normalized, out rayhit))
+        if (Physics.Linecast(position, Vector3.zero, out rayhit))
         {
             if (rayhit.transform.GetComponent<Renderer>() != null)
             {
@@ -157,7 +197,7 @@ public class ProceduralSphere : MonoBehaviour
                         //Don't spawn tree if no treetypes were found.
                         if (curBiome.treeTypes.Length == 0)
                         {
-                            return;
+                            return null;
                         }
                         TreeType = curBiome.treeTypes[Random.Range(0, curBiome.treeTypes.Length)];
                         break;
@@ -165,24 +205,11 @@ public class ProceduralSphere : MonoBehaviour
                 }
 
                 ProceduralTree.TreeMesh tm = treeMesh[TreeType, Random.Range(0, treeMesh.GetLength(1))];
-
-                GameObject finalTree = new GameObject("Tree: " + TreeType);
-                finalTree.transform.position = SpawnPos;
-                finalTree.transform.rotation = SpawnRot;
-
-                MeshFilter treeFilter = finalTree.AddComponent<MeshFilter>();
-                MeshRenderer treeRender = finalTree.AddComponent<MeshRenderer>();
-                MeshCollider treeCol = finalTree.AddComponent<MeshCollider>();
-                treeFilter.sharedMesh = tm.mesh;
-                treeRender.material = treeMaterial;
-                treeRender.material.mainTexture = tm.uvTex;
-                if (treeCol.sharedMesh != null)
-                {
-                    treeCol.sharedMesh.Clear();
-                }
-                treeCol.sharedMesh = tm.mesh;
+                TreePosition treePos = new TreePosition(SpawnPos, tm);
+                return treePos;
             }
         }
+        return null;
     }
 
     //Called on script load.
@@ -192,6 +219,16 @@ public class ProceduralSphere : MonoBehaviour
         {
             OnBeforeSpawn(Vector3.zero);
         }
+    }
+
+    private void OnDisabled()
+    {
+        group.Dispose();
+        group = null;
+    }
+
+    private void OnTreeStateChanged(CullingGroupEvent evt)
+    {
     }
 
     private void Awake()
@@ -558,6 +595,25 @@ public class ProceduralSphere : MonoBehaviour
         public static V3 operator /(V3 v1, float scalar)
         {
             return new V3(v1.x / scalar, v1.y / scalar, v1.z / scalar);
+        }
+    }
+
+    public class TreeObject
+    {
+        public GameObject gameObject;
+        public int type;
+    }
+
+    [Serializable]
+    public class TreePosition
+    {
+        public ProceduralTree.TreeMesh mesh;
+        public BoundingSphere sphere;
+
+        public TreePosition(Vector3 Position, ProceduralTree.TreeMesh treeMesh)
+        {
+            mesh = treeMesh;
+            sphere = new BoundingSphere(Position, treeMesh.height);
         }
     }
 

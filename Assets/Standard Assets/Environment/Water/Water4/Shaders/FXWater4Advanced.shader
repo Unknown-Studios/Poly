@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 Shader "FX/Water4" {
 	Properties{
 		_ReflectionTex("Internal reflection", 2D) = "white" {}
@@ -129,7 +131,7 @@ Shader "FX/Water4" {
 		{
 			v2f o;
 
-			half3 worldSpaceVertex = mul(_Object2World, (v.vertex)).xyz;
+			half3 worldSpaceVertex = mul(unity_ObjectToWorld, (v.vertex)).xyz;
 			half3 vtxForAni = (worldSpaceVertex).xzz;
 
 			half3 nrml;
@@ -147,7 +149,7 @@ Shader "FX/Water4" {
 			v.vertex.xyz += offsets;
 
 			// one can also use worldSpaceVertex.xz here (speed!), albeit it'll end up a little skewed
-			half2 tileableUv = mul(_Object2World, (v.vertex)).xz;
+			half2 tileableUv = mul(unity_ObjectToWorld, (v.vertex)).xz;
 
 			o.bumpCoords.xyzw = (tileableUv.xyxy + _Time.xxxx * _BumpDirection.xyzw) * _BumpTiling.xyzw;
 
@@ -234,7 +236,7 @@ Shader "FX/Water4" {
 		{
 			v2f_noGrab o;
 
-			half3 worldSpaceVertex = mul(_Object2World, (v.vertex)).xyz;
+			half3 worldSpaceVertex = mul(unity_ObjectToWorld, (v.vertex)).xyz;
 			half3 vtxForAni = (worldSpaceVertex).xzz;
 
 			half3 nrml;
@@ -252,7 +254,7 @@ Shader "FX/Water4" {
 			v.vertex.xyz += offsets;
 
 			// one can also use worldSpaceVertex.xz here (speed!), albeit it'll end up a little skewed
-			half2 tileableUv = mul(_Object2World, v.vertex).xz;
+			half2 tileableUv = mul(unity_ObjectToWorld, v.vertex).xz;
 			o.bumpCoords.xyzw = (tileableUv.xyxy + _Time.xxxx * _BumpDirection.xyzw) * _BumpTiling.xyzw;
 
 			o.viewInterpolator.xyz = worldSpaceVertex - _WorldSpaceCameraPos;
@@ -320,7 +322,7 @@ Shader "FX/Water4" {
 		{
 			v2f_simple o;
 
-			half3 worldSpaceVertex = mul(_Object2World, v.vertex).xyz;
+			half3 worldSpaceVertex = mul(unity_ObjectToWorld, v.vertex).xyz;
 			half2 tileableUv = worldSpaceVertex.xz;
 
 			o.bumpCoords.xyzw = (tileableUv.xyxy + _Time.xxxx * _BumpDirection.xyzw) * _BumpTiling.xyzw;

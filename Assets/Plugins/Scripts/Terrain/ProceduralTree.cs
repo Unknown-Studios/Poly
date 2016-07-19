@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class ProceduralTree : MonoBehaviour
 {
-
     public static TreeMesh GenerateTree(TreeClass treeInfo)
     {
         //Initialization
@@ -146,6 +145,9 @@ public class ProceduralTree : MonoBehaviour
 
         TreeMesh tm = new TreeMesh();
         tm.mesh = treeMesh;
+        tm.lRadius = LeavesRadius;
+        tm.tRadius = trunkRadius;
+        tm.height = trunkHeight + leavesHeight;
         tm.uvTex = uvTex;
         return tm;
     }
@@ -155,6 +157,9 @@ public class ProceduralTree : MonoBehaviour
     {
         public Texture2D uvTex;
         public Mesh mesh;
+        public int height;
+        public float lRadius;
+        public float tRadius;
     }
 
     [System.Serializable]

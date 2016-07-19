@@ -155,7 +155,7 @@ public class ProceduralTerrain : NetworkBehaviour
         {
             Seed = PlayerPrefs.GetInt("Seed");
         }
-        Random.seed = Seed;
+        //Random.seed = Seed;
         if (GameObject.Find("Chunk"))
         {
             Chunk = GameObject.Find("Chunk").GetComponent<Terrain>();
@@ -352,7 +352,7 @@ public class ProceduralTerrain : NetworkBehaviour
 
     private void OnSeedReceived()
     {
-        Random.seed = Seed;
+        //Random.seed = Seed;
         starto = true;
         StartCoroutine("UpdateTile");
     }
