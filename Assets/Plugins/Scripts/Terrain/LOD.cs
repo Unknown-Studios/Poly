@@ -342,7 +342,7 @@ public class LOD : MonoBehaviour
 
         //Calculate UVs
         uv = new Vector2[vert.Length];
-        AddUV(LODW);
+        AddUV();
 
         //Reset mesh and set values
         mesh.Clear();
@@ -376,88 +376,75 @@ public class LOD : MonoBehaviour
         }
     }
 
-    private void AddUV(int LODW)
+    private void AddUV()
     {
-        if (LODW != Mathf.Sqrt(uv.Length) - 1)
-        {
-            LODW = (int)Mathf.Sqrt(uv.Length) - 1;
-        }
-
         int i = 0;
         Vector2 start = new Vector2(ChunkWidth * Chunk.x, ChunkWidth * Chunk.y) / Width;
 
-        for (int y = 0; y <= ChunkWidth; y += _LODLevel)
-        {
-            for (int x = 0; x <= ChunkWidth; x += _LODLevel, i++)
-            {
-                uv[i] = start + (new Vector2(x, y) / (1.0f * Width));
-            }
-        }
-
-        /*switch (side)
+        switch (side)
         {
             case 0:
-                for (int y = 0; y <= LODW; y++)
+			for (int y = 0; y <= ChunkWidth; y+= _LODLevel)
                 {
-                    for (int x = 0; x <= LODW; x++, i++)
-                    {
-                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
-                    }
+				for (int x = 0; x <= ChunkWidth; x+= _LODLevel, i++)
+                {
+            		uv[i] = start + (new Vector2(x, y) / (1.0f * Width));
                 }
+            }
                 break;
 
             case 1:
-                for (int x = 0; x <= LODW; x++)
+			for (int x = 0; x <= ChunkWidth; x+=_LODLevel)
                 {
-                    for (int y = 0; y <= LODW; y++, i++)
-                    {
-                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
+				for (int y = 0; y <= ChunkWidth; y+=_LODLevel, i++)
+				{
+					uv[i] = start + (new Vector2(x,y) / (1.0f * Width));
                     }
                 }
                 break;
 
             case 2:
-                for (int y = 0; y <= LODW; y++)
+			for (int y = 0; y <= ChunkWidth; y+=_LODLevel)
                 {
-                    for (int x = LODW; x >= 0; x--, i++)
-                    {
-                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
+				for (int x = ChunkWidth; x >= 0; x-=_LODLevel, i++)
+				{
+					uv[i] = start + (new Vector2(x, y) / (1.0f * Width));
                     }
                 }
                 break;
 
             case 3:
-                for (int y = 0; y <= LODW; y++)
+			for (int y = 0; y <= ChunkWidth; y+=_LODLevel)
                 {
-                    for (int x = 0; x <= LODW; x++, i++)
-                    {
-                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
+				for (int x = 0; x <= ChunkWidth; x+=_LODLevel, i++)
+				{
+					uv[i] = start + (new Vector2(x, y) / (1.0f * Width));
                     }
                 }
                 break;
 
             case 4:
-                for (int y = 0; y <= LODW; y++)
+			for (int y = 0; y <= ChunkWidth; y+=_LODLevel)
                 {
-                    for (int x = 0; x <= LODW; x++, i++)
-                    {
-                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
+				for (int x = 0; x <= ChunkWidth; x+=_LODLevel, i++)
+				{
+					uv[i] = start + (new Vector2(x, y) / (1.0f * Width));
                     }
                 }
                 break;
             //Bottom
             case 5:
-                for (int x = LODW; x <= 0; x--)
+			for (int x = 0; x <= ChunkWidth; x += _LODLevel)
                 {
-                    for (int y = 0; y <= LODW; y++, i++)
-                    {
-                        uv[i] = new Vector2((start.y + y) / UVSize, (start.x + x) / UVSize);
+				for (int y = 0; y <= ChunkWidth; y += _LODLevel, i++)
+				{
+					uv[i] = start + (new Vector2(x, y) / (1.0f * Width));
                     }
                 }
                 break;
 
             default:
                 break;
-        }*/
+        }
     }
 }
