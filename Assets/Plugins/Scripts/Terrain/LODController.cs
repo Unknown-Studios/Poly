@@ -37,7 +37,7 @@ public class LODController : MonoBehaviour
             {
                 if (lastColliders[i].GetComponent<LOD>())
                 {
-                    lastColliders[i].GetComponent<LOD>().SetTargetLOD(4);
+                    lastColliders[i].GetComponent<LOD>().SetTargetLOD(5);
                 }
             }
         }

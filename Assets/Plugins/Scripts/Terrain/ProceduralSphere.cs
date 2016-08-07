@@ -325,13 +325,11 @@ public class ProceduralSphere : MonoBehaviour
             if (!mc.convex)
             {
                 mc.convex = true;
-                yield return null;
-                current.GetComponent<LOD>().SetTargetLOD(4);
+                current.GetComponent<LOD>().SetTargetLOD(5);
                 Done.Add(current);
             }
             colCount++;
-            yield return null;
-            if (queue.Count == 0 && maxCheck <= 10)
+            if (queue.Count == 0 && maxCheck <= 25)
             {
                 yield return new WaitForSeconds(1.0f);
                 maxCheck++;
@@ -344,13 +342,18 @@ public class ProceduralSphere : MonoBehaviour
     {
         RaycastHit Rayhit;
         Color col = Color.black;
-        if (Physics.Linecast(s * (Radius + MaxHeight), Vector3.zero, out Rayhit))
+		Vector3 start = s * (Radius + MaxHeight);
+        if (Physics.Linecast(start, Vector3.zero, out Rayhit))
         {
             for (int r = Regions.Length - 1; r >= 0; r--)
             {
                 if (Mathf.Clamp01((Vector3.Distance(Rayhit.point, Vector3.zero) - Radius) / MaxHeight) <= Regions[r].height)
                 {
-                    if (Regions[r].Biome)
+					if (Vector3.Angle(Rayhit.normal, start) > 25.0f) {
+						col = Color.gray;
+						Debug.DrawLine (start, Rayhit.point,Color.red,10.0f);
+					} else 
+					if (Regions[r].Biome)
                     {
                         VoronoiPoint closest = points[0];
                         for (int b = 1; b < points.Length; b++)
@@ -369,9 +372,6 @@ public class ProceduralSphere : MonoBehaviour
                 }
             }
         }
-		if (col == Color.black) {
-			Debug.LogError ("Color is black on terrain, position: "+s);
-		}
         return col;
     }
 

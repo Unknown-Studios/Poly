@@ -167,6 +167,7 @@ GameObject:
   - 114: {fileID: 580943512}
   - 114: {fileID: 580943511}
   - 114: {fileID: 580943510}
+  - 114: {fileID: 580943518}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
@@ -185,7 +186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2bcde0a14e53442a2c5b472bd9eaba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lodLevels: 960000002c010000c201000058020000
+  lodLevels: 2c010000c201000058020000e8030000
 --- !u!114 &580943511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,6 +294,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &580943518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 580943509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6237a8591c8948fd8c2e53b02052cc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1390317049
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,7 +435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravity: -9.81
-  Range: 1000
+  Range: 3000
   LM:
     serializedVersion: 2
     m_Bits: 0
@@ -440,31 +452,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WidthTick: 7
   Width: 128
-  Radius: 1000
-  MaxHeight: 300
+  Radius: 2000
+  MaxHeight: 750
   Seed: 0
   done: 0
-  Octaves: 2
+  Octaves: 5
   TerrainMaterial: {fileID: 2100000, guid: 08aeff6d473330a4597b4ce7d53eed3e, type: 2}
   currentAction: 
   progress: 0
   Regions:
-  - Name: Test
-    color: {r: 0.28016496, g: 0.47498247, b: 0.67360693, a: 1}
+  - Name: Water
+    color: {r: 0.2784314, g: 0.47450984, b: 0.6745098, a: 1}
     Biome: 0
-    height: 0.100288704
-  - Name: Test
-    color: {r: 0.2750659, g: 0.6033253, b: 0.21217732, a: 1}
+    height: 0.15003875
+  - Name: Sand
+    color: {r: 0.8897059, g: 0.78611743, b: 0.35326558, a: 1}
     Biome: 0
-    height: 0.1996073
-  - Name: Test
+    height: 0.25078374
+  - Name: Biome
     color: {r: 1, g: 1, b: 1, a: 1}
     Biome: 1
-    height: 0.8994233
-  - Name: Test
-    color: {r: 1, g: 1, b: 1, a: 1}
+    height: 0.7509096
+  - Name: Snow
+    color: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
     Biome: 0
-    height: 0.99666667
+    height: 0.998
   curve:
     serializedVersion: 2
     m_Curve:
@@ -498,7 +510,7 @@ MonoBehaviour:
     biomeColor: {r: 0.6392157, g: 0.70980394, b: 0.42745098, a: 1}
     treeTypes: 00000000
   trees: []
-  treeMaterial: {fileID: 2100000, guid: 14517172b2e3a4d48ad6b01ea3a245d2, type: 2}
+  treeMaterial: {fileID: 2100000, guid: 34b67c23ce7da49439a2b71704c1156a, type: 2}
 --- !u!114 &1588451296
 MonoBehaviour:
   m_ObjectHideFlags: 0

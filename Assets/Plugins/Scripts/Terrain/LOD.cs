@@ -42,6 +42,7 @@ public class LOD : MonoBehaviour
     private PinkNoise pink;
     private MeshRenderer mr0;
     private MeshCollider mc0;
+	private MeshFilter mf0;
     private Vector3[] vert;
     private Vector3[] norm;
     private int[] tri;
@@ -62,7 +63,7 @@ public class LOD : MonoBehaviour
         Distance = Vector3.Distance(pos, mc0.bounds.center);
 
         //Calculate which LODLevel should be used.
-        TargetLOD = 4;
+        TargetLOD = 5;
         for (int x = 0; x < lodlevels.Length; x++)
         {
             if (Distance < lodlevels[x])
@@ -111,7 +112,7 @@ public class LOD : MonoBehaviour
     /// <param name="y">Y-coordinate for vertex</param>
     /// <param name="z">Z-coordinate for vertex</param>
     /// <returns></returns>
-    private void AddVertex(int x, int y, int z, ref float[] H, ref ProceduralSphere.V3[] N)
+	private void AddVertex(int x, int y, int z, ref float[] H, ref ProceduralSphere.V3[] N)
     {
         ProceduralSphere.V3 v = new ProceduralSphere.V3(x, y, z) * 2f / Width - ProceduralSphere.V3.one;
         float x2 = v.x * v.x;
@@ -135,7 +136,6 @@ public class LOD : MonoBehaviour
         hill = val < 0 ? 0 : val;
 
         H[ve] = plain + mountains + hill;
-
         N[ve] = s;
 
         ve++;
@@ -163,6 +163,7 @@ public class LOD : MonoBehaviour
         hills.Frequency = 0.01f;
 
         mesh = GetComponent<MeshFilter>().mesh;
+		mf0 = GetComponent<MeshFilter> ();
         mr0 = GetComponent<MeshRenderer>();
         mc0 = GetComponent<MeshCollider>();
         mr0.material = terrainMaterial;
@@ -183,7 +184,7 @@ public class LOD : MonoBehaviour
     {
         if (thread == null)
         {
-            Debug.LogWarning("thread doesn't exist");
+            Debug.LogError("thread doesn't exist");
         }
         thread.Add(item);
         if (!thread.Started)
@@ -310,6 +311,11 @@ public class LOD : MonoBehaviour
 
     private IEnumerator GenerateMesh(bool forceCollider = false)
     {
+		if (_LODLevel == 5) {
+			mesh.Clear();
+			mf0.mesh = null;
+			yield break;
+		}
         //Reset
         CallbackDone = false;
 
@@ -347,12 +353,11 @@ public class LOD : MonoBehaviour
         //Reset mesh and set values
         mesh.Clear();
         mesh.vertices = vert;
-        mesh.normals = norm;
+		mesh.normals = CalculateNormals (norm);
         mesh.triangles = tri;
         mesh.uv = uv;
 
         mesh.RecalculateBounds();
-        mesh.RecalculateNormals();
 
         //First time setup
         if (!FirstTime)
@@ -365,9 +370,11 @@ public class LOD : MonoBehaviour
             {
                 yield return null;
             }
-            yield return new WaitForSeconds(2);
-            SetTargetLOD(4);
-        }
+		}
+		if (mc0.sharedMesh == null && mf0.sharedMesh != null) {
+			mc0.sharedMesh = mf0.sharedMesh;
+			mc0.convex = true;
+		}
 
         //If player nears a collider before it is generated force its generation
         if (forceCollider && !mc0.convex)
@@ -375,6 +382,13 @@ public class LOD : MonoBehaviour
             mc0.convex = true;
         }
     }
+
+	Vector3[] CalculateNormals(Vector3[] normals) {
+		//Replace with custom normals calculations
+		mesh.normals = normals;
+		mesh.RecalculateNormals ();
+		return mesh.normals;
+	}
 
     private void AddUV()
     {
