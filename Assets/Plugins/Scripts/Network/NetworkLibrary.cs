@@ -5,11 +5,11 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace NetworkLibrary
+namespace OneNetworking
 {
-    public enum NetworkType { Server = 0, Client = 1 };
-
-    public enum NetworkMessageType { Connect = 0, Message = 1, Disconnect = 2 }
+    public enum NetworkType { NotConnected = 0, Server = 1, Client = 2 };
+	public enum NetworkMessageMode { Server = 0, Clients = 1, All = 2, Private = 3 };
+	public enum NetworkMessageType { Connect = 0, Message = 1, Disconnect = 2 };
 
     public class Packet
     {
@@ -23,24 +23,52 @@ namespace NetworkLibrary
         }
     }
 
+	[Serializable]
+	public class NetworkConnection {
+		public IPAddress IP;
+
+		public NetworkConnection(IPAddress ip) {
+			IP = ip;
+		}
+
+		public static NetworkConnection Parse(string IPAsString) {
+			NetworkConnection nc = new NetworkConnection (IPAddress.Parse (IPAsString));
+			return nc;
+		}
+	}
+
     [Serializable]
     public class NetworkMessage
     {
         public string UID;
+		public NetworkMessageMode msgMode = NetworkMessageMode.Private;
         public NetworkMessageType msgType = NetworkMessageType.Message;
-        public Type[] types;
         public string methodName;
         public object[] parameters;
         public Type scriptType;
+		public int Ping;
 
-        private NetworkMessage(Type st, Type[] Types, string methodN, string uid, object[] Parameters)
+		public NetworkMessage(NetworkMessageType type, string clientIP) {
+			msgType = type;
+			parameters = new object[] { clientIP };
+		}
+
+		public NetworkMessage(Type st, string methodN, string uid, object[] Parameters)
         {
             UID = uid;
             scriptType = st;
-            types = Types;
             methodName = methodN;
             parameters = Parameters;
         }
+
+		public NetworkMessage(Type st, NetworkMessageMode mode, string methodN, string uid, object[] Parameters)
+		{
+			msgMode = mode;
+			UID = uid;
+			scriptType = st;
+			methodName = methodN;
+			parameters = Parameters;
+		}
 
         public static NetworkMessage ToNM(byte[] bytes)
         {
@@ -52,64 +80,12 @@ namespace NetworkLibrary
             return nm;
         }
 
-        public static void SendMethod(IPAddress IP, string name, params object[] parameters)
-        {
-            Type ty = (new StackTrace().GetFrame(1).GetMethod().DeclaringType);
-            MethodInfo mi = ty.GetMethod(name);
-            ParameterInfo[] pi = mi.GetParameters();
-            Type[] types = new Type[pi.Length];
-            for (int i = 0; i < pi.Length; i++)
-            {
-                types[i] = pi[i].ParameterType;
-            }
-            string UID = "";
-            foreach (Attribute a in mi.GetCustomAttributes(false))
-            {
-                if (a.GetType() == typeof(NetworkMethodAttribute))
-                {
-                    NetworkMethodAttribute na = (NetworkMethodAttribute)a;
-                    UID = na.UID;
-                }
-            }
-
-            NetworkMessage nm = new NetworkMessage(mi.DeclaringType, types, name, UID, parameters);
-            byte[] bytes = nm.ToByteArray();
-
-            Packet packet = new Packet(new IPEndPoint(IP, NetworkSystem.port), bytes);
-            NetworkSystem.queue.Enqueue(packet);
-        }
-
-        public static void SendMethod(IPAddress IP, NetworkMessageType MsgType, string name, params object[] parameters)
-        {
-            MethodInfo mi = (new StackTrace().GetFrame(1).GetMethod().DeclaringType).GetMethod(name);
-            ParameterInfo[] pi = mi.GetParameters();
-            Type[] types = new Type[pi.Length];
-            for (int i = 0; i < pi.Length; i++)
-            {
-                types[i] = pi[i].ParameterType;
-            }
-            string UID = "";
-            foreach (Attribute a in mi.GetCustomAttributes(false))
-            {
-                if (a.GetType() == typeof(NetworkMethodAttribute))
-                {
-                    NetworkMethodAttribute na = (NetworkMethodAttribute)a;
-                    UID = na.UID;
-                }
-            }
-
-            NetworkMessage nm = new NetworkMessage(mi.DeclaringType, types, name, UID, parameters);
-            nm.msgType = MsgType;
-
-            nm.Send(IP);
-        }
-
         public void Send(IPAddress IP)
         {
             byte[] bytes = ToByteArray();
 
-            Packet packet = new Packet(new IPEndPoint(IP, NetworkSystem.port), bytes);
-            NetworkSystem.queue.Enqueue(packet);
+			Packet packet = new Packet(new IPEndPoint(IP, OneServer.Port), bytes);
+			OneServer.queue.Enqueue(packet);
         }
 
         public byte[] ToByteArray()
@@ -122,15 +98,6 @@ namespace NetworkLibrary
                 bf.Serialize(ms, this);
                 return ms.ToArray();
             }
-        }
-    }
-
-    public sealed class NetworkMethodAttribute : Attribute
-    {
-        public string UID = "";
-
-        public NetworkMethodAttribute()
-        {
         }
     }
 }
