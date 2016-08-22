@@ -18,10 +18,6 @@ public class NetworkObject : MonoBehaviour
 		UID = new Guid ().ToString();
 	}
 
-	void Start() {
-
-	}
-
 	public void SendMethod(NetworkMessageMode mode, string name, params object[] parameters)
 	{
 		if (mode == NetworkMessageMode.Private) {
@@ -32,7 +28,7 @@ public class NetworkObject : MonoBehaviour
 		MethodInfo mi = ty.GetMethod(name);
 
 		List<object> param = new List<object> ();
-		param.Add (new NetworkConnection (OneServer.publicIP));
+		param.Add (new NetworkConnection (OneServer.publicIP, OneServer.Port));
 		foreach (object o in parameters) {
 			param.Add (o);
 		}
@@ -40,23 +36,22 @@ public class NetworkObject : MonoBehaviour
 		NetworkMessage nm = new NetworkMessage(mi.DeclaringType, mode, name, UID, param.ToArray());
 		byte[] bytes = nm.ToByteArray();
 
-		Packet packet = new Packet (new IPEndPoint (OneServer.connections [0].IP, OneServer.Port), bytes);
-		OneServer.queue.Enqueue (packet);
+		if (OneServer.networkType == NetworkType.Server) {
+			Packet packet = new Packet (new IPEndPoint (IPAddress.Parse("127.0.0.1"), OneServer.sendPort), bytes);
+			OneServer.queue.Enqueue (packet);
+		} else {
+			Packet packet = new Packet (new IPEndPoint (OneServer.connections [0].GetIP(), OneServer.sendPort), bytes);
+			OneServer.queue.Enqueue (packet);
+		}
 	}
 
-	/// <summary>
-	/// Used to send a method to another client
-	/// </summary>
-	/// <param name="connection">Connection.</param>
-	/// <param name="name">Name.</param>
-	/// <param name="parameters">Parameters.</param>
 	public void SendMethod(NetworkConnection connection, string name, params object[] parameters)
 	{
 		Type ty = (new StackTrace().GetFrame(1).GetMethod().DeclaringType);
 		MethodInfo mi = ty.GetMethod(name);
 
 		List<object> param = new List<object> ();
-		param.Add (new NetworkConnection (OneServer.publicIP));
+		param.Add (new NetworkConnection (OneServer.publicIP, OneServer.Port));
 		foreach (object o in parameters) {
 			param.Add (o);
 		}
@@ -64,17 +59,28 @@ public class NetworkObject : MonoBehaviour
 		NetworkMessage nm = new NetworkMessage(mi.DeclaringType, name, UID, param.ToArray());
 		byte[] bytes = nm.ToByteArray();
 
-		Packet packet = new Packet(new IPEndPoint(connection.IP, OneServer.Port), bytes);
+		Packet packet = new Packet(new IPEndPoint(connection.GetIP(), connection.Port), bytes);
 		OneServer.queue.Enqueue(packet);
 	}
 
 	public void Update() {
 		NetworkMessage[] netmsg = OneServer.GetPersonalPackages (UID);
 		if (netmsg.Length != 0) {
-			Debug.Log (netmsg.Length + " messages received");
 			for (int i = 0; i < netmsg.Length; i++) {
-				NetworkMessage msg = netmsg [i];
-				GetComponent (msg.scriptType).BroadcastMessage (msg.methodName, msg.parameters);
+				NetworkMessage msg = (NetworkMessage)netmsg [i];
+				MethodInfo[] methods = OneServer.GetMethods (msg.scriptType, msg.methodName);
+				bool found = false;
+				for (int k = 0; k < methods.Length && !found; k++) {
+					try {
+						methods[k].Invoke(GetComponent(msg.scriptType), msg.parameters);
+						found = true; //Stop if matching format found
+					}
+					catch (TargetParameterCountException) {
+					}
+					if (!found && k == methods.Length-1) {
+						Debug.LogError ("Parameters doesn't match format for any of the methods found!");
+					}
+				}
 			}
 		}
 	}

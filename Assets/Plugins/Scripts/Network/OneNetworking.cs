@@ -10,6 +10,7 @@ namespace OneNetworking
     public enum NetworkType { NotConnected = 0, Server = 1, Client = 2 };
 	public enum NetworkMessageMode { Server = 0, Clients = 1, All = 2, Private = 3 };
 	public enum NetworkMessageType { Connect = 0, Message = 1, Disconnect = 2 };
+	public enum NetworkError { NotSpaceEnough = 0 };
 
     public class Packet
     {
@@ -26,14 +27,29 @@ namespace OneNetworking
 	[Serializable]
 	public class NetworkConnection {
 		public IPAddress IP;
+		public int Port;
 
 		public NetworkConnection(IPAddress ip) {
 			IP = ip;
 		}
 
-		public static NetworkConnection Parse(string IPAsString) {
-			NetworkConnection nc = new NetworkConnection (IPAddress.Parse (IPAsString));
-			return nc;
+		public NetworkConnection(IPAddress ip, int port) {
+			IP = ip;
+			Port = port;
+		}
+
+		public NetworkConnection(string ip, int port) {
+			IP = IPAddress.Parse(ip);
+			Port = port;
+		}
+
+		public IPAddress GetIP() {
+			return IP;
+		}
+
+		static public explicit operator string (NetworkConnection connection)
+		{
+			return connection.IP+":"+connection.Port;
 		}
 	}
 
@@ -48,9 +64,9 @@ namespace OneNetworking
         public Type scriptType;
 		public int Ping;
 
-		public NetworkMessage(NetworkMessageType type, string clientIP) {
+		public NetworkMessage(NetworkMessageType type, NetworkConnection connection) {
 			msgType = type;
-			parameters = new object[] { clientIP };
+			parameters = new object[] { connection };
 		}
 
 		public NetworkMessage(Type st, string methodN, string uid, object[] Parameters)
@@ -80,11 +96,11 @@ namespace OneNetworking
             return nm;
         }
 
-        public void Send(IPAddress IP)
+		public void Send(IPAddress IP, int port)
         {
             byte[] bytes = ToByteArray();
 
-			Packet packet = new Packet(new IPEndPoint(IP, OneServer.Port), bytes);
+			Packet packet = new Packet(new IPEndPoint(IP, port), bytes);
 			OneServer.queue.Enqueue(packet);
         }
 

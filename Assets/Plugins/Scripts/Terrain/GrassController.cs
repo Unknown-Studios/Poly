@@ -39,7 +39,6 @@ public class GrassController : MonoBehaviour {
 	private Bounds bounds = new Bounds(Vector3.zero,Vector3.one);
 	void Update () {
 		Plane[] frustumPlanes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
-		Vector3 curPos = transform.position;
 		for (int x = -grassRadius; x < grassRadius; x++) {
 			for (int y = -grassRadius; y < grassRadius;y++) {
 				Vector3 pos = new Vector3 (x * 1.5f, 0.5f, y * 1.5f);
