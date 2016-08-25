@@ -37,12 +37,12 @@ public class NetworkObject : MonoBehaviour
 
         if (OneServer.networkType == NetworkType.Server)
         {
-            Packet packet = new Packet(new IPEndPoint(IPAddress.Parse("127.0.0.1"), OneServer.sendPort), bytes);
+			Packet packet = new Packet(new NetworkConnection(IPAddress.Parse("127.0.0.1"), OneServer.sendPort), bytes);
             OneServer.queue.Enqueue(packet);
         }
         else
         {
-            Packet packet = new Packet(new IPEndPoint(OneServer.connections[0].IP, OneServer.sendPort), bytes);
+			Packet packet = new Packet(new NetworkConnection(OneServer.connections[0].IP, OneServer.sendPort), bytes);
             OneServer.queue.Enqueue(packet);
         }
     }
@@ -62,13 +62,13 @@ public class NetworkObject : MonoBehaviour
         NetworkMessage nm = new NetworkMessage(mi.DeclaringType, name, UID, param.ToArray());
         byte[] bytes = nm.ToByteArray();
 
-        Packet packet = new Packet(new IPEndPoint(connection.GetIP(), OneServer.sendPort), bytes);
+		Packet packet = new Packet(new NetworkConnection(connection.IP, OneServer.sendPort), bytes);
         OneServer.queue.Enqueue(packet);
     }
 
     public void Update()
     {
-        NetworkMessage[] netmsg = OneServer.GetPersonalPackages("Server");
+		NetworkMessage[] netmsg = OneServer.GetPersonalPackages(UID);
         if (netmsg.Length != 0)
         {
             for (int i = 0; i < netmsg.Length; i++)

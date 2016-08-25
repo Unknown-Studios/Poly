@@ -103,17 +103,12 @@ public class NetworkTest : MonoBehaviour
 
             if (GUI.Button(new Rect(100, 100, 200, 25), "Send test message"))
             {
-                Send();
+				netobj.SendMethod (NetworkMessageMode.All, "Test", Random.Range (0, 10));
             }
         }
     }
 
-    private void Send()
-    {
-        for (int i = 1; i < OneServer.connections.Count; i++)
-        {
-            Color col = Random.ColorHSV();
-            netobj.SendMethod(OneServer.connections[i], "UpdateTexture", col.r, col.g, col.b);
-        }
-    }
+	public void Test(int test) {
+		Debug.Log (test);
+	}
 }

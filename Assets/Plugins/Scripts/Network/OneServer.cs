@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
+using System.Security.Cryptography;
+using System.Text;
 
 public class OneServer : MonoBehaviour
 {
@@ -58,7 +60,46 @@ public class OneServer : MonoBehaviour
 
     private UdpClient Client;
 
-    private List<NetworkConnection> Checked;
+	public static EncryptKeyPair CreateKeyPair()
+	{
+		CspParameters cspParams = new CspParameters { ProviderType = 1 };
+
+		RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider(2048, cspParams);
+
+		string publicKey = rsaProvider.ToXmlString(false);
+		string privateKey = rsaProvider.ToXmlString(true);
+
+		return new EncryptKeyPair(publicKey, privateKey);
+	}
+
+	private string RSAEncrypt(string publickey, string value)
+	{
+		byte[] plaintext = Encoding.Unicode.GetBytes(value);
+
+		CspParameters cspParams = new CspParameters();
+		using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider(2048,cspParams))
+		{
+			RSA.FromXmlString (publickey);
+			byte[] encryptedData = RSA.Encrypt(plaintext, false);
+			return Convert.ToBase64String(encryptedData);
+		}
+	}
+
+	private string RSADecrypt(string privatekey, string value)
+	{
+		byte[] encryptedData = Convert.FromBase64String(value);
+
+		CspParameters cspParams = new CspParameters();
+		cspParams.KeyContainerName = privatekey;
+		using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider(2048,cspParams))
+		{ 
+			RSA.FromXmlString (privatekey);
+			byte[] decryptedData = RSA.Decrypt(encryptedData,false);
+			return Encoding.Unicode.GetString(decryptedData);
+		}
+	}
+
+	private EncryptKeyPair encryptionKeys;
 
     public static OneServer instance
     {
@@ -128,15 +169,29 @@ public class OneServer : MonoBehaviour
         sendPort = port;
         Client = new UdpClient(Port);
         Init();
-        Checked = new List<NetworkConnection>();
-        connections.Add(new NetworkConnection(IPAddress.Parse("127.0.0.1"), port));
-        networkType = NetworkType.Server;
+		myConnection = new NetworkConnection (IPAddress.Parse ("127.0.0.1"), port, encryptionKeys.publicKey);
+		connections.Add(myConnection);
+		Keys.Add (myConnection, GenerateKey ());
+		networkType = NetworkType.Server;
     }
 
-    public void Connect(NetworkConnection con)
-    {
-        Debug.Log("Connected to " + connectIP + ":" + connectPort);
-        networkType = NetworkType.Client;
+	public void Connect(NetworkConnection con, string RSAKey, string serverAESKey, string clientAESKey, string ClientRSA)
+	{
+		networkType = NetworkType.Client;
+		string decryptKey = "";
+		if (ClientRSA == encryptionKeys.publicKey) {
+			decryptKey = encryptionKeys.privateKey;
+		}
+
+		string serverAES = RSADecrypt (decryptKey, serverAESKey);
+		string clientAES = RSADecrypt (decryptKey, clientAESKey);
+
+		swatch.Stop ();
+		Debug.Log (swatch.Elapsed.Seconds);
+
+		connections [0].encryptionKey = RSAKey;
+		Keys.Add (con, serverAES);
+		Keys.Add (myConnection, clientAES);
     }
 
     public void InitClient(IPAddress ip, int port)
@@ -154,7 +209,7 @@ public class OneServer : MonoBehaviour
         Port = port;
         sendPort = port;
 
-        CreateUdpClient();
+		CreateUdpClient();
 
         Init();
         connectIP = ip;
@@ -165,17 +220,27 @@ public class OneServer : MonoBehaviour
         //Get my own ip, so server can connect to me
         if (ip.ToString() == "127.0.0.1")
         { //Server is located locally
-            NetworkMessage nm = new NetworkMessage(NetworkMessageType.Connect, new NetworkConnection(IPAddress.Parse("127.0.0.1"), Port)); //Send local credentials to the server
+			myConnection = new NetworkConnection(IPAddress.Parse("127.0.0.1"), Port, encryptionKeys.publicKey);
+			NetworkMessage nm = new NetworkMessage(NetworkMessageType.Connect, myConnection); //Send local credentials to the server
             nm.UID = "Server";
-            nm.Send(connectIP, connectPort);
+			Packet packet = new Packet (new NetworkConnection (connectIP, connectPort), nm.ToByteArray (), false);
+			queue.Enqueue (packet);
         }
         else
-        {
-            NetworkMessage nm = new NetworkMessage(NetworkMessageType.Connect, new NetworkConnection(publicIP, Port)); //Send credentials to the server
-            nm.UID = "Server";
-            nm.Send(connectIP, connectPort);
+		{
+			myConnection = new NetworkConnection (publicIP, Port, encryptionKeys.publicKey);
+			NetworkMessage nm = new NetworkMessage(NetworkMessageType.Connect, myConnection); //Send credentials to the server
+			nm.UID = "Server";
+			Packet packet = new Packet (new NetworkConnection (connectIP, connectPort), nm.ToByteArray (), false);
+			queue.Enqueue (packet);
         }
+		swatch = new Stopwatch ();
+		swatch.Start ();
     }
+
+	Stopwatch swatch;
+
+	NetworkConnection myConnection;
 
     public void ConnectFailed(NetworkConnection connection, NetworkError error)
     {
@@ -185,21 +250,7 @@ public class OneServer : MonoBehaviour
         }
     }
 
-    public void UpdateClientList(NetworkConnection[] allCon)
-    {
-        Debug.Log("Updated client list");
-        connections.Clear();
-        foreach (NetworkConnection con in allCon)
-        {
-            connections.Add(con);
-        }
-        if (networkType == NetworkType.NotConnected)
-        {
-            networkType = NetworkType.Client;
-        }
-    }
-
-    public void SendMethod(NetworkMessageMode mode, string name, params object[] parameters)
+	private void SendMethod(NetworkMessageMode mode, string name, params object[] parameters)
     {
         if (mode == NetworkMessageMode.Private)
         {
@@ -221,17 +272,17 @@ public class OneServer : MonoBehaviour
 
         if (networkType == NetworkType.Server)
         {
-            Packet packet = new Packet(new IPEndPoint(IPAddress.Parse("127.0.0.1"), OneServer.sendPort), bytes);
+			Packet packet = new Packet(new NetworkConnection(IPAddress.Parse("127.0.0.1"), OneServer.sendPort), bytes);
             OneServer.queue.Enqueue(packet);
         }
         else
         {
-            Packet packet = new Packet(new IPEndPoint(connectIP, connectPort), bytes);
+			Packet packet = new Packet(new NetworkConnection(connectIP, connectPort), bytes);
             OneServer.queue.Enqueue(packet);
         }
     }
 
-    public void SendMethod(NetworkConnection connection, string name, params object[] parameters)
+	private void SendMethod(NetworkConnection connection, string name, params object[] parameters)
     {
         Type ty = typeof(OneServer);
         MethodInfo mi = ty.GetMethod(name);
@@ -246,28 +297,28 @@ public class OneServer : MonoBehaviour
         NetworkMessage nm = new NetworkMessage(mi.DeclaringType, name, "Server", param.ToArray());
         byte[] bytes = nm.ToByteArray();
 
-        Packet packet = new Packet(new IPEndPoint(connection.GetIP(), OneServer.sendPort), bytes);
+		Packet packet = new Packet(connection, bytes);
         OneServer.queue.Enqueue(packet);
     }
 
-    public void SendMethod(IPEndPoint connection, string name, params object[] parameters)
-    {
-        Type ty = typeof(OneServer);
-        MethodInfo mi = ty.GetMethod(name);
+	private void SendMethod(NetworkConnection connection, bool Encrypt, string name, params object[] parameters)
+	{
+		Type ty = typeof(OneServer);
+		MethodInfo mi = ty.GetMethod(name);
 
-        List<object> param = new List<object>();
-        param.Add(new NetworkConnection(publicIP, OneServer.Port));
-        foreach (object o in parameters)
-        {
-            param.Add(o);
-        }
+		List<object> param = new List<object>();
+		param.Add(new NetworkConnection(publicIP, OneServer.Port));
+		foreach (object o in parameters)
+		{
+			param.Add(o);
+		}
 
-        NetworkMessage nm = new NetworkMessage(mi.DeclaringType, name, "Server", param.ToArray());
-        byte[] bytes = nm.ToByteArray();
+		NetworkMessage nm = new NetworkMessage(mi.DeclaringType, name, "Server", param.ToArray());
+		byte[] bytes = nm.ToByteArray();
 
-        Packet packet = new Packet(connection, bytes);
-        OneServer.queue.Enqueue(packet);
-    }
+		Packet packet = new Packet(connection, bytes, Encrypt);
+		OneServer.queue.Enqueue(packet);
+	}
 
     /// <summary>
     /// You can only send NetworkMessages after this has been instantiated
@@ -283,15 +334,24 @@ public class OneServer : MonoBehaviour
             Debug.LogError("Couldn't retrieve public IP");
             return;
         }
+		encryptionKeys = CreateKeyPair ();
+
+		Keys = new Dictionary<NetworkConnection, string> ();
         packetQueue = new List<NetworkMessage>();
         connections = new List<NetworkConnection>();
         queue = new Queue<Packet>();
 
-        //Client.Client.Bind ((new IPEndPoint (IPAddress.Any, Port)));
-
         Client.BeginReceive(new AsyncCallback(Receiver), null);
         InvokeRepeating("SendPackages", 0.0f, (1.0f / tickrate));
     }
+
+	string GetKey(NetworkConnection con) {
+		string data = null;
+		if (!Keys.TryGetValue (con, out data)) {
+			throw new Exception ("Key for that NetworkConnection couldn't be found");
+		}
+		return data;
+	}
 
     private void CreateUdpClient()
     {
@@ -316,6 +376,12 @@ public class OneServer : MonoBehaviour
         }
     }
 
+	public string GenerateKey() {
+		return Guid.NewGuid().ToString();
+	}
+
+	Dictionary<NetworkConnection, string> Keys;
+
     private void SendPackages()
     {
         tick++;
@@ -326,8 +392,16 @@ public class OneServer : MonoBehaviour
         for (int i = 0; i < queue.Count; i++)
         {
             Packet packet = queue.Dequeue();
-            Client.Send(packet.bytes, packet.bytes.Length, packet.ipEnd);
-            BytesSent += packet.bytes.Length;
+			if (packet.Encrypt) {
+				EncryptedMessage encryptedMsg = Encryption.EncryptBytes(GetKey(packet.connection), packet.bytes);
+				byte[] encryptedBytes = encryptedMsg.ToByteArray ();
+
+				Client.Send (encryptedBytes, encryptedBytes.Length, (IPEndPoint)packet.connection);
+				BytesSent += encryptedBytes.Length;
+			} else {
+				Client.Send (packet.bytes, packet.bytes.Length, (IPEndPoint)packet.connection);
+				BytesSent += packet.bytes.Length;
+			}
         }
     }
 
@@ -339,7 +413,6 @@ public class OneServer : MonoBehaviour
             for (int i = 0; i < netmsg.Length; i++)
             {
                 NetworkMessage msg = netmsg[i];
-                //msg.scriptType.GetMethod (msg.methodName).Invoke (GetComponent (msg.scriptType), msg.parameters);
                 MethodInfo[] methods = OneServer.GetMethods(msg.scriptType, msg.methodName);
                 bool found = false;
                 for (int k = 0; k < methods.Length && !found; k++)
@@ -370,9 +443,19 @@ public class OneServer : MonoBehaviour
     private void Receiver(IAsyncResult res)
     {
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
-        byte[] received = Client.EndReceive(res, ref sender);
+		byte[] received = Client.EndReceive(res, ref sender);
+		NetworkMessage d = null;
+		try {
+			d = NetworkMessage.ToNM(received); //Convert to NetworkMessage
+		}
+		catch (Exception) {
+			EncryptedMessage e = EncryptedMessage.ToEM(received);
+			string key = GetKey ((NetworkConnection)d.parameters [0]);
+			received = Encryption.DecryptBytes(key, e);
+			d = NetworkMessage.ToNM(received); //Convert to NetworkMessage
+		}
+
         BytesReceived += received.Length;
-        NetworkMessage d = NetworkMessage.ToNM(received); //Convert to NetworkMessage
 
         if (d.msgType == NetworkMessageType.Connect)
         {
@@ -380,12 +463,23 @@ public class OneServer : MonoBehaviour
             {
                 if (connections.Count + 1 < MaxPlayers)
                 {
-                    connections.Add(new NetworkConnection(sender.Address, sender.Port));
-                    SendMethod(sender, "Connect");
+					NetworkConnection con = (NetworkConnection)d.parameters [0]; 
+					connections.Add(con);
+					//Get both keys as strings
+					string serverKey = GetKey (myConnection);
+					string clientKey = GenerateKey ();
+					//Add clients key to list
+					Keys.Add (con, clientKey);
+
+					//Encrypt both keys
+					string encryptServerKey = RSAEncrypt (con.encryptionKey, serverKey);
+					string encryptClientKey = RSAEncrypt (con.encryptionKey, clientKey);
+					SendMethod(con, false, "Connect", encryptionKeys.publicKey, encryptServerKey, encryptClientKey, con.encryptionKey);
                 }
                 else
-                {
-                    SendMethod(sender, "ConnectFailed", NetworkError.NotSpaceEnough);
+				{
+					NetworkConnection con = (NetworkConnection)d.parameters [0];
+					SendMethod(con, "ConnectFailed", NetworkError.NotSpaceEnough);
                 }
             }
         }
@@ -404,7 +498,7 @@ public class OneServer : MonoBehaviour
                     for (int i = 1; i < connections.Count; i++)
                     {
                         Debug.Log((string)connections[i]);
-                        Packet packet = new Packet(new IPEndPoint(connections[i].GetIP(), connections[i].Port), d.ToByteArray());
+						Packet packet = new Packet(new NetworkConnection(connections[i].IP, connections[i].Port), d.ToByteArray());
                         queue.Enqueue(packet);
                     }
                 }
@@ -414,7 +508,7 @@ public class OneServer : MonoBehaviour
                     d.msgMode = NetworkMessageMode.Private;
                     for (int i = 1; i < connections.Count; i++)
                     {
-                        Packet packet = new Packet(new IPEndPoint(connections[i].GetIP(), connections[i].Port), d.ToByteArray());
+						Packet packet = new Packet(new NetworkConnection(connections[i].IP, connections[i].Port), d.ToByteArray());
                         queue.Enqueue(packet);
                     }
                 }

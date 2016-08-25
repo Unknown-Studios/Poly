@@ -179,7 +179,6 @@ public class ProceduralSphere : MonoBehaviour
             if (rayhit.transform.GetComponent<Renderer>() != null)
             {
                 Vector3 SpawnPos = rayhit.point;
-                Quaternion SpawnRot = Quaternion.Euler(SpawnPos.normalized);
 
                 Texture2D tex = rayhit.transform.GetComponent<Renderer>().material.mainTexture as Texture2D;
                 int x = Mathf.RoundToInt(rayhit.textureCoord.x * tex.width);
