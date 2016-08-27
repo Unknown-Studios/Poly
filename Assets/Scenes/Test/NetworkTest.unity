@@ -186,9 +186,9 @@ GameObject:
   m_Component:
   - 4: {fileID: 1323387563}
   - 108: {fileID: 1323387562}
-  - 114: {fileID: 1323387566}
   - 114: {fileID: 1323387565}
   - 114: {fileID: 1323387564}
+  - 114: {fileID: 1323387566}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -251,24 +251,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1323387561}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88098c7f15c9d403d8f68d6c6d89ef09, type: 3}
+  m_Script: {fileID: 11500000, guid: 7fc2971a4fedd3a4199999638555bace, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ip: 
 --- !u!114 &1323387565
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1323387561}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 667f63e79c347466a84369e0f1d9482e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UID: 
-  isMine: 0
---- !u!114 &1323387566
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -283,3 +269,15 @@ MonoBehaviour:
   tick: 0
   BytesReceived: 0
   BytesSent: 0
+--- !u!114 &1323387566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1323387561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88098c7f15c9d403d8f68d6c6d89ef09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ip: 

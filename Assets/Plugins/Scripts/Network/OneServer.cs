@@ -171,7 +171,7 @@ public class OneServer : MonoBehaviour
         Init();
 		myConnection = new NetworkConnection (IPAddress.Parse ("127.0.0.1"), port, encryptionKeys.publicKey);
 		connections.Add(myConnection);
-		Keys.Add (myConnection, GenerateKey ());
+		Keys.Add ((string)myConnection, GenerateKey ());
 		networkType = NetworkType.Server;
     }
 
@@ -187,12 +187,20 @@ public class OneServer : MonoBehaviour
 		string clientAES = RSADecrypt (decryptKey, clientAESKey);
 
 		swatch.Stop ();
-		Debug.Log (swatch.Elapsed.Seconds);
+		Debug.Log ((swatch.ElapsedMilliseconds/1000.0f)+"s");
 
 		connections [0].encryptionKey = RSAKey;
-		Keys.Add (con, serverAES);
-		Keys.Add (myConnection, clientAES);
+		Keys.Add ((string)con, serverAES);
+		Keys.Add ((string)myConnection, clientAES);
+		SendMethod (NetworkMessageMode.All, "ClientConnected", myConnection);
     }
+
+	public void ClientConnected(NetworkConnection con, NetworkConnection connectingClient) {
+		OnClientConnected (connectingClient);
+	}
+
+	public static event ConnectEvent OnClientConnected;
+	public delegate void ConnectEvent (NetworkConnection connection);
 
     public void InitClient(IPAddress ip, int port)
     {
@@ -336,7 +344,7 @@ public class OneServer : MonoBehaviour
         }
 		encryptionKeys = CreateKeyPair ();
 
-		Keys = new Dictionary<NetworkConnection, string> ();
+		Keys = new Dictionary<string, string> ();
         packetQueue = new List<NetworkMessage>();
         connections = new List<NetworkConnection>();
         queue = new Queue<Packet>();
@@ -346,9 +354,12 @@ public class OneServer : MonoBehaviour
     }
 
 	string GetKey(NetworkConnection con) {
+		string searchstring = (string)con;
 		string data = null;
-		if (!Keys.TryGetValue (con, out data)) {
-			throw new Exception ("Key for that NetworkConnection couldn't be found");
+		if (!Keys.TryGetValue (searchstring, out data)) {
+			for (int i = 0; i < Keys.Count; i++) {
+			}
+			throw new Exception ("Key ("+searchstring+") for that NetworkConnection couldn't be found");
 		}
 		return data;
 	}
@@ -380,7 +391,7 @@ public class OneServer : MonoBehaviour
 		return Guid.NewGuid().ToString();
 	}
 
-	Dictionary<NetworkConnection, string> Keys;
+	Dictionary<string, string> Keys;
 
     private void SendPackages()
     {
@@ -469,7 +480,7 @@ public class OneServer : MonoBehaviour
 					string serverKey = GetKey (myConnection);
 					string clientKey = GenerateKey ();
 					//Add clients key to list
-					Keys.Add (con, clientKey);
+					Keys.Add ((string)con, clientKey);
 
 					//Encrypt both keys
 					string encryptServerKey = RSAEncrypt (con.encryptionKey, serverKey);
